@@ -204,7 +204,7 @@ local function getSafeUIContainer()
     else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
--- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
+-- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) ====================
 local function showCrashMenu(err)
     local traceback = debug.traceback()
     local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
@@ -226,7 +226,8 @@ local function showCrashMenu(err)
         mainFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
         mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
         mainFrame.BorderSizePixel = 0
-        mainFrame.Active, mainFrame.Draggable = true, true
+        mainFrame.Active = true
+        mainFrame.Draggable = true
         mainFrame.Parent = screenGui
         
         local corner = Instance.new("UICorner")
@@ -234,34 +235,52 @@ local function showCrashMenu(err)
         corner.Parent = mainFrame
         
         local stroke = Instance.new("UIStroke")
-        stroke.Color, stroke.Thickness, stroke.Parent = Color3.fromRGB(231, 76, 60), 1.5, mainFrame
+        stroke.Color = Color3.fromRGB(231, 76, 60)
+        stroke.Thickness = 1.5
+        stroke.Parent = mainFrame
         
         local title = Instance.new("TextLabel")
         title.Size = UDim2.new(1, 0, 0, 35)
         title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
         title.Text = T("CrashTitle")
-        title.TextColor3, title.TextSize, title.Font, title.Parent = Color3.fromRGB(231, 76, 60), 13, Enum.Font.SourceSansBold, mainFrame
+        title.TextColor3 = Color3.fromRGB(231, 76, 60)
+        title.TextSize = 13
+        title.Font = Enum.Font.SourceSansBold
+        title.Parent = mainFrame
         
         local titleCorner = Instance.new("UICorner")
         titleCorner.CornerRadius = UDim.new(0, 8)
         titleCorner.Parent = title
         
         local textBox = Instance.new("TextBox")
-        textBox.Size, textBox.Position = UDim2.new(0.9, 0, 0, 150), UDim2.new(0.05, 0, 0.18, 0)
-        textBox.BackgroundColor3, textBox.TextColor3 = Color3.fromRGB(10, 10, 10), Color3.fromRGB(220, 220, 220)
-        textBox.Text, textBox.TextSize = logText, 11
-        textBox.ClearTextOnFocus, textBox.TextEditable, textBox.MultiLine, textBox.TextWrapped = false, false, true, true
-        textBox.TextYAlignment, textBox.TextXAlignment = Enum.TextYAlignment.Top, Enum.TextXAlignment.Left
-        textBox.Font, textBox.Parent = Enum.Font.Code, mainFrame
+        textBox.Size = UDim2.new(0.9, 0, 0, 150)
+        textBox.Position = UDim2.new(0.05, 0, 0.18, 0)
+        textBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        textBox.TextColor3 = Color3.fromRGB(220, 220, 220)
+        textBox.Text = logText
+        textBox.TextSize = 11
+        textBox.ClearTextOnFocus = false
+        textBox.TextEditable = false
+        textBox.MultiLine = true
+        textBox.TextWrapped = true
+        textBox.TextYAlignment = Enum.TextYAlignment.Top
+        textBox.TextXAlignment = Enum.TextXAlignment.Left
+        textBox.Font = Enum.Font.Code
+        textBox.Parent = mainFrame
         
         local boxCorner = Instance.new("UICorner")
         boxCorner.CornerRadius = UDim.new(0, 6)
         boxCorner.Parent = textBox
         
         local copyBtn = Instance.new("TextButton")
-        copyBtn.Size, copyBtn.Position = UDim2.new(0.42, 0, 0, 35), UDim2.new(0.06, 0, 0.78, 0)
-        copyBtn.BackgroundColor3, copyBtn.TextColor3 = Color3.fromRGB(41, 128, 185), Color3.fromRGB(255, 255, 255)
-        copyBtn.Text, copyBtn.Font, copyBtn.TextSize, copyBtn.Parent = T("CopyLog"), Enum.Font.SourceSansBold, 13, mainFrame
+        copyBtn.Size = UDim2.new(0.42, 0, 0, 35)
+        copyBtn.Position = UDim2.new(0.06, 0, 0.78, 0)
+        copyBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
+        copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        copyBtn.Text = T("CopyLog")
+        copyBtn.Font = Enum.Font.SourceSansBold
+        copyBtn.TextSize = 13
+        copyBtn.Parent = mainFrame
         
         local copyCorner = Instance.new("UICorner")
         copyCorner.CornerRadius = UDim.new(0, 4)
@@ -270,18 +289,26 @@ local function showCrashMenu(err)
         copyBtn.MouseButton1Click:Connect(function()
             local success, _ = pcall(function() setclipboard(logText) end)
             if success then
-                copyBtn.Text, copyBtn.BackgroundColor3 = T("Copied"), Color3.fromRGB(46, 204, 113)
+                copyBtn.Text = T("Copied")
+                copyBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
                 task.wait(2)
-                copyBtn.Text, copyBtn.BackgroundColor3 = T("CopyLog"), Color3.fromRGB(41, 128, 185)
+                copyBtn.Text = T("CopyLog")
+                copyBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
             else
-                copyBtn.Text, copyBtn.BackgroundColor3 = T("BufError"), Color3.fromRGB(192, 57, 43)
+                copyBtn.Text = T("BufError")
+                copyBtn.BackgroundColor3 = Color3.fromRGB(192, 57, 43)
             end
         end)
         
         local closeBtn = Instance.new("TextButton")
-        closeBtn.Size, closeBtn.Position = UDim2.new(0.42, 0, 0, 35), UDim2.new(0.52, 0, 0.78, 0)
-        closeBtn.BackgroundColor3, closeBtn.TextColor3 = Color3.fromRGB(45, 45, 45), Color3.fromRGB(255, 255, 255)
-        closeBtn.Text, closeBtn.Font, closeBtn.TextSize, closeBtn.Parent = T("Close"), Enum.Font.SourceSansBold, 13, mainFrame
+        closeBtn.Size = UDim2.new(0.42, 0, 0, 35)
+        closeBtn.Position = UDim2.new(0.52, 0, 0.78, 0)
+        closeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtn.Text = T("Close")
+        closeBtn.Font = Enum.Font.SourceSansBold
+        closeBtn.TextSize = 13
+        closeBtn.Parent = mainFrame
         
         local closeCorner = Instance.new("UICorner")
         closeCorner.CornerRadius = UDim.new(0, 4)
@@ -326,6 +353,7 @@ local function main()
         SheriffESP = false,
         InnocentESP = false,
         EspBoxes = false, 
+        AutoShootMurderer = false,
         AutoGrabGun = false,
         AntiFling = false,
         StretchEnabled = false,
@@ -558,15 +586,23 @@ local function main()
         if not torso then return end
         
         radioModel = Instance.new("Part")
-        radioModel.Name, radioModel.Size, radioModel.CanCollide = "ClientRadio", Vector3.new(2, 1, 1), false
-        radioModel.BrickColor, radioModel.Material = BrickColor.new("Bright yellow"), Enum.Material.Metal
+        radioModel.Name = "ClientRadio"
+        radioModel.Size = Vector3.new(2, 1, 1)
+        radioModel.CanCollide = false
+        radioModel.BrickColor = BrickColor.new("Bright yellow")
+        radioModel.Material = Enum.Material.Metal
         
         local mesh = Instance.new("SpecialMesh")
-        mesh.MeshId, mesh.TextureId, mesh.Scale, mesh.Parent = "rbxassetid://212641536", "rbxassetid://212641944", Vector3.new(1.2, 1.2, 1.2), radioModel
+        mesh.MeshId = "rbxassetid://212641536"
+        mesh.TextureId = "rbxassetid://212641944"
+        mesh.Scale = Vector3.new(1.2, 1.2, 1.2)
+        mesh.Parent = radioModel
         
         local weld = Instance.new("Weld")
-        weld.Part0, weld.Part1 = torso, radioModel
-        weld.C0, weld.Parent = CFrame.new(0, 0, 0.75) * CFrame.Angles(0, math.rad(180), 0), radioModel
+        weld.Part0 = torso
+        weld.Part1 = radioModel
+        weld.C0 = CFrame.new(0, 0, 0.75) * CFrame.Angles(0, math.rad(180), 0)
+        weld.Parent = radioModel
         
         radioModel.Parent = char
     end
@@ -580,7 +616,9 @@ local function main()
         local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
         sound.Name = "RadioSound"
         sound:Stop()
-        sound.SoundId, sound.Volume, sound.Looped = "rbxassetid://" .. currentSongId, radioVolume, radioLooped
+        sound.SoundId = "rbxassetid://" .. currentSongId
+        sound.Volume = radioVolume
+        sound.Looped = radioLooped
         sound:Play()
         radioSound = sound
     end
@@ -606,8 +644,13 @@ local function main()
                 attachRadio()
                 if not radioModel then return end
                 local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
-                sound.Name, sound.SoundId, sound.Volume, sound.Looped = "RadioSound", localAsset, radioVolume, radioLooped
-                sound:Stop() sound:Play() radioSound = sound
+                sound.Name = "RadioSound"
+                sound.SoundId = localAsset
+                sound.Volume = radioVolume
+                sound.Looped = radioLooped
+                sound:Stop() 
+                sound:Play() 
+                radioSound = sound
                 WindUI:Notify({ Title = T("Radio"), Content = T("RadioCache"), Icon = "check", Duration = 3 })
                 return
             end
@@ -625,8 +668,13 @@ local function main()
                     attachRadio()
                     if not radioModel then return end
                     local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
-                    sound.Name, sound.SoundId, sound.Volume, sound.Looped = "RadioSound", assetId, radioVolume, radioLooped
-                    sound:Stop() sound:Play() radioSound = sound
+                    sound.Name = "RadioSound"
+                    sound.SoundId = assetId
+                    sound.Volume = radioVolume
+                    sound.Looped = radioLooped
+                    sound:Stop() 
+                    sound:Play() 
+                    radioSound = sound
                     WindUI:Notify({ Title = T("Radio"), Content = T("RadioHttpSuccess"), Icon = "check", Duration = 3 })
                 else
                     WindUI:Notify({ Title = T("Radio"), Content = T("RadioHttpError"), Icon = "x", Duration = 3 })
@@ -662,7 +710,6 @@ local function main()
             local originalPos = hrp.CFrame
             local wasAnchored = hrp.Anchored
             
-            -- Временное локальное отключение коллизии во избежание флинга при прохождении сквозь пол
             local noclipConn = RunService.Stepped:Connect(function()
                 if char then
                     for _, part in ipairs(char:GetDescendants()) do
@@ -671,7 +718,6 @@ local function main()
                 end
             end)
             
-            -- 1. Этап: Мгновенное CFrame перемещение на пушку в заблокированном состоянии
             hrp.Anchored = true
             local targetCFrame = handle:IsA("Model") and handle:GetPivot() or (handle:IsA("BasePart") and handle.CFrame)
             if targetCFrame then
@@ -679,23 +725,21 @@ local function main()
                 char:PivotTo(targetCFrame)
                 task.wait(0.1)
                 
-                -- 2. Этап: Если пушка не взялась сразу, отключаем анкор (для тач-контакта) и плавно опускаем персонажа ниже
                 local timeout = 0
                 local altHeight = 0
                 while not hasGun() and timeout < 15 do 
                     timeout = timeout + 1
                     
                     altHeight = altHeight - 0.5
-                    if altHeight < -2.5 then altHeight = -2.5 end -- Опускаемся глубже (до -2.5 studs)
+                    if altHeight < -2.5 then altHeight = -2.5 end 
                     
-                    hrp.Anchored = false -- Физический движок должен просчитать Touched контакт
+                    hrp.Anchored = false 
                     local adjustedCFrame = targetCFrame * CFrame.new(0, altHeight, 0)
                     hrp.CFrame = adjustedCFrame
                     char:PivotTo(adjustedCFrame)
                     
                     task.wait(0.1)
                     
-                    -- Если пушку уже подобрал кто-то другой (объект исчез), прекращаем цикл
                     local checkGun = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
                     if not checkGun then break end
                 end
@@ -703,7 +747,6 @@ local function main()
             
             noclipConn:Disconnect()
             
-            -- Возврат на исходную позицию
             hrp.CFrame = originalPos
             char:PivotTo(originalPos)
             hrp.Anchored = wasAnchored
@@ -735,12 +778,11 @@ local function main()
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
         if not hrp then return end
         
-        local center = Vector3.new(12.0, 291.7, 9040.0) -- Координаты центра всех карт MM2
+        local center = Vector3.new(12.0, 291.7, 9040.0) 
         local normal = workspace:FindFirstChild("Normal")
         local bestPart = nil
         local minDistance = math.huge
         
-        -- Поиск твердой плоской поверхности внутри карты в радиусе 120 studs от центра
         if normal then
             for _, obj in ipairs(normal:GetDescendants()) do
                 if obj:IsA("BasePart") and obj.Name ~= "HumanoidRootPart" and obj.CanCollide then
@@ -754,18 +796,15 @@ local function main()
         end
         
         if bestPart then
-            -- Безопасно телепортируемся прямо на найденную поверхность пола/спавна
             hrp.CFrame = CFrame.new(bestPart.Position + Vector3.new(0, 3.5, 0))
         else
-            -- Умный обход 2: если спавны карты скрыты, переносимся к живому игроку вне лобби
             local tpSuccess = false
             for _, p in ipairs(Players:GetPlayers()) do
                 if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
                     local hum = p.Character:FindFirstChildOfClass("Humanoid")
                     if hum and hum.Health > 0 then
-                        -- Проверяем по новым координатам лобби
                         local distToLobby = (p.Character.HumanoidRootPart.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
-                        if distToLobby > 150 then -- Далеко от лобби
+                        if distToLobby > 150 then 
                             hrp.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
                             tpSuccess = true
                             break
@@ -774,7 +813,6 @@ local function main()
                 end
             end
             
-            -- Если карта полностью пуста, переносим в воздух над точными координатами центра
             if not tpSuccess then
                 hrp.CFrame = CFrame.new(center + Vector3.new(0, 3.5, 0))
             end
@@ -988,7 +1026,7 @@ local function main()
         end
     end
 
-    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК (С ДРАГОМ НА КНОПКЕ) ====================
+    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК ====================
     local function createFloatingButton(name, translationKey, callback)
         if ScreenButtons[name] then ScreenButtons[name]:Destroy() end
         local sg = getBindsScreenGui()
@@ -1009,16 +1047,22 @@ local function main()
             ["TP Map"] = 550, ["Aimlock"] = 595
         }
         frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
-        frame.BackgroundColor3, frame.BorderSizePixel, frame.BorderColor3 = Color3.fromRGB(30, 30, 30), 1, Color3.fromRGB(0, 150, 255)
-        frame.Active, frame.Parent = true, sg
+        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        frame.BorderSizePixel = 1
+        frame.BorderColor3 = Color3.fromRGB(0, 150, 255)
+        frame.Active = true
+        frame.Parent = sg
         
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 6)
         corner.Parent = frame
         
         local btn = Instance.new("TextButton")
-        btn.Size, btn.BackgroundTransparency = UDim2.new(1, 0, 1, 0), 1
-        btn.Text, btn.Font, btn.TextColor3 = T(translationKey), Enum.Font.SourceSansBold, Color3.fromRGB(255, 255, 255)
+        btn.Size = UDim2.new(1, 0, 1, 0)
+        btn.BackgroundTransparency = 1
+        btn.Text = T(translationKey)
+        btn.Font = Enum.Font.SourceSansBold
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         btn.TextSize = math.clamp(math.round(11 * Config.ButtonScale), 8, 24)
         btn.Parent = frame
         
@@ -1112,7 +1156,6 @@ local function main()
     -- Вкладка Бой
     CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.AutoShootMurderer, Callback = function(s) Config.AutoShootMurderer = s saveConfig() end })
     CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.AimlockEnabled, Callback = function(s) Config.AimlockEnabled = s saveConfig() end })
-    CombatTab:Button({ Title = T("TpShoot"), Callback = tpBehindAndShoot })
     
     -- Авто-уклонение от ножей
     local lastDodgeTime = 0
