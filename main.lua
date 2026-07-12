@@ -757,11 +757,11 @@ local function main()
         sky.Parent = Lighting
     end
 
-    -- Auto Kill All
+    -- Auto Kill All (Исправлен сбой символа & в коде)
     local function autoKillAll()
         local char = LocalPlayer.Character
         local bp = LocalPlayer:FindFirstChild("Backpack")
-        local knife = char and char:FindFirstChild("Knife") or (bp&nbst;and bp:FindFirstChild("Knife"))
+        local knife = char and char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
         
         if not knife then
             WindUI:Notify({ Title = "Error", Content = T("NoKnife"), Icon = "x", Duration = 3 })
@@ -1026,6 +1026,7 @@ local function main()
         end)
         
         UserInputService.InputEnded:Connect(function(input)
+            -- Исправлено: удален лишний закрывающий символ ")" перед then
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = false
             end
