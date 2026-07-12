@@ -657,20 +657,35 @@ local function main()
         end
     end
 
-    -- Стабильная телепортация на Карту (Обновлено на точные координаты со скриншота!)
+    -- Умный анализ геометрии активной карты и безопасное приземление (Полностью обновлено)
     local function tpToMap()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
         if not hrp then return end
         
+        local center = Vector3.new(12.0, 291.7, 9040.0) -- Координаты центра всех карт MM2
         local normal = workspace:FindFirstChild("Normal")
-        local spawns = normal and (normal:FindFirstChild("Spawns") or normal:FindFirstChild("Spawn", true))
-        local spawnPart = spawns and (spawns:FindFirstChildOfClass("SpawnLocation") or spawns:FindFirstChildOfClass("Part") or spawns:FindFirstChild("Spawn"))
+        local bestPart = nil
+        local minDistance = math.huge
         
-        if spawnPart then
-            hrp.CFrame = spawnPart.CFrame * CFrame.new(0, 3, 0)
+        -- Поиск твердой плоской поверхности внутри карты в радиусе 120 studs от центра
+        if normal then
+            for _, obj in ipairs(normal:GetDescendants()) do
+                if obj:IsA("BasePart") and obj.Name ~= "HumanoidRootPart" and obj.CanCollide then
+                    local dist = (obj.Position - center).Magnitude
+                    if dist < minDistance and dist < 120 then
+                        minDistance = dist
+                        bestPart = obj
+                    end
+                end
+            end
+        end
+        
+        if bestPart then
+            -- Безопасно телепортируемся прямо на найденную поверхность пола/спавна
+            hrp.CFrame = CFrame.new(bestPart.Position + Vector3.new(0, 3.5, 0))
         else
-            -- Умный обход: телепортируемся к любому живому игроку на карте (вне зоны лобби)
+            -- Умный обход 2: если спавны карты скрыты, переносимся к живому игроку вне лобби
             local tpSuccess = false
             for _, p in ipairs(Players:GetPlayers()) do
                 if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
@@ -687,9 +702,9 @@ local function main()
                 end
             end
             
-            -- Если на карте никого нет, переносим по точным координатам со скриншота!
+            -- Если карта полностью пуста, переносим в воздух над точными координатами центра
             if not tpSuccess then
-                hrp.CFrame = CFrame.new(12.0, 291.7, 9040.0)
+                hrp.CFrame = CFrame.new(center + Vector3.new(0, 3.5, 0))
             end
         end
     end
@@ -1026,7 +1041,6 @@ local function main()
         end)
         
         UserInputService.InputEnded:Connect(function(input)
-            -- Исправлено: удален лишний закрывающий символ ")" перед then
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = false
             end
