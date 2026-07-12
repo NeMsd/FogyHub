@@ -639,7 +639,7 @@ local function main()
         grabbingGun = false
     end
 
-    -- Стабильная телепортация в Лобби
+    -- Стабильная телепортация в Лобби (Обновлено на точные координаты со скриншота!)
     local function tpToLobby()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -652,12 +652,12 @@ local function main()
             local targetCFrame = spawnLocation:IsA("Model") and spawnLocation:GetPivot() or spawnLocation.CFrame
             hrp.CFrame = targetCFrame * CFrame.new(0, 3, 0)
         else
-            -- Универсальные резервные координаты спавна лобби в MM2
-            hrp.CFrame = CFrame.new(-108.5, 140.7, 83.3)
+            -- Точные вечные координаты лобби со скриншота!
+            hrp.CFrame = CFrame.new(6.0, 505.2, -35.0)
         end
     end
 
-    -- Стабильная телепортация на Карту
+    -- Стабильная телепортация на Карту (Обновлено на точные координаты со скриншота!)
     local function tpToMap()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -671,19 +671,26 @@ local function main()
             hrp.CFrame = spawnPart.CFrame * CFrame.new(0, 3, 0)
         else
             -- Умный обход: телепортируемся к любому живому игроку на карте (вне зоны лобби)
+            local tpSuccess = false
             for _, p in ipairs(Players:GetPlayers()) do
                 if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
                     local hum = p.Character:FindFirstChildOfClass("Humanoid")
                     if hum and hum.Health > 0 then
-                        local distToLobby = (p.Character.HumanoidRootPart.Position - Vector3.new(-108.5, 140.7, 83.3)).Magnitude
+                        -- Проверяем по новым координатам лобби
+                        local distToLobby = (p.Character.HumanoidRootPart.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
                         if distToLobby > 150 then -- Далеко от лобби
                             hrp.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
-                            return
+                            tpSuccess = true
+                            break
                         end
                     end
                 end
             end
-            WindUI:Notify({ Title = "Teleport", Content = T("NoMapLoaded"), Icon = "x", Duration = 3 })
+            
+            -- Если на карте никого нет, переносим по точным координатам со скриншота!
+            if not tpSuccess then
+                hrp.CFrame = CFrame.new(12.0, 291.7, 9040.0)
+            end
         end
     end
 
@@ -754,7 +761,7 @@ local function main()
     local function autoKillAll()
         local char = LocalPlayer.Character
         local bp = LocalPlayer:FindFirstChild("Backpack")
-        local knife = char and char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
+        local knife = char and char:FindFirstChild("Knife") or (bp&nbst;and bp:FindFirstChild("Knife"))
         
         if not knife then
             WindUI:Notify({ Title = "Error", Content = T("NoKnife"), Icon = "x", Duration = 3 })
