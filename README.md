@@ -81,6 +81,5 @@
 
 ## 🚀 How to Execute / Инструкция по запуску
 
-```lua
--- FogyHub (MsD & Gemini)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/NeMsd/FogyHub/refs/heads/main/main.lua"))()
+-- FogyHub MM2 Loader (MsD & Gemini)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/NeMsd/FogyHub/refs/heads/main/refs/heads/main/main.lua"))()
