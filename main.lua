@@ -204,7 +204,7 @@ local function getSafeUIContainer()
     else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
--- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) ====================
+-- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
 local function showCrashMenu(err)
     local traceback = debug.traceback()
     local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
@@ -235,9 +235,7 @@ local function showCrashMenu(err)
         corner.Parent = mainFrame
         
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(231, 76, 60)
-        stroke.Thickness = 1.5
-        stroke.Parent = mainFrame
+        stroke.Color, stroke.Thickness, stroke.Parent = Color3.fromRGB(231, 76, 60), 1.5, mainFrame
         
         local title = Instance.new("TextLabel")
         title.Size = UDim2.new(1, 0, 0, 35)
@@ -546,6 +544,35 @@ local function main()
         return hum and hum.Health > 0
     end
 
+    -- Вспомогательная функция безопасного ТП для обхода анти-читов и лагов
+    local function safeTeleport(targetCFrame)
+        local char = LocalPlayer.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        
+        if hrp and hum then
+            local wasAnchored = hrp.Anchored
+            
+            -- Сбрасываем инерцию
+            hrp.Velocity = Vector3.new(0, 0, 0)
+            hrp.RotVelocity = Vector3.new(0, 0, 0)
+            
+            hrp.Anchored = true
+            hum.PlatformStand = true -- Временно отключаем анимации
+            
+            hrp.CFrame = targetCFrame
+            char:PivotTo(targetCFrame)
+            
+            task.wait(0.15) -- Безопасное время задержки
+            
+            hrp.Velocity = Vector3.new(0, 0, 0)
+            hrp.RotVelocity = Vector3.new(0, 0, 0)
+            
+            hrp.Anchored = wasAnchored
+            hum.PlatformStand = false
+        end
+    end
+
     -- Вспомогательные функции для поиска Мардера и Шерифа (Мгновенно по Кэшу сервера)
     local function getMurderer()
         if Murder then
@@ -690,7 +717,7 @@ local function main()
         if radioModel then radioModel:Destroy() radioModel = nil end
     end
 
-    -- Умный бесконфликтный автоподбор пистолета
+    -- Умный бесконфликтный автоподбор пистолета (На базе safeTeleport)
     local function grabGun()
         if grabbingGun then return end
         grabbingGun = true
@@ -708,7 +735,6 @@ local function main()
         
         if handle and hrp and not hasGun() then
             local originalPos = hrp.CFrame
-            local wasAnchored = hrp.Anchored
             
             local noclipConn = RunService.Stepped:Connect(function()
                 if char then
@@ -718,26 +744,18 @@ local function main()
                 end
             end)
             
-            hrp.Anchored = true
             local targetCFrame = handle:IsA("Model") and handle:GetPivot() or (handle:IsA("BasePart") and handle.CFrame)
             if targetCFrame then
-                hrp.CFrame = targetCFrame
-                char:PivotTo(targetCFrame)
-                task.wait(0.1)
+                safeTeleport(targetCFrame)
                 
                 local timeout = 0
                 local altHeight = 0
                 while not hasGun() and timeout < 15 do 
                     timeout = timeout + 1
-                    
                     altHeight = altHeight - 0.5
                     if altHeight < -2.5 then altHeight = -2.5 end 
                     
-                    hrp.Anchored = false 
-                    local adjustedCFrame = targetCFrame * CFrame.new(0, altHeight, 0)
-                    hrp.CFrame = adjustedCFrame
-                    char:PivotTo(adjustedCFrame)
-                    
+                    safeTeleport(targetCFrame * CFrame.new(0, altHeight, 0))
                     task.wait(0.1)
                     
                     local checkGun = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
@@ -746,43 +764,43 @@ local function main()
             end
             
             noclipConn:Disconnect()
-            
-            hrp.CFrame = originalPos
-            char:PivotTo(originalPos)
-            hrp.Anchored = wasAnchored
+            safeTeleport(originalPos)
         end
         grabbingGun = false
     end
 
     -- Стабильная телепортация в Лобби (Обновлено на точные координаты со скриншота!)
     local function tpToLobby()
-        local char = LocalPlayer.Character
-        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-        if not hrp then return end
-        
         local lobby = workspace:FindFirstChild("Lobby")
         local spawnLocation = lobby and (lobby:FindFirstChild("Spawn", true) or lobby:FindFirstChildOfClass("SpawnLocation", true) or lobby:FindFirstChild("Spawns", true))
         
+        local targetCFrame
         if spawnLocation then
-            local targetCFrame = spawnLocation:IsA("Model") and spawnLocation:GetPivot() or spawnLocation.CFrame
-            hrp.CFrame = targetCFrame * CFrame.new(0, 3, 0)
+            targetCFrame = spawnLocation:IsA("Model") and spawnLocation:GetPivot() or spawnLocation.CFrame
+            targetCFrame = targetCFrame * CFrame.new(0, 3, 0)
         else
             -- Точные вечные координаты лобби со скриншота!
-            hrp.CFrame = CFrame.new(6.0, 505.2, -35.0)
+            targetCFrame = CFrame.new(6.0, 505.2, -35.0)
         end
+        safeTeleport(targetCFrame)
     end
 
-    -- Умный анализ геометрии активной карты и безопасное приземление
+    -- Умный анализ геометрии активной карты и безопасное приземление (Полностью обновлено)
     local function tpToMap()
-        local char = LocalPlayer.Character
-        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-        if not hrp then return end
-        
-        local center = Vector3.new(12.0, 291.7, 9040.0) 
+        local center = Vector3.new(12.0, 291.7, 9040.0) -- Координаты центра всех карт MM2
         local normal = workspace:FindFirstChild("Normal")
         local bestPart = nil
         local minDistance = math.huge
         
+        -- Проверка на предмет того, играем ли мы за Убийцу
+        local weAreMurderer = false
+        local char = LocalPlayer.Character
+        local bp = LocalPlayer:FindFirstChild("Backpack")
+        if (char and char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) then
+            weAreMurderer = true
+        end
+        
+        -- Поиск твердой плоской поверхности внутри карты в радиусе 120 studs от центра
         if normal then
             for _, obj in ipairs(normal:GetDescendants()) do
                 if obj:IsA("BasePart") and obj.Name ~= "HumanoidRootPart" and obj.CanCollide then
@@ -796,25 +814,32 @@ local function main()
         end
         
         if bestPart then
-            hrp.CFrame = CFrame.new(bestPart.Position + Vector3.new(0, 3.5, 0))
+            -- Безопасно телепортируемся прямо на найденную поверхность пола/спавна
+            safeTeleport(CFrame.new(bestPart.Position + Vector3.new(0, 3.5, 0)))
         else
+            -- Умный обход 2: если спавны карты скрыты, переносимся к живому игроку вне лобби (только если мы НЕ Убийца!)
             local tpSuccess = false
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                    local hum = p.Character:FindFirstChildOfClass("Humanoid")
-                    if hum and hum.Health > 0 then
-                        local distToLobby = (p.Character.HumanoidRootPart.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
-                        if distToLobby > 150 then 
-                            hrp.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
-                            tpSuccess = true
-                            break
+            if not weAreMurderer then
+                for _, p in ipairs(Players:GetPlayers()) do
+                    -- Блокируем ТП к Мардеру во избежание мгновенной смерти (Фикс!)
+                    if p ~= LocalPlayer and p.Name ~= Murder and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        local hum = p.Character:FindFirstChildOfClass("Humanoid")
+                        if hum and hum.Health > 0 then
+                            -- Проверяем по новым координатам лобби
+                            local distToLobby = (p.Character.HumanoidRootPart.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
+                            if distToLobby > 150 then -- Далеко от лобби
+                                safeTeleport(p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0))
+                                tpSuccess = true
+                                break
+                            end
                         end
                     end
                 end
             end
             
+            -- Если карта полностью пуста (или мы убийца), переносим в воздух над точными координатами центра
             if not tpSuccess then
-                hrp.CFrame = CFrame.new(center + Vector3.new(0, 3.5, 0))
+                safeTeleport(CFrame.new(center + Vector3.new(0, 3.5, 0)))
             end
         end
     end
@@ -913,6 +938,66 @@ local function main()
                 end
             end
             char.HumanoidRootPart.CFrame = originalPos
+        end
+    end
+
+    -- TP Behind & Shoot (С принудительным поворотом персонажа и камеры для ПК/Тел)
+    local function tpBehindAndShoot()
+        local murderer = getMurderer()
+        local char = LocalPlayer.Character
+        local bp = LocalPlayer:FindFirstChild("Backpack")
+        local gun = char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
+        
+        if not murderer or not murderer.Character or not murderer.Character:FindFirstChild("HumanoidRootPart") then
+            WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 })
+            return
+        end
+        if not gun then
+            WindUI:Notify({ Title = "Error", Content = T("NoGun"), Icon = "x", Duration = 3 })
+            return
+        end
+        
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local hrp = char.HumanoidRootPart
+            local originalPos = hrp.CFrame
+            local mHrp = murderer.Character.HumanoidRootPart
+            
+            local targetCFrame = mHrp.CFrame * CFrame.new(0, 0, 3.5) * CFrame.Angles(0, math.rad(180), 0)
+            local wasAnchored = hrp.Anchored
+            
+            hrp.Anchored = true
+            hrp.CFrame = targetCFrame
+            char:PivotTo(targetCFrame)
+            
+            -- Фиксируем разворот персонажа прямо на лицо мардера
+            hrp.CFrame = CFrame.new(hrp.Position, Vector3.new(mHrp.Position.X, hrp.Position.Y, mHrp.Position.Z))
+            
+            task.wait(0.12)
+            
+            if gun.Parent == bp then
+                char.Humanoid:EquipTool(gun)
+            end
+            
+            -- Временно переключаем камеру в Scriptable, чтобы зафиксировать направление взгляда
+            local camera = workspace.CurrentCamera
+            local oldCamType = camera.CameraType
+            
+            camera.CameraType = Enum.CameraType.Scriptable
+            if murderer.Character:FindFirstChild("Head") then
+                camera.CFrame = CFrame.new(camera.CFrame.Position, murderer.Character.Head.Position)
+                fireGun(gun, murderer.Character.Head.Position) 
+            else
+                camera.CFrame = CFrame.new(camera.CFrame.Position, mHrp.Position)
+                fireGun(gun, mHrp.Position)
+            end
+            
+            task.wait(0.18)
+            
+            -- Возвращаем камеру и позицию игрока
+            camera.CameraType = oldCamType
+            hrp.Anchored = wasAnchored
+            hrp.CFrame = originalPos
+            char:PivotTo(originalPos)
         end
     end
 
@@ -1026,7 +1111,7 @@ local function main()
         end
     end
 
-    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК ====================
+    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК (С ДРАГОМ НА КНОПКЕ) ====================
     local function createFloatingButton(name, translationKey, callback)
         if ScreenButtons[name] then ScreenButtons[name]:Destroy() end
         local sg = getBindsScreenGui()
@@ -1035,6 +1120,7 @@ local function main()
         local frame = Instance.new("Frame")
         frame.Name = name .. "_Frame"
         
+        -- Установка начального размера с учетом выбранного масштаба
         local baseWidth, baseHeight = 115, 35
         local w = baseWidth * Config.ButtonScale
         local h = baseHeight * Config.ButtonScale
@@ -1042,32 +1128,27 @@ local function main()
         
         local offsets = {
             ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
-            ["Slide Glitch"] = 280, ["Noclip"] = 325, ["Kill Aura"] = 370,
-            ["Auto Kill All"] = 415, ["Godmode"] = 460, ["TP Lobby"] = 505, 
-            ["TP Map"] = 550, ["Aimlock"] = 595
+            ["TP & Shoot"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325,
+            ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460,
+            ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
         }
         frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
-        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        frame.BorderSizePixel = 1
-        frame.BorderColor3 = Color3.fromRGB(0, 150, 255)
-        frame.Active = true
-        frame.Parent = sg
+        frame.BackgroundColor3, frame.BorderSizePixel, frame.BorderColor3 = Color3.fromRGB(30, 30, 30), 1, Color3.fromRGB(0, 150, 255)
+        frame.Active, frame.Parent = true, sg
         
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 6)
         corner.Parent = frame
         
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, 0, 1, 0)
-        btn.BackgroundTransparency = 1
-        btn.Text = T(translationKey)
-        btn.Font = Enum.Font.SourceSansBold
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.Size, btn.BackgroundTransparency = UDim2.new(1, 0, 1, 0), 1
+        btn.Text, btn.Font, btn.TextColor3 = T(translationKey), Enum.Font.SourceSansBold, Color3.fromRGB(255, 255, 255)
         btn.TextSize = math.clamp(math.round(11 * Config.ButtonScale), 8, 24)
         btn.Parent = frame
         
         btn.Activated:Connect(callback)
         
+        -- Стабильная логика драга (срабатывает как при зажатии рамки, так и при зажатии самой кнопки)
         local dragging = false
         local dragStart, startPos
         
@@ -1116,7 +1197,7 @@ local function main()
     local VisualsTab = Window:Tab({ Title = T("Visuals"), Icon = "eye" })
     local CombatTab = Window:Tab({ Title = T("Combat"), Icon = "swords" })
     local UtilityTab = Window:Tab({ Title = T("Utility"), Icon = "zap" })
-    local TeleportsTab = Window:Tab({ Title = T("Teleports"), Icon = "map-pin" }) 
+    local TeleportsTab = Window:Tab({ Title = T("Teleports"), Icon = "map-pin" }) -- Отдельная вкладка ТП
     local ButtonsTab = Window:Tab({ Title = T("MobileBinds"), Icon = "smartphone" })
     local RadioTab = Window:Tab({ Title = T("Radio"), Icon = "music" })
 
@@ -1156,6 +1237,7 @@ local function main()
     -- Вкладка Бой
     CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.AutoShootMurderer, Callback = function(s) Config.AutoShootMurderer = s saveConfig() end })
     CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.AimlockEnabled, Callback = function(s) Config.AimlockEnabled = s saveConfig() end })
+    CombatTab:Button({ Title = T("TpShoot"), Callback = tpBehindAndShoot })
     
     -- Авто-уклонение от ножей
     local lastDodgeTime = 0
@@ -1165,7 +1247,19 @@ local function main()
     CombatTab:Slider({ Title = T("KillAuraRange"), Step = 5, Value = { Min = 10, Max = 45, Default = Config.KillAuraRange }, Callback = function(v) Config.KillAuraRange = v saveConfig() end })
     CombatTab:Button({ Title = T("AutoKillAll"), Callback = autoKillAll })
     CombatTab:Button({ Title = T("FlingM"), Callback = function() local m = getMurderer() if m then flingPlayer(m) else WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 }) end end })
-    CombatTab:Button({ Title = T("FlingS"), Callback = function() local s = getSheriff() if s then flingPlayer(s) else WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) end end })
+    
+    -- Исправлен бинд флинга Шерифа (опечатка переменной 's' исправлена на 'sh' во избежание сбоев в работе)
+    CombatTab:Button({ 
+        Title = T("FlingS"), 
+        Callback = function() 
+            local sh = getSheriff() 
+            if sh then 
+                flingPlayer(sh) 
+            else 
+                WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) 
+            end 
+        end 
+    })
 
     -- Вкладка Утилиты
     UtilityTab:Toggle({ Title = T("AutoGrab"), Value = Config.AutoGrabGun, Callback = function(s) Config.AutoGrabGun = s saveConfig() end })
@@ -1205,7 +1299,7 @@ local function main()
     ButtonsTab:Toggle({ Title = T("LockButtons"), Value = Config.LockMobileButtons, Callback = function(s) Config.LockMobileButtons = s saveConfig() end })
     ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = Config.ButtonScale }, Callback = function(v) Config.ButtonScale = v saveConfig() updateButtonSizes() end }) -- Слайдер размера
     ButtonsTab:Toggle({ Title = T("BtnFlingM"), Value = false, Callback = function(s) if s then createFloatingButton("Fling Murderer", "FlingM", function() local m = getMurderer() if m then flingPlayer(m) end end) else removeFloatingButton("Fling Murderer") end end })
-    ButtonsTab:Toggle({ Title = T("BtnFlingS"), Value = false, Callback = function(s) if s then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(s) end end) else removeFloatingButton("Fling Sheriff") end end })
+    ButtonsTab:Toggle({ Title = T("BtnFlingS"), Value = false, Callback = function(s) if s then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(sh) end end) else removeFloatingButton("Fling Sheriff") end end })
     ButtonsTab:Toggle({ Title = T("BtnGrab"), Value = false, Callback = function(s) if s then createFloatingButton("Grab Gun", "AutoGrab", grabGun) else removeFloatingButton("Grab Gun") end end })
     ButtonsTab:Toggle({ Title = T("BtnSlide"), Value = false, Callback = function(s) if s then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch) else removeFloatingButton("Slide Glitch") end end })
     ButtonsTab:Toggle({ Title = T("BtnNoclip"), Value = false, Callback = function(s) if s then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.NoclipEnabled) end) else removeFloatingButton("Noclip") end end })
@@ -1240,7 +1334,7 @@ local function main()
         end
     end)
 
-    -- Цикл ESP (Фоновый опрос роли и статуса с сервера раз в 0.3 сек для максимальной оптимизации сети)
+    -- Цикл ESP
     task.spawn(function()
         while true do
             local success, serverRoles = pcall(function()
