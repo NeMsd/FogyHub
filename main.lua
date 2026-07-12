@@ -63,7 +63,6 @@ local L = {
         BtnFlingM = "Button: Fling Murderer",
         BtnFlingS = "Button: Fling Sheriff",
         BtnGrab = "Button: Grab Gun",
-        BtnTpShoot = "Button: TP & Shoot",
         BtnSlide = "Button: Slide Glitch",
         BtnNoclip = "Button: Noclip",
         BtnKillAura = "Button: Kill Aura",
@@ -76,7 +75,6 @@ local L = {
         Volume = "Volume",
         Loop = "Loop Audio",
         NoKnife = "Knife not found!",
-        NoGun = "Sheriff's gun not found!",
         NoM = "Murderer not found or dead",
         NoS = "Sheriff not found or dead",
         SitError = " is sitting (fling impossible)",
@@ -86,7 +84,7 @@ local L = {
         RadioHttpSuccess = "External audio started successfully!",
         RadioHttpError = "Failed to parse asset from file.",
         RadioHttpFail = "Failed to download audio file.",
-        RadioCache = "Audio loaded from local cache!",
+        RadioCache = "Audio loaded from persistent local cache!",
         NoclipToggle = "Noclip",
         NoclipOn = "Enabled",
         NoclipOff = "Disabled",
@@ -99,6 +97,12 @@ local L = {
         BtnTpLobby = "Button: TP Lobby",
         BtnTpMap = "Button: TP Map",
         NoMapLoaded = "Map not loaded yet or empty!",
+        BtnAimlock = "Button: Aimlock",
+        SkinChangerTitle = "Visual Skin Changer",
+        SkinChangerInput = "Roblox Username",
+        SkinChangerBtn = "Apply Skin",
+        SkinNotFound = "Player not found!",
+        SkinSuccess = "Outfit changed visually!",
     },
     ru = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню",
@@ -143,7 +147,6 @@ local L = {
         BtnFlingM = "Кнопка: Fling Murderer",
         BtnFlingS = "Кнопка: Fling Sheriff",
         BtnGrab = "Кнопка: Grab Gun",
-        BtnTpShoot = "Кнопка: TP & Shoot",
         BtnSlide = "Кнопка: Slide Glitch",
         BtnNoclip = "Кнопка: Noclip",
         BtnKillAura = "Кнопка: Kill Aura",
@@ -156,7 +159,6 @@ local L = {
         Volume = "Громкость",
         Loop = "Зациклить",
         NoKnife = "Нож не найден!",
-        NoGun = "У вас нет пистолета шерифа!",
         NoM = "Убийца не найден или мертв",
         NoS = "Шериф не найден или мертв",
         SitError = " сидит (флинг невозможен)",
@@ -166,7 +168,7 @@ local L = {
         RadioHttpSuccess = "Внешнее аудио успешно запущено!",
         RadioHttpError = "Не удалось преобразовать файл в ассет.",
         RadioHttpFail = "Не удалось скачать аудиофайл.",
-        RadioCache = "Песня запущена из локального кэша!",
+        RadioCache = "Песня запущена из постоянного локального кэша!",
         NoclipToggle = "Noclip",
         NoclipOn = "Включен",
         NoclipOff = "Выключен",
@@ -179,6 +181,12 @@ local L = {
         BtnTpLobby = "Кнопка: ТП Лобби",
         BtnTpMap = "Кнопка: ТП Карта",
         NoMapLoaded = "Карта еще не загружена или пуста!",
+        BtnAimlock = "Кнопка: Аимлок",
+        SkinChangerTitle = "Визуальный скинченджер",
+        SkinChangerInput = "Ник игрока для копирования",
+        SkinChangerBtn = "Применить скин",
+        SkinNotFound = "Игрок не найден!",
+        SkinSuccess = "Скин визуально применен!",
     }
 }
 
@@ -289,6 +297,7 @@ local function main()
     local UserInputService = game:GetService("UserInputService")
     local VirtualInputManager = game:GetService("VirtualInputManager")
     local Lighting = game:GetService("Lighting")
+    local HttpService = game:GetService("HttpService")
     local LocalPlayer = Players.LocalPlayer
 
     -- Полноценный, безопасный загрузчик WindUI
@@ -311,13 +320,12 @@ local function main()
         error(T("FailedUI"))
     end
 
-    -- Глобальная конфигурация скрипта
+    -- Глобальная конфигурация скрипта (будет сохраняться/считываться физически)
     local Config = {
         MurdererESP = false,
         SheriffESP = false,
         InnocentESP = false,
         EspBoxes = false, 
-        AutoShootMurderer = false,
         AutoGrabGun = false,
         AntiFling = false,
         StretchEnabled = false,
@@ -336,12 +344,11 @@ local function main()
 
     local radioModel, radioSound, currentSongId, radioVolume, radioLooped = nil, nil, "", 2, false
     local httpSongUrl = "" 
-    local lastDownloadedUrl = "" 
-    local lastCustomAsset = nil  
     local ScreenButtons = {} 
     local BindsScreenGui = nil 
     local originalFog = Lighting.FogEnd 
     local grabbingGun = false
+    local skinChangerNick = ""
 
     -- Переменные серверной синхронизации ролей
     local roles = {}
@@ -349,6 +356,33 @@ local function main()
 
     getgenv().OldPos = nil
     getgenv().FPDH = workspace.FallenPartsDestroyHeight
+
+    -- ==================== СИСТЕМА КОНФИГОВ (JSON СОХРАНЕНИЯ) ====================
+    local configFileName = "fogyhub_settings.json"
+    
+    local function saveConfig()
+        if writefile then
+            pcall(function()
+                writefile(configFileName, HttpService:JSONEncode(Config))
+            end)
+        end
+    end
+    
+    local function loadConfig()
+        if readfile and isfile and isfile(configFileName) then
+            pcall(function()
+                local loaded = HttpService:JSONDecode(readfile(configFileName))
+                for k, v in pairs(loaded) do
+                    if Config[k] ~= nil then
+                        Config[k] = v
+                    end
+                end
+            end)
+        end
+    end
+    
+    -- Загружаем настройки перед созданием UI
+    loadConfig()
 
     -- Получение ScreenGui для мобильных плавающих кнопок
     local function getBindsScreenGui()
@@ -403,6 +437,15 @@ local function main()
             return result
         end
         return nil
+    end
+
+    -- Генерация уникального безопасного имени файла на основе URL для физического кэширования аудио
+    local function getFileNameFromUrl(url)
+        local clean = url:gsub("[^%w]", "") -- Только латиница и цифры
+        if #clean > 25 then
+            clean = clean:sub(#clean - 24)
+        end
+        return "fogyhub_radio_" .. clean .. ".mp3"
     end
 
     -- Функция создания подсветки (Highlight) с защитой от мерцания
@@ -542,7 +585,7 @@ local function main()
         radioSound = sound
     end
 
-    -- Воспроизведение через внешнюю ссылку (HTTP)
+    -- Воспроизведение через внешнюю ссылку (HTTP) с ФИЗИЧЕСКИМ КЭШИРОВАНИЕМ
     local function playHttpRadio()
         if httpSongUrl == "" then return end
         if not writefile or not getcustomasset then
@@ -550,14 +593,24 @@ local function main()
             return
         end
         
-        if httpSongUrl == lastDownloadedUrl and lastCustomAsset then
-            attachRadio()
-            if not radioModel then return end
-            local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
-            sound.Name, sound.SoundId, sound.Volume, sound.Looped = "RadioSound", lastCustomAsset, radioVolume, radioLooped
-            sound:Stop() sound:Play() radioSound = sound
-            WindUI:Notify({ Title = T("Radio"), Content = T("RadioCache"), Icon = "check", Duration = 3 })
-            return
+        local cachedFileName = getFileNameFromUrl(httpSongUrl)
+        
+        -- Если файл уже физически сохранен в папке чита, моментально запускаем его
+        if isfile and isfile(cachedFileName) then
+            local localAsset = nil
+            pcall(function()
+                localAsset = getcustomasset(cachedFileName)
+            end)
+            
+            if localAsset then
+                attachRadio()
+                if not radioModel then return end
+                local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
+                sound.Name, sound.SoundId, sound.Volume, sound.Looped = "RadioSound", localAsset, radioVolume, radioLooped
+                sound:Stop() sound:Play() radioSound = sound
+                WindUI:Notify({ Title = T("Radio"), Content = T("RadioCache"), Icon = "check", Duration = 3 })
+                return
+            end
         end
         
         WindUI:Notify({ Title = T("Radio"), Content = T("RadioDownloading"), Icon = "music", Duration = 3 })
@@ -565,9 +618,8 @@ local function main()
         task.spawn(function()
             local data = httpGet(httpSongUrl)
             if data and #data > 0 then
-                local fileName = "temp_radio_stream.mp3"
-                local writeSuccess = pcall(function() writefile(fileName, data) end)
-                local assetId = writeSuccess and pcall(function() return getcustomasset(fileName) end) and getcustomasset(fileName)
+                local writeSuccess = pcall(function() writefile(cachedFileName, data) end)
+                local assetId = writeSuccess and pcall(function() return getcustomasset(cachedFileName) end) and getcustomasset(cachedFileName)
                 
                 if assetId then
                     attachRadio()
@@ -575,7 +627,6 @@ local function main()
                     local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
                     sound.Name, sound.SoundId, sound.Volume, sound.Looped = "RadioSound", assetId, radioVolume, radioLooped
                     sound:Stop() sound:Play() radioSound = sound
-                    lastDownloadedUrl, lastCustomAsset = httpSongUrl, assetId
                     WindUI:Notify({ Title = T("Radio"), Content = T("RadioHttpSuccess"), Icon = "check", Duration = 3 })
                 else
                     WindUI:Notify({ Title = T("Radio"), Content = T("RadioHttpError"), Icon = "x", Duration = 3 })
@@ -678,7 +729,7 @@ local function main()
         end
     end
 
-    -- Умный анализ геометрии активной карты и безопасное приземление (Полностью обновлено)
+    -- Умный анализ геометрии активной карты и безопасное приземление
     local function tpToMap()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -730,49 +781,49 @@ local function main()
         end
     end
 
-    -- Симуляция физического тапа по экрану
-    local function simulatePhysicalClick()
-        local vpSize = workspace.CurrentCamera.ViewportSize
-        local x, y = vpSize.X / 2, vpSize.Y / 2
-        pcall(function()
-            VirtualInputManager:SendMouseButtonEvent(x, y, 0, true, game, 1)
-            task.wait(0.04)
-            VirtualInputManager:SendMouseButtonEvent(x, y, 0, false, game, 1)
-        end)
-    end
-
-    -- Сетевая стрельба по цели
-    local function fireGun(gun, targetPosition)
-        local char = LocalPlayer.Character
-        local bp = LocalPlayer:FindFirstChild("Backpack")
-        
-        if gun.Parent == bp then
-            char.Humanoid:EquipTool(gun)
-            task.wait(0.1)
-        end
-        
-        workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPosition)
-        local shotFired = false
-        pcall(function()
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            if ReplicatedStorage:FindFirstChild("ShootGun") then
-                ReplicatedStorage.ShootGun:InvokeServer(1, targetPosition, targetPosition)
-                shotFired = true
+    -- Локальный 3D Скинченджер по никнейму игрока
+    local function changeVisualSkin(username)
+        task.spawn(function()
+            local success, userId = pcall(function()
+                return Players:GetUserIdFromNameAsync(username)
+            end)
+            
+            if not success or not userId then
+                WindUI:Notify({ Title = T("Visuals"), Content = T("SkinNotFound"), Icon = "x", Duration = 3 })
+                return
+            end
+            
+            local char = LocalPlayer.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if char and hum then
+                local descSuccess, desc = pcall(function()
+                    return Players:GetHumanoidDescriptionFromUserId(userId)
+                end)
+                
+                if descSuccess and desc then
+                    local applySuccess, err = pcall(function()
+                        hum:ApplyDescription(desc)
+                    end)
+                    
+                    if applySuccess then
+                        WindUI:Notify({ Title = T("Visuals"), Content = T("SkinSuccess"), Icon = "check", Duration = 3 })
+                    else
+                        warn("SkinChanger Error:", err)
+                    end
+                end
             end
         end)
-        
-        if not shotFired then
-            simulatePhysicalClick()
-        end
     end
 
     local function toggleSlideGlitch()
         Config.SlideGlitchEnabled = not Config.SlideGlitchEnabled
+        saveConfig()
         WindUI:Notify({ Title = T("SlideGlitch"), Content = Config.SlideGlitchEnabled and T("SpeedOn") or T("SpeedOff"), Icon = "zap", Duration = 2 })
     end
 
     local function toggleNoclip(state)
         Config.NoclipEnabled = state
+        saveConfig()
         WindUI:Notify({ Title = T("NoclipToggle"), Content = state and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 })
     end
 
@@ -824,66 +875,6 @@ local function main()
                 end
             end
             char.HumanoidRootPart.CFrame = originalPos
-        end
-    end
-
-    -- TP Behind & Shoot (С принудительным поворотом персонажа и камеры для ПК/Тел)
-    local function tpBehindAndShoot()
-        local murderer = getMurderer()
-        local char = LocalPlayer.Character
-        local bp = LocalPlayer:FindFirstChild("Backpack")
-        local gun = char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
-        
-        if not murderer or not murderer.Character or not murderer.Character:FindFirstChild("HumanoidRootPart") then
-            WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 })
-            return
-        end
-        if not gun then
-            WindUI:Notify({ Title = "Error", Content = T("NoGun"), Icon = "x", Duration = 3 })
-            return
-        end
-        
-        if char and char:FindFirstChild("HumanoidRootPart") then
-            local hrp = char.HumanoidRootPart
-            local originalPos = hrp.CFrame
-            local mHrp = murderer.Character.HumanoidRootPart
-            
-            local targetCFrame = mHrp.CFrame * CFrame.new(0, 0, 3.5) * CFrame.Angles(0, math.rad(180), 0)
-            local wasAnchored = hrp.Anchored
-            
-            hrp.Anchored = true
-            hrp.CFrame = targetCFrame
-            char:PivotTo(targetCFrame)
-            
-            -- Фиксируем разворот персонажа прямо на лицо мардера
-            hrp.CFrame = CFrame.new(hrp.Position, Vector3.new(mHrp.Position.X, hrp.Position.Y, mHrp.Position.Z))
-            
-            task.wait(0.12)
-            
-            if gun.Parent == bp then
-                char.Humanoid:EquipTool(gun)
-            end
-            
-            -- Временно переключаем камеру в Scriptable, чтобы зафиксировать направление взгляда
-            local camera = workspace.CurrentCamera
-            local oldCamType = camera.CameraType
-            
-            camera.CameraType = Enum.CameraType.Scriptable
-            if murderer.Character:FindFirstChild("Head") then
-                camera.CFrame = CFrame.new(camera.CFrame.Position, murderer.Character.Head.Position)
-                fireGun(gun, murderer.Character.Head.Position) 
-            else
-                camera.CFrame = CFrame.new(camera.CFrame.Position, mHrp.Position)
-                fireGun(gun, mHrp.Position)
-            end
-            
-            task.wait(0.18)
-            
-            -- Возвращаем камеру и позицию игрока
-            camera.CameraType = oldCamType
-            hrp.Anchored = wasAnchored
-            hrp.CFrame = originalPos
-            char:PivotTo(originalPos)
         end
     end
 
@@ -1006,7 +997,6 @@ local function main()
         local frame = Instance.new("Frame")
         frame.Name = name .. "_Frame"
         
-        -- Установка начального размера с учетом выбранного масштаба
         local baseWidth, baseHeight = 115, 35
         local w = baseWidth * Config.ButtonScale
         local h = baseHeight * Config.ButtonScale
@@ -1014,9 +1004,9 @@ local function main()
         
         local offsets = {
             ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
-            ["TP & Shoot"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325,
-            ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460,
-            ["TP Lobby"] = 505, ["TP Map"] = 550
+            ["Slide Glitch"] = 280, ["Noclip"] = 325, ["Kill Aura"] = 370,
+            ["Auto Kill All"] = 415, ["Godmode"] = 460, ["TP Lobby"] = 505, 
+            ["TP Map"] = 550, ["Aimlock"] = 595
         }
         frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         frame.BackgroundColor3, frame.BorderSizePixel, frame.BorderColor3 = Color3.fromRGB(30, 30, 30), 1, Color3.fromRGB(0, 150, 255)
@@ -1034,7 +1024,6 @@ local function main()
         
         btn.Activated:Connect(callback)
         
-        -- Стабильная логика драга (срабатывает как при зажатии рамки, так и при зажатии самой кнопки)
         local dragging = false
         local dragStart, startPos
         
@@ -1083,20 +1072,21 @@ local function main()
     local VisualsTab = Window:Tab({ Title = T("Visuals"), Icon = "eye" })
     local CombatTab = Window:Tab({ Title = T("Combat"), Icon = "swords" })
     local UtilityTab = Window:Tab({ Title = T("Utility"), Icon = "zap" })
-    local TeleportsTab = Window:Tab({ Title = T("Teleports"), Icon = "map-pin" }) -- Отдельная вкладка ТП
+    local TeleportsTab = Window:Tab({ Title = T("Teleports"), Icon = "map-pin" }) 
     local ButtonsTab = Window:Tab({ Title = T("MobileBinds"), Icon = "smartphone" })
     local RadioTab = Window:Tab({ Title = T("Radio"), Icon = "music" })
 
     -- Вкладка Визуалы
-    VisualsTab:Toggle({ Title = T("EspM"), Value = false, Callback = function(s) Config.MurdererESP = s end })
-    VisualsTab:Toggle({ Title = T("EspS"), Value = false, Callback = function(s) Config.SheriffESP = s end })
-    VisualsTab:Toggle({ Title = T("EspI"), Value = false, Callback = function(s) Config.InnocentESP = s end })
-    VisualsTab:Toggle({ Title = T("EspBoxes"), Value = false, Callback = function(s) Config.EspBoxes = s end })
+    VisualsTab:Toggle({ Title = T("EspM"), Value = Config.MurdererESP, Callback = function(s) Config.MurdererESP = s saveConfig() end })
+    VisualsTab:Toggle({ Title = T("EspS"), Value = Config.SheriffESP, Callback = function(s) Config.SheriffESP = s saveConfig() end })
+    VisualsTab:Toggle({ Title = T("EspI"), Value = Config.InnocentESP, Callback = function(s) Config.InnocentESP = s saveConfig() end })
+    VisualsTab:Toggle({ Title = T("EspBoxes"), Value = Config.EspBoxes, Callback = function(s) Config.EspBoxes = s saveConfig() end })
     
     local stretchConnection = nil
     VisualsTab:Toggle({
-        Title = T("Stretch"), Value = false, Callback = function(state)
+        Title = T("Stretch"), Value = Config.StretchEnabled, Callback = function(state)
             Config.StretchEnabled = state
+            saveConfig()
             if not state then
                 if stretchConnection then stretchConnection:Disconnect() stretchConnection = nil end
                 workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame
@@ -1108,38 +1098,43 @@ local function main()
             end)
         end
     })
-    VisualsTab:Slider({ Title = T("StretchForce"), Step = 0.05, Value = { Min = 0.5, Max = 1, Default = 0.75 }, Callback = function(v) Config.StretchFactor = v end })
+    VisualsTab:Slider({ Title = T("StretchForce"), Step = 0.05, Value = { Min = 0.5, Max = 1, Default = Config.StretchFactor }, Callback = function(v) Config.StretchFactor = v saveConfig() end })
     VisualsTab:Button({ Title = T("NebulaSky"), Callback = function() applySkybox("Nebula") end })
     VisualsTab:Button({ Title = T("SunsetSky"), Callback = function() applySkybox("Sunset") end })
     VisualsTab:Button({ Title = T("ClassicSky"), Callback = function() applySkybox("Classic") end })
-    VisualsTab:Toggle({ Title = T("NoFog"), Value = false, Callback = function(s) Config.NoFogEnabled = s Lighting.FogEnd = s and 9e9 or originalFog end })
+    VisualsTab:Toggle({ Title = T("NoFog"), Value = Config.NoFogEnabled, Callback = function(s) Config.NoFogEnabled = s saveConfig() Lighting.FogEnd = s and 9e9 or originalFog end })
     VisualsTab:Slider({ Title = T("TimeOfDay"), Step = 1, Value = { Min = 0, Max = 24, Default = 14 }, Callback = function(v) Lighting.TimeOfDay = string.format("%02d:00:00", v) end })
+    
+    -- Локальный Скинченджер
+    VisualsTab:Input({ Title = T("SkinChangerInput"), Value = "", Placeholder = "Roblox Username...", Callback = function(t) skinChangerNick = t end })
+    VisualsTab:Button({ Title = T("SkinChangerBtn"), Callback = function() changeVisualSkin(skinChangerNick) end })
 
     -- Вкладка Бой
-    CombatTab:Toggle({ Title = T("AutoShoot"), Value = false, Callback = function(s) Config.AutoShootMurderer = s end })
-    CombatTab:Toggle({ Title = T("Aimlock"), Value = false, Callback = function(s) Config.AimlockEnabled = s end })
+    CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.AutoShootMurderer, Callback = function(s) Config.AutoShootMurderer = s saveConfig() end })
+    CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.AimlockEnabled, Callback = function(s) Config.AimlockEnabled = s saveConfig() end })
     CombatTab:Button({ Title = T("TpShoot"), Callback = tpBehindAndShoot })
     
     -- Авто-уклонение от ножей
     local lastDodgeTime = 0
-    CombatTab:Toggle({ Title = T("DodgeKnife"), Value = false, Callback = function(state) Config.AutoDodgeKnife = state end }) 
+    CombatTab:Toggle({ Title = T("DodgeKnife"), Value = Config.AutoDodgeKnife, Callback = function(state) Config.AutoDodgeKnife = state saveConfig() end }) 
     
-    CombatTab:Toggle({ Title = T("KillAura"), Value = false, Callback = function(s) Config.KillAuraEnabled = s end })
-    CombatTab:Slider({ Title = T("KillAuraRange"), Step = 5, Value = { Min = 10, Max = 45, Default = 25 }, Callback = function(v) Config.KillAuraRange = v end })
+    CombatTab:Toggle({ Title = T("KillAura"), Value = Config.KillAuraEnabled, Callback = function(s) Config.KillAuraEnabled = s saveConfig() end })
+    CombatTab:Slider({ Title = T("KillAuraRange"), Step = 5, Value = { Min = 10, Max = 45, Default = Config.KillAuraRange }, Callback = function(v) Config.KillAuraRange = v saveConfig() end })
     CombatTab:Button({ Title = T("AutoKillAll"), Callback = autoKillAll })
     CombatTab:Button({ Title = T("FlingM"), Callback = function() local m = getMurderer() if m then flingPlayer(m) else WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 }) end end })
     CombatTab:Button({ Title = T("FlingS"), Callback = function() local s = getSheriff() if s then flingPlayer(s) else WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) end end })
 
     -- Вкладка Утилиты
-    UtilityTab:Toggle({ Title = T("AutoGrab"), Value = false, Callback = function(s) Config.AutoGrabGun = s end })
-    UtilityTab:Toggle({ Title = T("SlideGlitch"), Value = false, Callback = function(s) Config.SlideGlitchEnabled = s end })
-    UtilityTab:Slider({ Title = T("SlideSpeed"), Step = 5, Value = { Min = 15, Max = 100, Default = 45 }, Callback = function(v) Config.SlideSpeedForce = v end })
-    UtilityTab:Toggle({ Title = T("Noclip"), Value = false, Callback = toggleNoclip })
+    UtilityTab:Toggle({ Title = T("AutoGrab"), Value = Config.AutoGrabGun, Callback = function(s) Config.AutoGrabGun = s saveConfig() end })
+    UtilityTab:Toggle({ Title = T("SlideGlitch"), Value = Config.SlideGlitchEnabled, Callback = function(s) Config.SlideGlitchEnabled = s saveConfig() end })
+    UtilityTab:Slider({ Title = T("SlideSpeed"), Step = 5, Value = { Min = 15, Max = 100, Default = Config.SlideSpeedForce }, Callback = function(v) Config.SlideSpeedForce = v saveConfig() end })
+    UtilityTab:Toggle({ Title = T("Noclip"), Value = Config.NoclipEnabled, Callback = toggleNoclip })
     
     local antiFlingConnection = nil
     UtilityTab:Toggle({
-        Title = T("AntiFling"), Value = false, Callback = function(state)
+        Title = T("AntiFling"), Value = Config.AntiFling, Callback = function(state)
             Config.AntiFling = state
+            saveConfig()
             if not state then
                 if antiFlingConnection then antiFlingConnection:Disconnect() antiFlingConnection = nil end
                 return
@@ -1164,19 +1159,19 @@ local function main()
     TeleportsTab:Button({ Title = T("TpMap"), Callback = tpToMap })
 
     -- Вкладка Тел. Кнопки
-    ButtonsTab:Toggle({ Title = T("LockButtons"), Value = false, Callback = function(s) Config.LockMobileButtons = s end })
-    ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = 1.0 }, Callback = function(v) Config.ButtonScale = v updateButtonSizes() end }) -- Слайдер размера
+    ButtonsTab:Toggle({ Title = T("LockButtons"), Value = Config.LockMobileButtons, Callback = function(s) Config.LockMobileButtons = s saveConfig() end })
+    ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = Config.ButtonScale }, Callback = function(v) Config.ButtonScale = v saveConfig() updateButtonSizes() end }) -- Слайдер размера
     ButtonsTab:Toggle({ Title = T("BtnFlingM"), Value = false, Callback = function(s) if s then createFloatingButton("Fling Murderer", "FlingM", function() local m = getMurderer() if m then flingPlayer(m) end end) else removeFloatingButton("Fling Murderer") end end })
     ButtonsTab:Toggle({ Title = T("BtnFlingS"), Value = false, Callback = function(s) if s then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(s) end end) else removeFloatingButton("Fling Sheriff") end end })
     ButtonsTab:Toggle({ Title = T("BtnGrab"), Value = false, Callback = function(s) if s then createFloatingButton("Grab Gun", "AutoGrab", grabGun) else removeFloatingButton("Grab Gun") end end })
-    ButtonsTab:Toggle({ Title = T("BtnTpShoot"), Value = false, Callback = function(s) if s then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) else removeFloatingButton("TP & Shoot") end end })
     ButtonsTab:Toggle({ Title = T("BtnSlide"), Value = false, Callback = function(s) if s then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch) else removeFloatingButton("Slide Glitch") end end })
     ButtonsTab:Toggle({ Title = T("BtnNoclip"), Value = false, Callback = function(s) if s then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.NoclipEnabled) end) else removeFloatingButton("Noclip") end end })
     ButtonsTab:Toggle({ Title = T("BtnKillAura"), Value = false, Callback = function(s) if s then createFloatingButton("Kill Aura", "KillAura", function() Config.KillAuraEnabled = not Config.KillAuraEnabled WindUI:Notify({ Title = "Kill Aura", Content = Config.KillAuraEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "swords", Duration = 2 }) end) else removeFloatingButton("Kill Aura") end end })
     ButtonsTab:Toggle({ Title = T("BtnKillAll"), Value = false, Callback = function(s) if s then createFloatingButton("Auto Kill All", "AutoKillAll", autoKillAll) else removeFloatingButton("Auto Kill All") end end })
     ButtonsTab:Toggle({ Title = T("BtnGodMode"), Value = false, Callback = function(s) if s then createFloatingButton("Godmode", "GodMode", function() Config.AutoDodgeKnife = not Config.AutoDodgeKnife WindUI:Notify({ Title = "Auto Dodge", Content = Config.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end) else removeFloatingButton("Godmode") end end })
-    ButtonsTab:Toggle({ Title = T("BtnTpLobby"), Value = false, Callback = function(s) if s then createFloatingButton("TP Lobby", "TpLobby", tpToLobby) else removeFloatingButton("TP Lobby") end end }) -- Кнопка ТП Лобби
-    ButtonsTab:Toggle({ Title = T("BtnTpMap"), Value = false, Callback = function(s) if s then createFloatingButton("TP Map", "TpMap", tpToMap) else removeFloatingButton("TP Map") end end }) -- Кнопка ТП Карта
+    ButtonsTab:Toggle({ Title = T("BtnTpLobby"), Value = false, Callback = function(s) if s then createFloatingButton("TP Lobby", "TpLobby", tpToLobby) else removeFloatingButton("TP Lobby") end end }) 
+    ButtonsTab:Toggle({ Title = T("BtnTpMap"), Value = false, Callback = function(s) if s then createFloatingButton("TP Map", "TpMap", tpToMap) else removeFloatingButton("TP Map") end end }) 
+    ButtonsTab:Toggle({ Title = T("BtnAimlock"), Value = false, Callback = function(s) if s then createFloatingButton("Aimlock", "Aimlock", function() Config.AimlockEnabled = not Config.AimlockEnabled WindUI:Notify({ Title = "Aimlock", Content = Config.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end) else removeFloatingButton("Aimlock") end end }) 
 
     -- Вкладка Радио
     local radioInput = RadioTab:Input({ Title = T("RobloxId"), Value = "", Placeholder = "ID...", Callback = function(text) currentSongId = text end })
