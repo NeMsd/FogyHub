@@ -32,7 +32,7 @@ local L = {
         Utility = "Utility",
         MobileBinds = "Mobile Buttons",
         Radio = "Radio",
-        Teleports = "Teleports", -- Телепорты
+        Teleports = "Teleports",
         EspM = "ESP Murderer",
         EspS = "ESP Sheriff",
         EspI = "ESP Innocents",
@@ -93,7 +93,7 @@ local L = {
         SpeedOff = "Disabled",
         DodgeKnife = "Auto-Dodge Thrown Knife (Jump Right)",
         BtnDodgeKnife = "Button: Dodge Knife",
-        TpLobby = "Teleport to Lobby", -- ТП
+        TpLobby = "Teleport to Lobby",
         TpMap = "Teleport to Map",
         BtnTpLobby = "Button: TP Lobby",
         BtnTpMap = "Button: TP Map",
@@ -112,7 +112,7 @@ local L = {
         Utility = "Утилиты",
         MobileBinds = "Тел. Кнопки",
         Radio = "Радио",
-        Teleports = "Телепорты", -- Телепорты
+        Teleports = "Телепорты",
         EspM = "ESP Убийца (Мардер)",
         EspS = "ESP Шериф",
         EspI = "ESP Мирные жители",
@@ -173,7 +173,7 @@ local L = {
         SpeedOff = "Выключен",
         DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)",
         BtnDodgeKnife = "Кнопка: Уворот",
-        TpLobby = "Телепорт в Лобби", -- ТП
+        TpLobby = "Телепорт в Лобби",
         TpMap = "Телепорт на Карту",
         BtnTpLobby = "Кнопка: ТП Лобби",
         BtnTpMap = "Кнопка: ТП Карта",
@@ -580,6 +580,7 @@ local function main()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
         
+        -- Функция проверки наличия пистолета у игрока
         local function hasGun()
             local bp = LocalPlayer:FindFirstChild("Backpack")
             return (char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver"))) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
@@ -589,6 +590,7 @@ local function main()
             local originalPos = hrp.CFrame
             local wasAnchored = hrp.Anchored
             
+            -- Временное локальное отключение коллизии во избежание флинга при прохождении сквозь пол
             local noclipConn = RunService.Stepped:Connect(function()
                 if char then
                     for _, part in ipairs(char:GetDescendants()) do
@@ -597,6 +599,7 @@ local function main()
                 end
             end)
             
+            -- 1. Этап: Мгновенное CFrame перемещение на пушку в заблокированном состоянии
             hrp.Anchored = true
             local targetCFrame = handle:IsA("Model") and handle:GetPivot() or (handle:IsA("BasePart") and handle.CFrame)
             if targetCFrame then
@@ -604,21 +607,23 @@ local function main()
                 char:PivotTo(targetCFrame)
                 task.wait(0.1)
                 
+                -- 2. Этап: Если пушка не взялась сразу, отключаем анкор (для тач-контакта) и плавно опускаем персонажа ниже
                 local timeout = 0
                 local altHeight = 0
                 while not hasGun() and timeout < 15 do 
                     timeout = timeout + 1
                     
                     altHeight = altHeight - 0.5
-                    if altHeight < -2.5 then altHeight = -2.5 end 
+                    if altHeight < -2.5 then altHeight = -2.5 end -- Опускаемся глубже (до -2.5 studs)
                     
-                    hrp.Anchored = false 
+                    hrp.Anchored = false -- Физический движок должен просчитать Touched контакт
                     local adjustedCFrame = targetCFrame * CFrame.new(0, altHeight, 0)
                     hrp.CFrame = adjustedCFrame
                     char:PivotTo(adjustedCFrame)
                     
                     task.wait(0.1)
                     
+                    -- Если пушку уже подобрал кто-то другой (объект исчез), прекращаем цикл
                     local checkGun = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
                     if not checkGun then break end
                 end
@@ -626,6 +631,7 @@ local function main()
             
             noclipConn:Disconnect()
             
+            -- Возврат на исходную позицию
             hrp.CFrame = originalPos
             char:PivotTo(originalPos)
             hrp.Anchored = wasAnchored
@@ -633,7 +639,7 @@ local function main()
         grabbingGun = false
     end
 
-    -- Стабильная телепортация в Лобби (Исправлено)
+    -- Стабильная телепортация в Лобби
     local function tpToLobby()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -651,7 +657,7 @@ local function main()
         end
     end
 
-    -- Стабильная телепортация на Карту (Исправлено)
+    -- Стабильная телепортация на Карту
     local function tpToMap()
         local char = LocalPlayer.Character
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -778,7 +784,7 @@ local function main()
         end
     end
 
-    -- TP Behind & Shoot
+    -- TP Behind & Shoot (С принудительным поворотом персонажа и камеры для ПК/Тел)
     local function tpBehindAndShoot()
         local murderer = getMurderer()
         local char = LocalPlayer.Character
@@ -806,6 +812,7 @@ local function main()
             hrp.CFrame = targetCFrame
             char:PivotTo(targetCFrame)
             
+            -- Фиксируем разворот персонажа прямо на лицо мардера
             hrp.CFrame = CFrame.new(hrp.Position, Vector3.new(mHrp.Position.X, hrp.Position.Y, mHrp.Position.Z))
             
             task.wait(0.12)
@@ -814,6 +821,7 @@ local function main()
                 char.Humanoid:EquipTool(gun)
             end
             
+            -- Временно переключаем камеру в Scriptable, чтобы зафиксировать направление взгляда
             local camera = workspace.CurrentCamera
             local oldCamType = camera.CameraType
             
@@ -828,6 +836,7 @@ local function main()
             
             task.wait(0.18)
             
+            -- Возвращаем камеру и позицию игрока
             camera.CameraType = oldCamType
             hrp.Anchored = wasAnchored
             hrp.CFrame = originalPos
@@ -954,6 +963,7 @@ local function main()
         local frame = Instance.new("Frame")
         frame.Name = name .. "_Frame"
         
+        -- Установка начального размера с учетом выбранного масштаба
         local baseWidth, baseHeight = 115, 35
         local w = baseWidth * Config.ButtonScale
         local h = baseHeight * Config.ButtonScale
@@ -981,6 +991,7 @@ local function main()
         
         btn.Activated:Connect(callback)
         
+        -- Стабильная логика драга (срабатывает как при зажатии рамки, так и при зажатии самой кнопки)
         local dragging = false
         local dragStart, startPos
         
@@ -1008,7 +1019,7 @@ local function main()
         end)
         
         UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = false
             end
         end)
@@ -1105,7 +1116,7 @@ local function main()
         end
     })
 
-    -- Вкладка Телепорты (NEW)
+    -- Вкладка Телепорты
     TeleportsTab:Button({ Title = T("TpLobby"), Callback = tpToLobby })
     TeleportsTab:Button({ Title = T("TpMap"), Callback = tpToMap })
 
