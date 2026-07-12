@@ -1,6 +1,7 @@
 -- ======================================================
 -- FogyHub (MM2 Custom Multi-Tool)
 -- Authors: MsD, Gemini
+-- Credits: Kiriot22 & Felix (for Server Role logic)
 -- ======================================================
 
 -- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ ====================
@@ -342,6 +343,10 @@ local function main()
     local originalFog = Lighting.FogEnd 
     local grabbingGun = false
 
+    -- Переменные серверной синхронизации ролей
+    local roles = {}
+    local Murder, Sheriff, Hero
+
     getgenv().OldPos = nil
     getgenv().FPDH = workspace.FallenPartsDestroyHeight
 
@@ -460,8 +465,21 @@ local function main()
         if box then box:Destroy() end
     end
 
-    -- Вспомогательные функции для поиска Мардера и Шерифа
+    -- Стабильная проверка состояния "Жив" на стороне сервера MM2
+    local function IsAlive(Player)
+        local data = roles and roles[Player.Name]
+        if data then
+            return not data.Killed and not data.Dead
+        end
+        local hum = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+        return hum and hum.Health > 0
+    end
+
+    -- Вспомогательные функции для поиска Мардера и Шерифа (Мгновенно по Кэшу сервера)
     local function getMurderer()
+        if Murder then
+            return Players:FindFirstChild(Murder)
+        end
         for _, p in ipairs(Players:GetPlayers()) do
             if p.Character then
                 local backpack = p:FindFirstChild("Backpack")
@@ -474,6 +492,9 @@ local function main()
     end
 
     local function getSheriff()
+        if Sheriff then
+            return Players:FindFirstChild(Sheriff)
+        end
         for _, p in ipairs(Players:GetPlayers()) do
             if p.Character then
                 local backpack = p:FindFirstChild("Backpack")
@@ -772,7 +793,7 @@ local function main()
         sky.Parent = Lighting
     end
 
-    -- Auto Kill All (Исправлен сбой символа & в коде)
+    -- Auto Kill All
     local function autoKillAll()
         local char = LocalPlayer.Character
         local bp = LocalPlayer:FindFirstChild("Backpack")
@@ -1181,37 +1202,96 @@ local function main()
         end
     end)
 
-    -- Цикл ESP
+    -- Цикл ESP (Фоновый опрос роли и статуса с сервера раз в 0.3 сек для максимальной оптимизации сети)
     task.spawn(function()
         while true do
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer then
-                    local character, backpack = player.Character, player:FindFirstChild("Backpack")
-                    local isM, isS = false, false
-                    
-                    if backpack then
-                        if backpack:FindFirstChild("Knife") then isM = true
-                        elseif backpack:FindFirstChild("Gun") or backpack:FindFirstChild("Revolver") then isS = true end
+            local success, serverRoles = pcall(function()
+                local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GetPlayerData", true)
+                return remote and remote:InvokeServer()
+            end)
+            
+            if success and serverRoles then
+                roles = serverRoles
+                Murder, Sheriff, Hero = nil, nil, nil
+                for i, v in pairs(roles) do
+                    if v.Role == "Murderer" then
+                        Murder = i
+                    elseif v.Role == "Sheriff" then
+                        Sheriff = i
+                    elseif v.Role == "Hero" then
+                        Hero = i
                     end
-                    if character and not (isM or isS) then
-                        if character:FindFirstChild("Knife") then isM = true
-                        elseif character:FindFirstChild("Gun") or character:FindFirstChild("Revolver") then isS = true end
-                    end
-                    
-                    -- Логика Highlights
-                    if isM and Config.MurdererESP then applyHighlight(player, Color3.fromRGB(255, 0, 0))
-                    elseif isS and Config.SheriffESP then applyHighlight(player, Color3.fromRGB(0, 0, 255))
-                    elseif not isM and not isS and Config.InnocentESP then applyHighlight(player, Color3.fromRGB(0, 255, 0))
-                    else removeHighlight(player) end
-
-                    -- Логика 3D Box Adornments
-                    if isM and Config.EspBoxes then applyBoxESP(player, Color3.fromRGB(255, 0, 0))
-                    elseif isS and Config.EspBoxes then applyBoxESP(player, Color3.fromRGB(0, 0, 255))
-                    elseif not isM and not isS and Config.EspBoxes then applyBoxESP(player, Color3.fromRGB(0, 255, 0))
-                    else removeBoxESP(player) end
                 end
             end
-            task.wait(0.5)
+            
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    local character = player.Character
+                    local isM, isS, isH = false, false, false
+                    local alive = IsAlive(player)
+                    
+                    -- Определение ролей на основе серверных API данных
+                    if player.Name == Murder and alive then
+                        isM = true
+                    elseif player.Name == Sheriff and alive then
+                        isS = true
+                    elseif player.Name == Hero and alive then
+                        local sheriffPlayer = Sheriff and Players:FindFirstChild(Sheriff)
+                        -- Если Шериф мертв, красим Героя в желтый. Если жив — считаем его мирным.
+                        if sheriffPlayer and not IsAlive(sheriffPlayer) then
+                            isH = true
+                        end
+                    end
+                    
+                    -- Проверка нахождения зрителей на спавне лобби
+                    local inLobby = false
+                    if character and character:FindFirstChild("HumanoidRootPart") then
+                        local distToLobby = (character.HumanoidRootPart.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
+                        if distToLobby < 150 then
+                            inLobby = true
+                        end
+                    end
+                    
+                    -- Отрисовка ESP цветов в зависимости от условий
+                    if not alive or inLobby then
+                        -- Мертвые или наблюдатели в лобби подсвечиваются серым
+                        if Config.MurdererESP or Config.SheriffESP or Config.InnocentESP then
+                            applyHighlight(player, Color3.fromRGB(150, 150, 150))
+                        else
+                            removeHighlight(player)
+                        end
+                        if Config.EspBoxes then
+                            applyBoxESP(player, Color3.fromRGB(150, 150, 150))
+                        else
+                            removeBoxESP(player)
+                        end
+                    else
+                        -- Активные выжившие на карте красятся по своим ролям
+                        local renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый по умолчанию
+                        
+                        if isM then
+                            renderColor = Color3.fromRGB(255, 0, 0) -- Красный (Мардер)
+                        elseif isS then
+                            renderColor = Color3.fromRGB(0, 0, 255) -- Синий (Шериф)
+                        elseif isH then
+                            renderColor = Color3.fromRGB(255, 250, 0) -- Желтый (Герой)
+                        end
+                        
+                        if (isM and Config.MurdererESP) or (isS and Config.SheriffESP) or (not isM and not isS and Config.InnocentESP) or (isH and Config.SheriffESP) then
+                            applyHighlight(player, renderColor)
+                        else
+                            removeHighlight(player)
+                        end
+
+                        if (isM and Config.EspBoxes) or (isS and Config.EspBoxes) or (not isM and not isS and Config.EspBoxes) or (isH and Config.EspBoxes) then
+                            applyBoxESP(player, renderColor)
+                        else
+                            removeBoxESP(player)
+                        end
+                    end
+                end
+            end
+            task.wait(0.3)
         end
     end)
 
