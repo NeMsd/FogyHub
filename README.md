@@ -82,4 +82,4 @@
 ## 🚀 How to Execute / Инструкция по запуску
 
 -- FogyHub MM2 Loader (MsD & Gemini)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/NeMsd/FogyHub/refs/heads/main/refs/heads/main/main.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/NeMsd/FogyHub/refs/heads/main/main.lua"))()
