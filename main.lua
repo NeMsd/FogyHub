@@ -61,19 +61,6 @@ local Config = {
         ["TP Lobby"] = false,
         ["TP Map"] = false,
         ["Aimlock"] = false,
-    },
-    ButtonPositions = {
-        ["Fling Murderer"] = {X = 30, Y = 100},
-        ["Fling Sheriff"] = {X = 30, Y = 145},
-        ["Grab Gun"] = {X = 30, Y = 190},
-        ["Slide Glitch"] = {X = 30, Y = 235},
-        ["Noclip"] = {X = 30, Y = 280},
-        ["Kill Aura"] = {X = 30, Y = 325},
-        ["Auto Kill All"] = {X = 30, Y = 370},
-        ["Godmode"] = {X = 30, Y = 415},
-        ["TP Lobby"] = {X = 30, Y = 460},
-        ["TP Map"] = {X = 30, Y = 505},
-        ["Aimlock"] = {X = 30, Y = 550}
     }
 }
 
@@ -105,9 +92,6 @@ local function loadConfig()
                 if loaded.MobileButtons then
                     for k, v in pairs(loaded.MobileButtons) do Config.MobileButtons[k] = v end
                 end
-                if loaded.ButtonPositions then
-                    for k, v in pairs(loaded.ButtonPositions) do Config.ButtonPositions[k] = v end
-                end
                 currentLang = Config.Language
             end
         end)
@@ -120,191 +104,40 @@ loadConfig()
 -- Словарь локализации (2 Языка)
 local L = {
     en = {
-        CrashTitle = "🚨 FogyHub — Crash Handler",
-        CopyLog = "Copy Log",
-        Copied = "Log Copied!",
-        BufError = "Clipboard Error!",
-        Close = "Close",
-        Loaded = "FogyHub loaded!",
-        FailedUI = "Failed to load WindUI library.",
-        Visuals = "Visuals",
-        Combat = "Combat",
-        Utility = "Utility",
-        MobileBinds = "Mobile Buttons",
-        Radio = "Radio",
-        Teleports = "Teleports",
-        Configs = "Configs / Settings",
-        EspM = "ESP Murderer",
-        EspS = "ESP Sheriff",
-        EspI = "ESP Innocents",
-        EspBoxes = "3D Box ESP (For Low-End PC)",
-        Stretch = "Screen Stretch (4:3)",
-        StretchForce = "Stretch Force",
-        NebulaSky = "Sky: Space Nebula",
-        SunsetSky = "Sky: Beautiful Sunset",
-        ClassicSky = "Sky: Default Classic",
-        NoFog = "Disable Map Fog",
-        TimeOfDay = "Time of Day",
-        AutoShoot = "Auto-Shoot Murderer",
-        Aimlock = "Aimlock on Murderer",
-        TpShoot = "TP Behind & Shoot",
-        KillAura = "Kill Aura",
-        KillAuraRange = "Kill Aura Range",
-        AutoKillAll = "Auto Kill All",
-        FlingM = "Fling Murderer",
-        FlingS = "Fling Sheriff",
-        AutoGrab = "Auto Grab Gun",
-        SlideGlitch = "Infinite Speed Glitch",
-        SlideSpeed = "Movement Speed",
-        Noclip = "Noclip (Walk Through Walls)",
-        AntiFling = "Anti-Fling",
-        LockButtons = "Lock Button Positions",
-        BtnScale = "Mobile Buttons Scale",
-        BtnFlingM = "Button: Fling Murderer",
-        BtnFlingS = "Button: Fling Sheriff",
-        BtnGrab = "Button: Grab Gun",
-        BtnSlide = "Button: Slide Glitch",
-        BtnNoclip = "Button: Noclip",
-        BtnKillAura = "Button: Kill Aura",
-        BtnKillAll = "Button: Auto Kill All",
-        RobloxId = "Roblox Audio ID",
-        PlayId = "Play Roblox ID",
-        HttpUrl = "HTTP Link to MP3 / OGG",
-        PlayHttp = "Play HTTP Link",
-        StopRadio = "Stop Radio",
-        Volume = "Volume",
-        Loop = "Loop Audio",
-        NoKnife = "Knife not found!",
-        NoGun = "Sheriff's gun not found!",
-        NoM = "Murderer not found or dead",
-        NoS = "Sheriff not found or dead",
-        SitError = " is sitting (fling impossible)",
-        Flinging = "Flinging: ",
-        RadioNoSupport = "Your exploit does not support writefile/getcustomasset!",
-        RadioDownloading = "Downloading audio file...",
-        RadioHttpSuccess = "External audio started successfully!",
-        RadioHttpError = "Failed to parse asset from file.",
-        RadioHttpFail = "Failed to download audio file.",
-        RadioCache = "Audio loaded from persistent local cache!",
-        NoclipToggle = "Noclip",
-        NoclipOn = "Enabled",
-        NoclipOff = "Disabled",
-        SpeedOn = "Enabled",
-        SpeedOff = "Disabled",
-        DodgeKnife = "Auto-Dodge Thrown Knife (Jump Right)",
-        BtnDodgeKnife = "Button: Dodge Knife",
-        TpLobby = "Teleport to Lobby",
-        TpMap = "Teleport to Map",
-        BtnTpLobby = "Button: TP Lobby",
-        BtnTpMap = "Button: TP Map",
-        NoMapLoaded = "Map not loaded yet or empty!",
-        BtnAimlock = "Button: Aimlock",
-        SkinChangerTitle = "Visual Skin Changer",
-        SkinChangerInput = "Roblox Username",
-        SkinChangerBtn = "Apply Skin",
-        SkinNotFound = "Player not found!",
-        SkinSuccess = "Outfit changed visually!",
-        SaveConfigBtn = "Save Config File",
-        LoadConfigBtn = "Load Config File",
-        ResetConfigBtn = "Reset to Defaults",
-        SetLangRu = "Switch UI to Russian",
-        SetLangEn = "Switch UI to English",
-        ConfSaved = "Config saved to storage!",
-        ConfLoaded = "Config loaded from storage!",
-        ConfReset = "Config reset to factory defaults.",
+        CrashTitle = "🚨 FogyHub — Crash Handler", CopyLog = "Copy Log", Copied = "Log Copied!", BufError = "Clipboard Error!", Close = "Close", Loaded = "FogyHub loaded!", FailedUI = "Failed to load WindUI library.",
+        Visuals = "Visuals", Combat = "Combat", Utility = "Utility", MobileBinds = "Mobile Buttons", Radio = "Radio", Teleports = "Teleports", Configs = "Configs / Settings",
+        EspM = "ESP Murderer", EspS = "ESP Sheriff", EspI = "ESP Innocents", EspBoxes = "3D Box ESP (For Low-End PC)", Stretch = "Screen Stretch (4:3)", StretchForce = "Stretch Force",
+        NebulaSky = "Sky: Space Nebula", SunsetSky = "Sky: Beautiful Sunset", ClassicSky = "Sky: Default Classic", NoFog = "Disable Map Fog", TimeOfDay = "Time of Day",
+        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", TpShoot = "TP Behind & Shoot", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
+        FlingM = "Fling Murderer", FlingS = "Fling Sheriff", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
+        LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
+        BtnNoclip = "Button: Noclip", BtnKillAura = "Button: Kill Aura", BtnKillAll = "Button: Auto Kill All", RobloxId = "Roblox Audio ID", PlayId = "Play Roblox ID", HttpUrl = "HTTP Link to MP3 / OGG",
+        PlayHttp = "Play HTTP Link", StopRadio = "Stop Radio", Volume = "Volume", Loop = "Loop Audio", NoKnife = "Knife not found!", NoGun = "Sheriff's gun not found!", NoM = "Murderer not found or dead",
+        NoS = "Sheriff not found or dead", SitError = " is sitting (fling impossible)", Flinging = "Flinging: ", RadioNoSupport = "Your exploit does not support writefile/getcustomasset!",
+        RadioDownloading = "Downloading audio file...", RadioHttpSuccess = "External audio started successfully!", RadioHttpError = "Failed to parse asset from file.", RadioHttpFail = "Failed to download audio file.",
+        RadioCache = "Audio loaded from persistent local cache!", NoclipToggle = "Noclip", NoclipOn = "Enabled", NoclipOff = "Disabled", SpeedOn = "Enabled", SpeedOff = "Disabled",
+        DodgeKnife = "Auto-Dodge Thrown Knife (Jump Right)", BtnDodgeKnife = "Button: Dodge Knife", TpLobby = "Teleport to Lobby", TpMap = "Teleport to Map", BtnTpLobby = "Button: TP Lobby",
+        BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username",
+        SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
+        ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
     },
     ru = {
-        CrashTitle = "🚨 FogyHub — Аварийное Меню",
-        CopyLog = "Скопировать Лог",
-        Copied = "Лог скопирован!",
-        BufError = "Ошибка буфера!",
-        Close = "Закрыть",
-        Loaded = "FogyHub загружен!",
-        FailedUI = "Не удалось загрузить библиотеку WindUI.",
-        Visuals = "Визуалы",
-        Combat = "Бой",
-        Utility = "Утилиты",
-        MobileBinds = "Тел. Кнопки",
-        Radio = "Радио",
-        Teleports = "Телепорты",
-        Configs = "Конфиги / Настройки",
-        EspM = "ESP Убийца (Мардер)",
-        EspS = "ESP Шериф",
-        EspI = "ESP Мирные жители",
-        EspBoxes = "3D Бокс ESP (Для слабых читов)",
-        Stretch = "Растяг экрана (4:3)",
-        StretchForce = "Сила растяга",
-        NebulaSky = "Небо: Космическая Туманность",
-        SunsetSky = "Небо: Красивый Закат",
-        ClassicSky = "Небо: Стандартное",
-        NoFog = "Отключить Туман на Карте",
-        TimeOfDay = "Время Суток в Игре",
-        AutoShoot = "Авто-выстрел в Мардера",
-        Aimlock = "Аимлок на Убийцу",
-        TpShoot = "ТП за Спину & Выстрел",
-        KillAura = "Килаура на игроков",
-        KillAuraRange = "Радиус килауры",
-        AutoKillAll = "Убить всех игроков",
-        FlingM = "Флинг Убийцы",
-        FlingS = "Флинг Шерифа",
-        AutoGrab = "Автоподбор пистолета",
-        SlideGlitch = "Бесконечный Спидглитч бега",
-        SlideSpeed = "Скорость движения",
-        Noclip = "Ноуклип (Проход сквозь стены)",
-        AntiFling = "Анти-Флинг",
-        LockButtons = "Заблокировать все кнопки",
-        BtnScale = "Масштаб мобильных кнопок",
-        BtnFlingM = "Кнопка: Fling Murderer",
-        BtnFlingS = "Кнопка: Fling Sheriff",
-        BtnGrab = "Кнопка: Grab Gun",
-        BtnSlide = "Кнопка: Slide Glitch",
-        BtnNoclip = "Кнопка: Noclip",
-        BtnKillAura = "Кнопка: Kill Aura",
-        BtnKillAll = "Кнопка: Auto Kill All",
-        RobloxId = "ID Звука из Roblox",
-        PlayId = "Играть по Roblox ID",
-        HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
-        PlayHttp = "Играть по внешней ссылке",
-        StopRadio = "Стоп Радио",
-        Volume = "Громкость",
-        Loop = "Зациклить",
-        NoKnife = "Нож не найден!",
-        NoM = "Убийца не найден или мертв",
-        NoS = "Шериф не найден или мертв",
-        SitError = " сидит (флинг невозможен)",
-        Flinging = "Выбиваем: ",
-        RadioNoSupport = "Ваш эксплойт не поддерживает writefile/getcustomasset!",
-        RadioDownloading = "Загрузка аудиофайла...",
-        RadioHttpSuccess = "Внешнее аудио успешно запущено!",
-        RadioHttpError = "Не удалось преобразовать файл в ассет.",
-        RadioHttpFail = "Не удалось скачать аудиофайл.",
-        RadioCache = "Песня запущена из постоянного локального кэша!",
-        NoclipToggle = "Noclip",
-        NoclipOn = "Включен",
-        NoclipOff = "Выключен",
-        SpeedOn = "Включен",
-        SpeedOff = "Выключен",
-        DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)",
-        BtnDodgeKnife = "Кнопка: Уворот",
-        TpLobby = "Телепорт в Лобби",
-        TpMap = "Телепорт на Карту",
-        BtnTpLobby = "Кнопка: ТП Лобби",
-        BtnTpMap = "Кнопка: ТП Карта",
-        NoMapLoaded = "Карта еще не загружена или пуста!",
-        BtnAimlock = "Кнопка: Аимлок",
-        SkinChangerTitle = "Визуальный скинченджер",
-        SkinChangerInput = "Ник игрока для копирования",
-        SkinChangerBtn = "Применить скин",
-        SkinNotFound = "Игрок не найден!",
-        SkinSuccess = "Скин визуально применен!",
-        SaveConfigBtn = "Сохранить текущие настройки",
-        LoadConfigBtn = "Загрузить настройки из файла",
-        ResetConfigBtn = "Сбросить по умолчанию",
-        SetLangRu = "Сменить язык на Русский",
-        SetLangEn = "Сменить язык на Английский",
-        ConfSaved = "Настройки успешно сохранены на устройство!",
-        ConfLoaded = "Настройки успешно загружены из файла!",
-        ConfReset = "Все параметры сброшены до заводских настроек.",
+        CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub загружен!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
+        Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
+        EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
+        NebulaSky = "Небо: Космическая Туманность", SunsetSky = "Небо: Красивый Закат", ClassicSky = "Небо: Стандартное", NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
+        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", TpShoot = "ТП за Спину & Выстрел", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
+        FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
+        LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
+        BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
+        PlayHttp = "Играть по внешней ссылке", StopRadio = "Стоп Радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден!", NoM = "Убийца не найден или мертв", NoS = "Шериф не найден или мертв",
+        SitError = " сидит (флинг невозможен)", Flinging = "Выбиваем: ", RadioNoSupport = "Ваш эксплойт не поддерживает writefile/getcustomasset!",
+        RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Внешнее аудио успешно запущено!", RadioHttpError = "Не удалось преобразовать файл в ассет.", RadioHttpFail = "Не удалось скачать аудиофайл.",
+        RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
+        DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
+        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник игрока для копирования",
+        SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
+        ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
     }
 }
 
@@ -317,13 +150,9 @@ end
 local function getSafeUIContainer()
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
-    if gethui then 
-        return gethui()
-    elseif game:GetService("CoreGui") then 
-        return game:GetService("CoreGui")
-    else 
-        return LocalPlayer:WaitForChild("PlayerGui", 10) 
-    end
+    if gethui then return gethui()
+    elseif game:GetService("CoreGui") then return game:GetService("CoreGui")
+    else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
 -- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) ====================
@@ -357,9 +186,7 @@ local function showCrashMenu(err)
         corner.Parent = mainFrame
         
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(231, 76, 60)
-        stroke.Thickness = 1.5
-        stroke.Parent = mainFrame
+        stroke.Color, stroke.Thickness, stroke.Parent = Color3.fromRGB(231, 76, 60), 1.5, mainFrame
         
         local title = Instance.new("TextLabel")
         title.Size = UDim2.new(1, 0, 0, 35)
@@ -593,7 +420,6 @@ local function main()
         box.Parent = hrp
     end
 
-    -- Функция удаления бокса
     local function removeBoxESP(player)
         local character = player.Character
         local hrp = character and character:FindFirstChild("HumanoidRootPart")
@@ -978,7 +804,7 @@ local function main()
         sky.Parent = Lighting
     end
 
-    -- Автоубийство всех на сервере
+    -- Auto Kill All
     local function autoKillAll()
         local char = LocalPlayer.Character
         local bp = LocalPlayer:FindFirstChild("Backpack")
@@ -1193,19 +1019,14 @@ local function main()
         local h = baseHeight * Config.MobileButtons.ButtonScale
         frame.Size = UDim2.new(0, w, 0, h)
         
-        -- Прогрузка сохраненного положения кнопки на экране
-        local savedPos = Config.ButtonPositions[name]
-        if savedPos then
-            frame.Position = UDim2.new(0.04, savedPos.X, 0, savedPos.Y)
-        else
-            local offsets = {
-                ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
-                ["Slide Glitch"] = 235, ["Noclip"] = 280, ["Kill Aura"] = 325,
-                ["Auto Kill All"] = 370, ["Godmode"] = 415, ["TP Lobby"] = 460, 
-                ["TP Map"] = 505, ["Aimlock"] = 550
-            }
-            frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
-        end
+        -- Прогрузка дефолтных положений без багов автосохранения
+        local offsets = {
+            ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
+            ["Slide Glitch"] = 235, ["Noclip"] = 280, ["Kill Aura"] = 325,
+            ["Auto Kill All"] = 370, ["Godmode"] = 415, ["TP Lobby"] = 460, 
+            ["TP Map"] = 505, ["Aimlock"] = 550
+        }
+        frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         frame.BackgroundColor3, frame.BorderSizePixel, frame.BorderColor3 = Color3.fromRGB(30, 30, 30), 1, Color3.fromRGB(0, 150, 255)
         frame.Active, frame.Parent = true, sg
         
@@ -1251,12 +1072,6 @@ local function main()
         UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 dragging = false
-                -- Мгновенно сохраняем новую позицию в JSON конфиг на диске (Решает сброс!)
-                Config.ButtonPositions[name] = {
-                    X = frame.Position.X.Offset,
-                    Y = frame.Position.Y.Offset
-                }
-                saveConfig()
             end
         end)
         
@@ -1491,7 +1306,7 @@ local function main()
             local success, keyStr = pcall(function() return input.KeyCode and input.KeyCode.Name end)
             if success and keyStr then
                 if keyStr == "F" then local m = getMurderer() if m then flingPlayer(m) end
-                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(s) end
+                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(sh) end -- Исправлено на sh
                 elseif keyStr == "T" then grabGun()
                 elseif keyStr == "C" then toggleSlideGlitch()
                 elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled) end
