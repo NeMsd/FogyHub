@@ -53,6 +53,7 @@ local Config = {
         ["Fling Murderer"] = false,
         ["Fling Sheriff"] = false,
         ["Grab Gun"] = false,
+        ["TP & Shoot"] = false,
         ["Slide Glitch"] = false,
         ["Noclip"] = false,
         ["Kill Aura"] = false,
@@ -61,6 +62,20 @@ local Config = {
         ["TP Lobby"] = false,
         ["TP Map"] = false,
         ["Aimlock"] = false,
+    },
+    ButtonPositions = {
+        ["Fling Murderer"] = {X = 30, Y = 100},
+        ["Fling Sheriff"] = {X = 30, Y = 145},
+        ["Grab Gun"] = {X = 30, Y = 190},
+        ["TP & Shoot"] = {X = 30, Y = 235},
+        ["Slide Glitch"] = {X = 30, Y = 280},
+        ["Noclip"] = {X = 30, Y = 325},
+        ["Kill Aura"] = {X = 30, Y = 370},
+        ["Auto Kill All"] = {X = 30, Y = 415},
+        ["Godmode"] = {X = 30, Y = 460},
+        ["TP Lobby"] = {X = 30, Y = 505},
+        ["TP Map"] = {X = 30, Y = 550},
+        ["Aimlock"] = {X = 30, Y = 595}
     }
 }
 
@@ -92,6 +107,9 @@ local function loadConfig()
                 if loaded.MobileButtons then
                     for k, v in pairs(loaded.MobileButtons) do Config.MobileButtons[k] = v end
                 end
+                if loaded.ButtonPositions then
+                    for k, v in pairs(loaded.ButtonPositions) do Config.ButtonPositions[k] = v end
+                end
                 currentLang = Config.Language
             end
         end)
@@ -120,6 +138,7 @@ local L = {
         BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username",
         SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
+        BtnTpShoot = "Button: TP & Shoot", -- Добавлено в локализацию
     },
     ru = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub загружен!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
@@ -138,6 +157,7 @@ local L = {
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник игрока для копирования",
         SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
+        BtnTpShoot = "Кнопка: TP & Shoot", -- Добавлено в локализацию
     }
 }
 
@@ -155,7 +175,7 @@ local function getSafeUIContainer()
     else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
--- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) ====================
+-- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
 local function showCrashMenu(err)
     local traceback = debug.traceback()
     local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
@@ -1004,7 +1024,7 @@ local function main()
         end
     end
 
-    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК ====================
+    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК (С ДРАГОМ НА КНОПКЕ) ====================
     local function createFloatingButton(name, translationKey, callback)
         if ScreenButtons[name] then ScreenButtons[name]:Destroy() end
         local sg = getBindsScreenGui()
@@ -1019,12 +1039,11 @@ local function main()
         local h = baseHeight * Config.MobileButtons.ButtonScale
         frame.Size = UDim2.new(0, w, 0, h)
         
-        -- Прогрузка дефолтных положений без багов автосохранения
         local offsets = {
             ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
-            ["Slide Glitch"] = 235, ["Noclip"] = 280, ["Kill Aura"] = 325,
-            ["Auto Kill All"] = 370, ["Godmode"] = 415, ["TP Lobby"] = 460, 
-            ["TP Map"] = 505, ["Aimlock"] = 550
+            ["TP & Shoot"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325,
+            ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460,
+            ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
         }
         frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         frame.BackgroundColor3, frame.BorderSizePixel, frame.BorderColor3 = Color3.fromRGB(30, 30, 30), 1, Color3.fromRGB(0, 150, 255)
@@ -1255,15 +1274,16 @@ local function main()
     UI_Elements.MobileButtons["TP Lobby"] = ButtonsTab:Toggle({ Title = T("BtnTpLobby"), Value = Config.MobileButtons["TP Lobby"], Callback = function(s) Config.MobileButtons["TP Lobby"] = s saveConfig() if s then createFloatingButton("TP Lobby", "TpLobby", tpToLobby) else removeFloatingButton("TP Lobby") end end }) 
     UI_Elements.MobileButtons["TP Map"] = ButtonsTab:Toggle({ Title = T("BtnTpMap"), Value = Config.MobileButtons["TP Map"], Callback = function(s) Config.MobileButtons["TP Map"] = s saveConfig() if s then createFloatingButton("TP Map", "TpMap", tpToMap) else removeFloatingButton("TP Map") end end }) 
     UI_Elements.MobileButtons["Aimlock"] = ButtonsTab:Toggle({ Title = T("BtnAimlock"), Value = Config.MobileButtons["Aimlock"], Callback = function(s) Config.MobileButtons["Aimlock"] = s saveConfig() if s then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end) else removeFloatingButton("Aimlock") end end }) 
+    UI_Elements.MobileButtons["TP & Shoot"] = ButtonsTab:Toggle({ Title = T("BtnTpShoot"), Value = Config.MobileButtons["TP & Shoot"], Callback = function(s) Config.MobileButtons["TP & Shoot"] = s saveConfig() if s then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) else removeFloatingButton("TP & Shoot") end end }) -- Кнопка ТП-Выстрел
 
-    -- Вкладка Конфиги (NEW)
+    -- Вкладка Конфиги
     ConfigsTab:Button({ Title = T("SaveConfigBtn"), Callback = function() saveConfig() WindUI:Notify({ Title = "FogyHub", Content = T("ConfSaved"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("LoadConfigBtn"), Callback = function() loadConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfLoaded"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
         Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14 }
         Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
         Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false }
-        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false }
+        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["TP & Shoot"] = false }
         saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
     end })
     ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() Config.Language = "ru" currentLang = "ru" saveConfig() WindUI:Notify({ Title = "Язык", Content = "Язык успешно изменен на Русский!", Icon = "globe", Duration = 3 }) end })
@@ -1293,7 +1313,8 @@ local function main()
                 elseif btnName == "Godmode" then createFloatingButton("Godmode", "GodMode", function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife WindUI:Notify({ Title = "Auto Dodge", Content = Config.Combat.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end)
                 elseif btnName == "TP Lobby" then createFloatingButton("TP Lobby", "TpLobby", tpToLobby)
                 elseif btnName == "TP Map" then createFloatingButton("TP Map", "TpMap", tpToMap)
-                elseif btnName == "Aimlock" then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end) end
+                elseif btnName == "Aimlock" then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end)
+                elseif btnName == "TP & Shoot" then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) end
             end
         end
         updateButtonSizes()
@@ -1306,7 +1327,7 @@ local function main()
             local success, keyStr = pcall(function() return input.KeyCode and input.KeyCode.Name end)
             if success and keyStr then
                 if keyStr == "F" then local m = getMurderer() if m then flingPlayer(m) end
-                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(sh) end -- Исправлено на sh
+                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(sh) end
                 elseif keyStr == "T" then grabGun()
                 elseif keyStr == "C" then toggleSlideGlitch()
                 elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled) end
