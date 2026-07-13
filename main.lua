@@ -1,3 +1,5 @@
+Вот 
+
 -- ======================================================
 -- FogyHub (MM2 Custom Multi-Tool)
 -- Authors: MsD, Gemini
@@ -36,6 +38,7 @@ local Config = {
     Combat = {
         AutoShootMurderer = false,
         AimlockEnabled = false,
+        SilentAimEnabled = false, -- Новое!
         AutoDodgeKnife = false, 
         KillAuraEnabled = false,
         KillAuraRange = 25,
@@ -46,6 +49,9 @@ local Config = {
         SlideSpeedForce = 45,
         NoclipEnabled = false,
         AntiFling = false,
+        AutoFarmCoins = false,      -- Новое!
+        EmoteSpamEnabled = false,   -- Новое!
+        ChatAlertsEnabled = false,  -- Новое!
     },
     MobileButtons = {
         LockMobileButtons = false,
@@ -53,7 +59,6 @@ local Config = {
         ["Fling Murderer"] = false,
         ["Fling Sheriff"] = false,
         ["Grab Gun"] = false,
-        ["TP & Shoot"] = false,
         ["Slide Glitch"] = false,
         ["Noclip"] = false,
         ["Kill Aura"] = false,
@@ -62,20 +67,21 @@ local Config = {
         ["TP Lobby"] = false,
         ["TP Map"] = false,
         ["Aimlock"] = false,
+        ["TP & Shoot"] = false
     },
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100},
         ["Fling Sheriff"] = {X = 30, Y = 145},
         ["Grab Gun"] = {X = 30, Y = 190},
-        ["TP & Shoot"] = {X = 30, Y = 235},
-        ["Slide Glitch"] = {X = 30, Y = 280},
-        ["Noclip"] = {X = 30, Y = 325},
-        ["Kill Aura"] = {X = 30, Y = 370},
-        ["Auto Kill All"] = {X = 30, Y = 415},
-        ["Godmode"] = {X = 30, Y = 460},
-        ["TP Lobby"] = {X = 30, Y = 505},
-        ["TP Map"] = {X = 30, Y = 550},
-        ["Aimlock"] = {X = 30, Y = 595}
+        ["Slide Glitch"] = {X = 30, Y = 235},
+        ["Noclip"] = {X = 30, Y = 280},
+        ["Kill Aura"] = {X = 30, Y = 325},
+        ["Auto Kill All"] = {X = 30, Y = 370},
+        ["Godmode"] = {X = 30, Y = 415},
+        ["TP Lobby"] = {X = 30, Y = 460},
+        ["TP Map"] = {X = 30, Y = 505},
+        ["Aimlock"] = {X = 30, Y = 550},
+        ["TP & Shoot"] = {X = 30, Y = 595}
     }
 }
 
@@ -135,10 +141,11 @@ local L = {
         RadioDownloading = "Downloading audio file...", RadioHttpSuccess = "External audio started successfully!", RadioHttpError = "Failed to parse asset from file.", RadioHttpFail = "Failed to download audio file.",
         RadioCache = "Audio loaded from persistent local cache!", NoclipToggle = "Noclip", NoclipOn = "Enabled", NoclipOff = "Disabled", SpeedOn = "Enabled", SpeedOff = "Disabled",
         DodgeKnife = "Auto-Dodge Thrown Knife (Jump Right)", BtnDodgeKnife = "Button: Dodge Knife", TpLobby = "Teleport to Lobby", TpMap = "Teleport to Map", BtnTpLobby = "Button: TP Lobby",
-        BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username",
-        SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
+        BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins", UnlockInventory = "Unlock All Skins (Bypass)",
+        SkinNotFound = "Player not found!", SkinSuccess = "Skins visual unlock complete!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
-        BtnTpShoot = "Button: TP & Shoot", -- Добавлено в локализацию
+        BtnTpShoot = "Button: TP & Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
+        SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat", SkinsUnlocked = "Skins unlocked! Open your in-game Inventory."
     },
     ru = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub загружен!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
@@ -154,10 +161,11 @@ local L = {
         RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Внешнее аудио успешно запущено!", RadioHttpError = "Не удалось преобразовать файл в ассет.", RadioHttpFail = "Не удалось скачать аудиофайл.",
         RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
         DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
-        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник игрока для копирования",
-        SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
+        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины", UnlockInventory = "Разблокировать ВСЕ скины инвентаря",
+        SkinNotFound = "Игрок не найден!", SkinSuccess = "Скины визуально разблокированы!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
-        BtnTpShoot = "Кнопка: TP & Shoot", -- Добавлено в локализацию
+        BtnTpShoot = "Кнопка: TP & Shoot", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат", SkinsUnlocked = "Скины разблокированы! Откройте игровой инвентарь."
     }
 }
 
@@ -175,7 +183,7 @@ local function getSafeUIContainer()
     else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
--- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
+-- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) ====================
 local function showCrashMenu(err)
     local traceback = debug.traceback()
     local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
@@ -206,7 +214,9 @@ local function showCrashMenu(err)
         corner.Parent = mainFrame
         
         local stroke = Instance.new("UIStroke")
-        stroke.Color, stroke.Thickness, stroke.Parent = Color3.fromRGB(231, 76, 60), 1.5, mainFrame
+        stroke.Color = Color3.fromRGB(231, 76, 60)
+        stroke.Thickness = 1.5
+        stroke.Parent = mainFrame
         
         local title = Instance.new("TextLabel")
         title.Size = UDim2.new(1, 0, 0, 35)
@@ -315,8 +325,27 @@ local function main()
         error(T("FailedUI"))
     end
 
+    -- ==================== ИНИЦИАЛИЗАЦИЯ ОКНА И ВКЛАДОК WINDUI ====================
+    local Window = WindUI:CreateWindow({
+        Title = "FogyHub",
+        Icon = "shield",
+        Author = "MsD & Gemini",
+        Folder = "FogyHub",
+        Size = UDim2.fromOffset(580, 460),
+        Theme = "Dark",
+        ToggleKey = Enum.KeyCode.RightControl
+    })
+
+    local VisualsTab = Window:Tab({ Title = T("Visuals"), Icon = "eye" })
+    local CombatTab = Window:Tab({ Title = T("Combat"), Icon = "swords" })
+    local UtilityTab = Window:Tab({ Title = T("Utility"), Icon = "tool" })
+    local TeleportsTab = Window:Tab({ Title = T("Teleports"), Icon = "map-pin" })
+    local ButtonsTab = Window:Tab({ Title = T("MobileBinds"), Icon = "smartphone" })
+    local ConfigsTab = Window:Tab({ Title = T("Configs"), Icon = "settings" })
+    local RadioTab = Window:Tab({ Title = T("Radio"), Icon = "music" })
+
     local radioModel, radioSound, currentSongId, radioVolume, radioLooped = nil, nil, "", 2, false
-    local httpSongUrl, grabbingGun, skinChangerNick = "", false, ""
+    local httpSongUrl, grabbingGun = "", false
     local ScreenButtons, BindsScreenGui, originalFog = {}, nil, Lighting.FogEnd 
     local roles, Murder, Sheriff, Hero = {}, nil, nil, nil
 
@@ -547,6 +576,15 @@ local function main()
         radioModel.Parent = char
     end
 
+    -- Симуляция физического клика (клик мыши) на ПК / Тач на мобильном
+    local function simulatePhysicalClick()
+        pcall(function()
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+            task.wait(0.05)
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+        end)
+    end
+
     -- Воспроизведение музыки по ID
     local function playRadio()
         if currentSongId == "" then return end
@@ -573,7 +611,7 @@ local function main()
         
         local cachedFileName = getFileNameFromUrl(httpSongUrl)
         
-        -- Если файл уже физически сохранен в папке чита, моментально запускаем его
+        -- Если файл уже физически сохранен в папке читов, моментально запускаем его
         if isfile and isfile(cachedFileName) then
             local localAsset = nil
             pcall(function()
@@ -599,9 +637,9 @@ local function main()
             local data = httpGet(httpSongUrl)
             if data and #data > 0 then
                 local writeSuccess = pcall(function() writefile(cachedFileName, data) end)
-                local assetId = writeSuccess and pcall(function() return getcustomasset(cachedFileName) end) and getcustomasset(cachedFileName)
+                local getSuccess, assetId = pcall(function() return getcustomasset(cachedFileName) end)
                 
-                if assetId then
+                if writeSuccess and getSuccess and assetId then
                     attachRadio()
                     if not radioModel then return end
                     local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
@@ -645,6 +683,7 @@ local function main()
         
         if handle and hrp and not hasGun() then
             local originalPos = hrp.CFrame
+            local wasAnchored = hrp.Anchored
             
             local noclipConn = RunService.Stepped:Connect(function()
                 if char then
@@ -654,6 +693,7 @@ local function main()
                 end
             end)
             
+            hrp.Anchored = true
             local targetCFrame = handle:IsA("Model") and handle:GetPivot() or (handle:IsA("BasePart") and handle.CFrame)
             if targetCFrame then
                 safeTeleport(targetCFrame)
@@ -679,7 +719,7 @@ local function main()
         grabbingGun = false
     end
 
-    -- Стабильная телепортация в Лобби (Обновлено на точные координаты со скриншота!)
+    -- Стабильная телепортация в Лобби
     local function tpToLobby()
         local lobby = workspace:FindFirstChild("Lobby")
         local spawnLocation = lobby and (lobby:FindFirstChild("Spawn", true) or lobby:FindFirstChildOfClass("SpawnLocation", true) or lobby:FindFirstChild("Spawns", true))
@@ -731,7 +771,7 @@ local function main()
             local tpSuccess = false
             if not weAreMurderer then
                 for _, p in ipairs(Players:GetPlayers()) do
-                    -- Блокируем ТП к Мардеру во избежание мгновенной смерти (Фикс!)
+                    -- Блокируем ТП к Мардеру во избежание мгновенной смерти
                     if p ~= LocalPlayer and p.Name ~= Murder and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
                         local hum = p.Character:FindFirstChildOfClass("Humanoid")
                         if hum and hum.Health > 0 then
@@ -754,35 +794,32 @@ local function main()
         end
     end
 
-    -- Локальный 3D Скинченджер по никнейму игрока
-    local function changeVisualSkin(username)
-        task.spawn(function()
-            local success, userId = pcall(function()
-                return Players:GetUserIdFromNameAsync(username)
-            end)
+    -- ==================== СОВРЕМЕННЫЙ СКИНЧЕНДЖЕР (ОБХОД ПАТЧА) ====================
+    local function applyClientSkinChanger()
+        pcall(function()
+            local ClientData = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("ClientData"))
+            local ItemDatabase = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("ItemDatabase"))
+            local myData = ClientData.get_data()[tostring(LocalPlayer.UserId)]
             
-            if not success or not userId then
-                WindUI:Notify({ Title = T("Visuals"), Content = T("SkinNotFound"), Icon = "x", Duration = 3 })
-                return
-            end
-            
-            local char = LocalPlayer.Character
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if char and hum then
-                local descSuccess, desc = pcall(function()
-                    return Players:GetHumanoidDescriptionFromUserId(userId)
-                end)
-                
-                if descSuccess and desc then
-                    local applySuccess, err = pcall(function()
-                        hum:ApplyDescription(desc)
-                    end)
-                    
-                    if applySuccess then
-                        WindUI:Notify({ Title = T("Visuals"), Content = T("SkinSuccess"), Icon = "check", Duration = 3 })
-                    else
-                        warn("SkinChanger Error:", err)
+            if myData and myData.Inventory then
+                local itemsAdded = 0
+                for category, items in pairs(ItemDatabase) do
+                    if type(items) == "table" then
+                        for itemName, _ in pairs(items) do
+                            if not myData.Inventory[itemName] then
+                                myData.Inventory[itemName] = 1
+                                itemsAdded = itemsAdded + 1
+                            end
+                        end
                     end
+                end
+                if itemsAdded > 0 then
+                    WindUI:Notify({ 
+                        Title = T("Visuals"), 
+                        Content = T("SkinsUnlocked"), 
+                        Icon = "check", 
+                        Duration = 4 
+                    })
                 end
             end
         end)
@@ -804,13 +841,33 @@ local function main()
         if not shotFired then simulatePhysicalClick() end
     end
 
-    local function toggleSlideGlitch()
-        Config.Utility.SlideGlitchEnabled = not Config.Utility.SlideGlitchEnabled saveConfig()
-        WindUI:Notify({ Title = T("SlideGlitch"), Content = Config.Utility.SlideGlitchEnabled and T("SpeedOn") or T("SpeedOff"), Icon = "zap", Duration = 2 })
+    -- Вспомогательный хэндлер изменения состояний UI переключателей
+    local function setToggle(toggleObj, value)
+        if not toggleObj then return end
+        if toggleObj.Set then pcall(function() toggleObj:Set(value) end)
+        elseif toggleObj.SetValue then pcall(function() toggleObj:SetValue(value) end) end
+    end
+    
+    local function setSlider(sliderObj, value)
+        if not sliderObj then return end
+        if sliderObj.Set then pcall(function() sliderObj:Set(value) end)
+        elseif sliderObj.SetValue then pcall(function() sliderObj:SetValue(value) end) end
+    end
+
+    -- Взаимосвязанные переключатели
+    local function toggleSlideGlitch(state)
+        if state == nil then state = not Config.Utility.SlideGlitchEnabled end
+        Config.Utility.SlideGlitchEnabled = state
+        saveConfig()
+        setToggle(UI_Elements.Utility.SlideGlitchEnabled, state)
+        WindUI:Notify({ Title = T("SlideGlitch"), Content = state and T("SpeedOn") or T("SpeedOff"), Icon = "zap", Duration = 2 })
     end
 
     local function toggleNoclip(state)
-        Config.Utility.NoclipEnabled = state saveConfig()
+        if state == nil then state = not Config.Utility.NoclipEnabled end
+        Config.Utility.NoclipEnabled = state
+        saveConfig()
+        setToggle(UI_Elements.Utility.NoclipEnabled, state)
         WindUI:Notify({ Title = T("NoclipToggle"), Content = state and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 })
     end
 
@@ -840,14 +897,18 @@ local function main()
                         char.HumanoidRootPart.CFrame = victim.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.2)
                         task.wait(0.04) knife:Activate()
                         pcall(function()
-                            firetouchinterest(victim.Character.HumanoidRootPart, knife.Handle, 0)
-                            firetouchinterest(victim.Character.HumanoidRootPart, knife.Handle, 1)
+                            local targetPart = victim.Character:FindFirstChild("HumanoidRootPart") or victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                            if targetPart then
+                                firetouchinterest(targetPart, knife.Handle, 0)
+                                firetouchinterest(targetPart, knife.Handle, 1)
+                            end
                         end)
                         task.wait(0.04)
                     end
                 end
             end
-            char.HumanoidRootPart.CFrame, char:PivotTo(originalPos) = originalPos, originalPos
+            char.HumanoidRootPart.CFrame = originalPos
+            char:PivotTo(originalPos)
         end
     end
 
@@ -918,16 +979,15 @@ local function main()
     local function flingPlayer(targetPlayer)
         local Character = LocalPlayer.Character
         local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
-        local RootPart = Humanoid and Humanoid.RootPart
+        local RootPart = Character and (Character:FindFirstChild("HumanoidRootPart") or (Humanoid and Humanoid.RootPart))
         local TCharacter = targetPlayer.Character
         if not TCharacter then return end
         
-        local THumanoid, TRootPart, THead, Accessory, Handle
-        if TCharacter:FindFirstChildOfClass("Humanoid") then THumanoid = TCharacter:FindFirstChildOfClass("Humanoid") end
-        if THumanoid and THumanoid.RootPart then TRootPart = THumanoid.RootPart end
-        if TCharacter:FindFirstChild("Head") then THead = TCharacter.Head end
-        if TCharacter:FindFirstChildOfClass("Accessory") then Accessory = TCharacter:FindFirstChildOfClass("Accessory") end
-        if Accessory and Accessory:FindFirstChild("Handle") then Handle = Accessory.Handle end
+        local THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
+        local TRootPart = TCharacter:FindFirstChild("HumanoidRootPart") or (THumanoid and THumanoid.RootPart)
+        local THead = TCharacter:FindFirstChild("Head")
+        local Accessory = TCharacter:FindFirstChildOfClass("Accessory")
+        local Handle = Accessory and Accessory:FindFirstChild("Handle")
         
         if Character and Humanoid and RootPart then
             if RootPart.Velocity.Magnitude < 50 then getgenv().OldPos = RootPart.CFrame end
@@ -947,12 +1007,16 @@ local function main()
                 Character:PivotTo(targetCFrame)
                 RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
                 RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+                pcall(function()
+                    RootPart.AssemblyLinearVelocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+                    RootPart.AssemblyAngularVelocity = Vector3.new(9e8, 9e8, 9e8)
+                end)
             end
             
             local SFBasePart = function(BasePart)
                 local TimeToWait, Time, Angle = 1.5, tick(), 0
                 repeat
-                    if RootPart and THumanoid then
+                    if RootPart and THumanoid and BasePart then
                         if BasePart.Velocity.Magnitude < 50 then
                             Angle = Angle + 100
                             FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
@@ -985,7 +1049,7 @@ local function main()
                             task.wait()
                         end
                     end
-                until Time + TimeToWait < tick() or not BasePart.Parent
+                until Time + TimeToWait < tick() or not BasePart.Parent or not RootPart.Parent or (THumanoid and THumanoid.Health <= 0) or (Humanoid and Humanoid.Health <= 0)
             end
             
             getgenv().FPDH = workspace.FallenPartsDestroyHeight
@@ -1018,13 +1082,13 @@ local function main()
                         if part:IsA("BasePart") then part.Velocity, part.RotVelocity = Vector3.new(), Vector3.new() end
                     end
                     task.wait()
-                until (RootPart.Position - getgenv().OldPos.Position).Magnitude < 25
+                until (RootPart.Position - getgenv().OldPos.Position).Magnitude < 25 or not RootPart.Parent
                 workspace.FallenPartsDestroyHeight = getgenv().FPDH
             end
         end
     end
 
-    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПОК (С ДРАГОМ НА КНОПКЕ) ====================
+    -- ==================== ИСПРАВЛЕННЫЕ ПЛАВАЮЩИЕ КНОПКИ ====================
     local function createFloatingButton(name, translationKey, callback)
         if ScreenButtons[name] then ScreenButtons[name]:Destroy() end
         local sg = getBindsScreenGui()
@@ -1039,13 +1103,19 @@ local function main()
         local h = baseHeight * Config.MobileButtons.ButtonScale
         frame.Size = UDim2.new(0, w, 0, h)
         
-        local offsets = {
-            ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
-            ["TP & Shoot"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325,
-            ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460,
-            ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
-        }
-        frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
+        -- Прогрузка сохраненных или дефолтных положений без багов автосохранения
+        local savedPos = Config.ButtonPositions[name]
+        if savedPos then
+            frame.Position = UDim2.new(0, savedPos.X, 0, savedPos.Y)
+        else
+            local offsets = {
+                ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
+                ["Slide Glitch"] = 235, ["Noclip"] = 280, ["Kill Aura"] = 325,
+                ["Auto Kill All"] = 370, ["Godmode"] = 415, ["TP Lobby"] = 460, 
+                ["TP Map"] = 505, ["Aimlock"] = 550, ["TP & Shoot"] = 595
+            }
+            frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
+        end
         frame.BackgroundColor3, frame.BorderSizePixel, frame.BorderColor3 = Color3.fromRGB(30, 30, 30), 1, Color3.fromRGB(0, 150, 255)
         frame.Active, frame.Parent = true, sg
         
@@ -1090,7 +1160,15 @@ local function main()
         
         UserInputService.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                dragging = false
+                if dragging then
+                    dragging = false
+                    -- Сохраняем новую физическую позицию кнопки в конфиг
+                    Config.ButtonPositions[name] = {
+                        X = frame.Position.X.Offset,
+                        Y = frame.Position.Y.Offset
+                    }
+                    saveConfig()
+                end
             end
         end)
         
@@ -1109,18 +1187,6 @@ local function main()
         MobileButtons = {}
     }
 
-    local function setToggle(toggleObj, value)
-        if not toggleObj then return end
-        if toggleObj.Set then pcall(function() toggleObj:Set(value) end)
-        elseif toggleObj.SetValue then pcall(function() toggleObj:SetValue(value) end) end
-    end
-    
-    local function setSlider(sliderObj, value)
-        if not sliderObj then return end
-        if sliderObj.Set then pcall(function() sliderObj:Set(value) end)
-        elseif sliderObj.SetValue then pcall(function() sliderObj:SetValue(value) end) end
-    end
-
     -- Функция применения конфига ко всем графическим элементам меню (Решает рассинхрон)
     local function applyConfigToUI()
         -- 1. Визуалы
@@ -1135,6 +1201,7 @@ local function main()
         -- 2. Бой
         setToggle(UI_Elements.Combat.AutoShootMurderer, Config.Combat.AutoShootMurderer)
         setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled)
+        setToggle(UI_Elements.Combat.SilentAimEnabled, Config.Combat.SilentAimEnabled) -- Новое!
         setToggle(UI_Elements.Combat.AutoDodgeKnife, Config.Combat.AutoDodgeKnife)
         setToggle(UI_Elements.Combat.KillAuraEnabled, Config.Combat.KillAuraEnabled)
         setSlider(UI_Elements.Combat.KillAuraRange, Config.Combat.KillAuraRange)
@@ -1145,6 +1212,9 @@ local function main()
         setSlider(UI_Elements.Utility.SlideSpeedForce, Config.Utility.SlideSpeedForce)
         setToggle(UI_Elements.Utility.NoclipEnabled, Config.Utility.NoclipEnabled)
         setToggle(UI_Elements.Utility.AntiFling, Config.Utility.AntiFling)
+        setToggle(UI_Elements.Utility.AutoFarmCoins, Config.Utility.AutoFarmCoins)         -- Новое!
+        setToggle(UI_Elements.Utility.EmoteSpamEnabled, Config.Utility.EmoteSpamEnabled)   -- Новое!
+        setToggle(UI_Elements.Utility.ChatAlertsEnabled, Config.Utility.ChatAlertsEnabled)   -- Новое!
         
         -- 4. Мобильные кнопки
         setToggle(UI_Elements.MobileButtons.LockMobileButtons, Config.MobileButtons.LockMobileButtons)
@@ -1155,15 +1225,37 @@ local function main()
             ["Grab Gun"] = "BtnGrab", ["Slide Glitch"] = "BtnSlide", ["Noclip"] = "BtnNoclip",
             ["Kill Aura"] = "BtnKillAura", ["Auto Kill All"] = "BtnKillAll",
             ["Godmode"] = "BtnGodMode", ["TP Lobby"] = "BtnTpLobby", ["TP Map"] = "BtnTpMap",
-            ["Aimlock"] = "BtnAimlock"
+            ["Aimlock"] = "BtnAimlock", ["TP & Shoot"] = "BtnTpShoot"
         }) do
             setToggle(UI_Elements.MobileButtons[name], Config.MobileButtons[name])
         end
+
+        -- Синхронизация мобильных кнопок на экране
+        for name, _ in pairs(Config.MobileButtons) do
+            if name ~= "LockMobileButtons" and name ~= "ButtonScale" then
+                local state = Config.MobileButtons[name]
+                if state then
+                    if name == "Fling Murderer" then createFloatingButton("Fling Murderer", "FlingM", function() local m = getMurderer() if m then flingPlayer(m) end end)
+                    elseif name == "Fling Sheriff" then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(sh) end end)
+                    elseif name == "Grab Gun" then createFloatingButton("Grab Gun", "AutoGrab", grabGun)
+                    elseif name == "Slide Glitch" then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch)
+                    elseif name == "Noclip" then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.Utility.NoclipEnabled) end)
+                    elseif name == "Kill Aura" then createFloatingButton("Kill Aura", "KillAura", function() Config.Combat.KillAuraEnabled = not Config.Combat.KillAuraEnabled setToggle(UI_Elements.Combat.KillAuraEnabled, Config.Combat.KillAuraEnabled) WindUI:Notify({ Title = "Kill Aura", Content = Config.Combat.KillAuraEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "swords", Duration = 2 }) end)
+                    elseif name == "Auto Kill All" then createFloatingButton("Auto Kill All", "AutoKillAll", autoKillAll)
+                    elseif name == "Godmode" then createFloatingButton("Godmode", "GodMode", function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife setToggle(UI_Elements.Combat.AutoDodgeKnife, Config.Combat.AutoDodgeKnife) WindUI:Notify({ Title = "Auto Dodge", Content = Config.Combat.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end)
+                    elseif name == "TP Lobby" then createFloatingButton("TP Lobby", "TpLobby", tpToLobby)
+                    elseif name == "TP Map" then createFloatingButton("TP Map", "TpMap", tpToMap)
+                    elseif name == "Aimlock" then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end)
+                    elseif name == "TP & Shoot" then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) end
+                else
+                    removeFloatingButton(name)
+                end
+            end
+        end
+        updateButtonSizes()
     end
 
     -- ==================== ВЕРСТКА ИНТЕРФЕЙСА FOGYHUB ====================
-
-    local ConfigsTab = Window:Tab({ Title = T("Configs"), Icon = "settings" }) -- Вкладка конфигов
 
     -- Вкладка Визуалы
     UI_Elements.Visuals.MurdererESP = VisualsTab:Toggle({ Title = T("EspM"), Value = Config.Visuals.MurdererESP, Callback = function(s) Config.Visuals.MurdererESP = s saveConfig() end })
@@ -1194,13 +1286,13 @@ local function main()
     UI_Elements.Visuals.NoFogEnabled = VisualsTab:Toggle({ Title = T("NoFog"), Value = Config.Visuals.NoFogEnabled, Callback = function(s) Config.Visuals.NoFogEnabled = s saveConfig() Lighting.FogEnd = s and 9e9 or originalFog end })
     VisualsTab:Slider({ Title = T("TimeOfDay"), Step = 1, Value = { Min = 0, Max = 24, Default = Config.Visuals.TimeOfDay }, Callback = function(v) Config.Visuals.TimeOfDay = v saveConfig() Lighting.TimeOfDay = string.format("%02d:00:00", v) end })
     
-    -- Локальный Скинченджер
-    VisualsTab:Input({ Title = T("SkinChangerInput"), Value = "", Placeholder = "Roblox Username...", Callback = function(t) skinChangerNick = t end })
-    VisualsTab:Button({ Title = T("SkinChangerBtn"), Callback = function() changeVisualSkin(skinChangerNick) end })
+    -- Инновационный Скинченджер (Обход патча)
+    VisualsTab:Button({ Title = T("UnlockInventory"), Callback = applyClientSkinChanger })
 
     -- Вкладка Бой
     UI_Elements.Combat.AutoShootMurderer = CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.Combat.AutoShootMurderer, Callback = function(s) Config.Combat.AutoShootMurderer = s saveConfig() end })
     UI_Elements.Combat.AimlockEnabled = CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.Combat.AimlockEnabled, Callback = function(s) Config.Combat.AimlockEnabled = s saveConfig() end })
+    UI_Elements.Combat.SilentAimEnabled = CombatTab:Toggle({ Title = T("SilentAim"), Value = Config.Combat.SilentAimEnabled, Callback = function(s) Config.Combat.SilentAimEnabled = s saveConfig() end }) -- Новое!
     CombatTab:Button({ Title = T("TpShoot"), Callback = tpBehindAndShoot })
     
     -- Авто-уклонение от ножей
@@ -1212,7 +1304,7 @@ local function main()
     CombatTab:Button({ Title = T("AutoKillAll"), Callback = autoKillAll })
     CombatTab:Button({ Title = T("FlingM"), Callback = function() local m = getMurderer() if m then flingPlayer(m) else WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 }) end end })
     
-    -- Исправлен бинд флинга Шерифа
+    -- Флинг Шерифа
     CombatTab:Button({ 
         Title = T("FlingS"), 
         Callback = function() 
@@ -1227,10 +1319,15 @@ local function main()
 
     -- Вкладка Утилиты
     UI_Elements.Utility.AutoGrabGun = UtilityTab:Toggle({ Title = T("AutoGrab"), Value = Config.Utility.AutoGrabGun, Callback = function(s) Config.Utility.AutoGrabGun = s saveConfig() end })
-    UI_Elements.Utility.SlideGlitchEnabled = UtilityTab:Toggle({ Title = T("SlideGlitch"), Value = Config.Utility.SlideGlitchEnabled, Callback = function(s) Config.Utility.SlideGlitchEnabled = s saveConfig() end })
+    UI_Elements.Utility.SlideGlitchEnabled = UtilityTab:Toggle({ Title = T("SlideGlitch"), Value = Config.Utility.SlideGlitchEnabled, Callback = function(s) if s ~= Config.Utility.SlideGlitchEnabled then toggleSlideGlitch(s) end end })
     UI_Elements.Utility.SlideSpeedForce = UtilityTab:Slider({ Title = T("SlideSpeed"), Step = 5, Value = { Min = 15, Max = 100, Default = Config.Utility.SlideSpeedForce }, Callback = function(v) Config.Utility.SlideSpeedForce = v saveConfig() end })
-    UI_Elements.Utility.NoclipEnabled = UtilityTab:Toggle({ Title = T("Noclip"), Value = Config.Utility.NoclipEnabled, Callback = toggleNoclip })
+    UI_Elements.Utility.NoclipEnabled = UtilityTab:Toggle({ Title = T("Noclip"), Value = Config.Utility.NoclipEnabled, Callback = function(s) if s ~= Config.Utility.NoclipEnabled then toggleNoclip(s) end end })
     
+    -- Новые утилиты!
+    UI_Elements.Utility.AutoFarmCoins = UtilityTab:Toggle({ Title = T("AutoFarmCoins"), Value = Config.Utility.AutoFarmCoins, Callback = function(s) Config.Utility.AutoFarmCoins = s saveConfig() end })
+    UI_Elements.Utility.EmoteSpamEnabled = UtilityTab:Toggle({ Title = T("EmoteSpam"), Value = Config.Utility.EmoteSpamEnabled, Callback = function(s) Config.Utility.EmoteSpamEnabled = s saveConfig() end })
+    UI_Elements.Utility.ChatAlertsEnabled = UtilityTab:Toggle({ Title = T("ChatAlerts"), Value = Config.Utility.ChatAlertsEnabled, Callback = function(s) Config.Utility.ChatAlertsEnabled = s saveConfig() end })
+
     local antiFlingConnection = nil
     UI_Elements.Utility.AntiFling = UtilityTab:Toggle({
         Title = T("AntiFling"), Value = Config.Utility.AntiFling, Callback = function(state)
@@ -1244,13 +1341,31 @@ local function main()
                 if not Config.Utility.AntiFling then return end
                 for _, p in ipairs(Players:GetPlayers()) do
                     if p ~= LocalPlayer and p.Character then
-                        for _, part in ipairs(p.Character:GetDescendants()) do
-                            if part:IsA("BasePart") then part.CanCollide = false end
+                        for _, part in ipairs(p.Character:GetChildren()) do
+                            if part:IsA("BasePart") then 
+                                part.CanCollide = false 
+                            elseif part:IsA("Accessory") then
+                                local handle = part:FindFirstChild("Handle")
+                                if handle and handle:IsA("BasePart") then
+                                    handle.CanCollide = false
+                                end
+                            end
                         end
                     end
                 end
                 local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if hrp and hrp.Velocity.Magnitude > 100 then hrp.Velocity, hrp.RotVelocity = Vector3.new(0, 0, 0), Vector3.new(0, 0, 0) end
+                if hrp then
+                    if hrp.Velocity.Magnitude > 100 then 
+                        hrp.Velocity = Vector3.new(0, 0, 0)
+                        hrp.RotVelocity = Vector3.new(0, 0, 0)
+                    end
+                    pcall(function()
+                        if hrp.AssemblyLinearVelocity.Magnitude > 100 then
+                            hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                            hrp.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                        end
+                    end)
+                end
             end)
         end
     })
@@ -1268,12 +1383,12 @@ local function main()
     UI_Elements.MobileButtons["Grab Gun"] = ButtonsTab:Toggle({ Title = T("BtnGrab"), Value = Config.MobileButtons["Grab Gun"], Callback = function(s) Config.MobileButtons["Grab Gun"] = s saveConfig() if s then createFloatingButton("Grab Gun", "AutoGrab", grabGun) else removeFloatingButton("Grab Gun") end end })
     UI_Elements.MobileButtons["Slide Glitch"] = ButtonsTab:Toggle({ Title = T("BtnSlide"), Value = Config.MobileButtons["Slide Glitch"], Callback = function(s) Config.MobileButtons["Slide Glitch"] = s saveConfig() if s then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch) else removeFloatingButton("Slide Glitch") end end })
     UI_Elements.MobileButtons["Noclip"] = ButtonsTab:Toggle({ Title = T("BtnNoclip"), Value = Config.MobileButtons["Noclip"], Callback = function(s) Config.MobileButtons["Noclip"] = s saveConfig() if s then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.Utility.NoclipEnabled) end) else removeFloatingButton("Noclip") end end })
-    UI_Elements.MobileButtons["Kill Aura"] = ButtonsTab:Toggle({ Title = T("BtnKillAura"), Value = Config.MobileButtons["Kill Aura"], Callback = function(s) Config.MobileButtons["Kill Aura"] = s saveConfig() if s then createFloatingButton("Kill Aura", "KillAura", function() Config.Combat.KillAuraEnabled = not Config.Combat.KillAuraEnabled WindUI:Notify({ Title = "Kill Aura", Content = Config.Combat.KillAuraEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "swords", Duration = 2 }) end) else removeFloatingButton("Kill Aura") end end })
+    UI_Elements.MobileButtons["Kill Aura"] = ButtonsTab:Toggle({ Title = T("BtnKillAura"), Value = Config.MobileButtons["Kill Aura"], Callback = function(s) Config.MobileButtons["Kill Aura"] = s saveConfig() if s then createFloatingButton("Kill Aura", "KillAura", function() Config.Combat.KillAuraEnabled = not Config.Combat.KillAuraEnabled setToggle(UI_Elements.Combat.KillAuraEnabled, Config.Combat.KillAuraEnabled) WindUI:Notify({ Title = "Kill Aura", Content = Config.Combat.KillAuraEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "swords", Duration = 2 }) end) else removeFloatingButton("Kill Aura") end end })
     UI_Elements.MobileButtons["Auto Kill All"] = ButtonsTab:Toggle({ Title = T("BtnKillAll"), Value = Config.MobileButtons["Auto Kill All"], Callback = function(s) Config.MobileButtons["Auto Kill All"] = s saveConfig() if s then createFloatingButton("Auto Kill All", "AutoKillAll", autoKillAll) else removeFloatingButton("Auto Kill All") end end })
-    UI_Elements.MobileButtons["Godmode"] = ButtonsTab:Toggle({ Title = T("BtnGodMode"), Value = Config.MobileButtons["Godmode"], Callback = function(s) Config.MobileButtons["Godmode"] = s saveConfig() if s then createFloatingButton("Godmode", "GodMode", function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife WindUI:Notify({ Title = "Auto Dodge", Content = Config.Combat.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end) else removeFloatingButton("Godmode") end end })
+    UI_Elements.MobileButtons["Godmode"] = ButtonsTab:Toggle({ Title = T("BtnGodMode"), Value = Config.MobileButtons["Godmode"], Callback = function(s) Config.MobileButtons["Godmode"] = s saveConfig() if s then createFloatingButton("Godmode", "GodMode", function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife setToggle(UI_Elements.Combat.AutoDodgeKnife, Config.Combat.AutoDodgeKnife) WindUI:Notify({ Title = "Auto Dodge", Content = Config.Combat.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end) else removeFloatingButton("Godmode") end end })
     UI_Elements.MobileButtons["TP Lobby"] = ButtonsTab:Toggle({ Title = T("BtnTpLobby"), Value = Config.MobileButtons["TP Lobby"], Callback = function(s) Config.MobileButtons["TP Lobby"] = s saveConfig() if s then createFloatingButton("TP Lobby", "TpLobby", tpToLobby) else removeFloatingButton("TP Lobby") end end }) 
     UI_Elements.MobileButtons["TP Map"] = ButtonsTab:Toggle({ Title = T("BtnTpMap"), Value = Config.MobileButtons["TP Map"], Callback = function(s) Config.MobileButtons["TP Map"] = s saveConfig() if s then createFloatingButton("TP Map", "TpMap", tpToMap) else removeFloatingButton("TP Map") end end }) 
-    UI_Elements.MobileButtons["Aimlock"] = ButtonsTab:Toggle({ Title = T("BtnAimlock"), Value = Config.MobileButtons["Aimlock"], Callback = function(s) Config.MobileButtons["Aimlock"] = s saveConfig() if s then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end) else removeFloatingButton("Aimlock") end end }) 
+    UI_Elements.MobileButtons["Aimlock"] = ButtonsTab:Toggle({ Title = T("BtnAimlock"), Value = Config.MobileButtons["Aimlock"], Callback = function(s) Config.MobileButtons["Aimlock"] = s saveConfig() if s then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end) else removeFloatingButton("Aimlock") end end }) 
     UI_Elements.MobileButtons["TP & Shoot"] = ButtonsTab:Toggle({ Title = T("BtnTpShoot"), Value = Config.MobileButtons["TP & Shoot"], Callback = function(s) Config.MobileButtons["TP & Shoot"] = s saveConfig() if s then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) else removeFloatingButton("TP & Shoot") end end }) -- Кнопка ТП-Выстрел
 
     -- Вкладка Конфиги
@@ -1281,8 +1396,8 @@ local function main()
     ConfigsTab:Button({ Title = T("LoadConfigBtn"), Callback = function() loadConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfLoaded"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
         Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14 }
-        Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
-        Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false }
+        Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
+        Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false }
         Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["TP & Shoot"] = false }
         saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
     end })
@@ -1298,6 +1413,23 @@ local function main()
     RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
     RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
 
+    -- Автоматическое восстановление активного Радио на вашей спине при возрождении (QOL фича)
+    LocalPlayer.CharacterAdded:Connect(function(char)
+        task.wait(1)
+        if radioSound and radioSound.Playing then
+            attachRadio()
+            if radioModel then
+                local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
+                sound.Name = "RadioSound"
+                sound.SoundId = radioSound.SoundId
+                sound.Volume = radioVolume
+                sound.Looped = radioLooped
+                sound:Play()
+                radioSound = sound
+            end
+        end
+    end)
+
     -- Автоматическое воссоздание активных мобильных кнопок при старте на основе конфига (Решает ресинхрон)
     task.spawn(function()
         task.wait(0.5) -- Ожидание прогрузки UI
@@ -1308,12 +1440,12 @@ local function main()
                 elseif btnName == "Grab Gun" then createFloatingButton("Grab Gun", "AutoGrab", grabGun)
                 elseif btnName == "Slide Glitch" then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch)
                 elseif btnName == "Noclip" then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.Utility.NoclipEnabled) end)
-                elseif btnName == "Kill Aura" then createFloatingButton("Kill Aura", "KillAura", function() Config.Combat.KillAuraEnabled = not Config.Combat.KillAuraEnabled WindUI:Notify({ Title = "Kill Aura", Content = Config.Combat.KillAuraEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "swords", Duration = 2 }) end)
+                elseif btnName == "Kill Aura" then createFloatingButton("Kill Aura", "KillAura", function() Config.Combat.KillAuraEnabled = not Config.Combat.KillAuraEnabled setToggle(UI_Elements.Combat.KillAuraEnabled, Config.Combat.KillAuraEnabled) WindUI:Notify({ Title = "Kill Aura", Content = Config.Combat.KillAuraEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "swords", Duration = 2 }) end)
                 elseif btnName == "Auto Kill All" then createFloatingButton("Auto Kill All", "AutoKillAll", autoKillAll)
-                elseif btnName == "Godmode" then createFloatingButton("Godmode", "GodMode", function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife WindUI:Notify({ Title = "Auto Dodge", Content = Config.Combat.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end)
+                elseif btnName == "Godmode" then createFloatingButton("Godmode", "GodMode", function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife setToggle(UI_Elements.Combat.AutoDodgeKnife, Config.Combat.AutoDodgeKnife) WindUI:Notify({ Title = "Auto Dodge", Content = Config.Combat.AutoDodgeKnife and T("NoclipOn") or T("NoclipOff"), Icon = "shield", Duration = 2 }) end)
                 elseif btnName == "TP Lobby" then createFloatingButton("TP Lobby", "TpLobby", tpToLobby)
                 elseif btnName == "TP Map" then createFloatingButton("TP Map", "TpMap", tpToMap)
-                elseif btnName == "Aimlock" then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end)
+                elseif btnName == "Aimlock" then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end)
                 elseif btnName == "TP & Shoot" then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) end
             end
         end
@@ -1327,13 +1459,40 @@ local function main()
             local success, keyStr = pcall(function() return input.KeyCode and input.KeyCode.Name end)
             if success and keyStr then
                 if keyStr == "F" then local m = getMurderer() if m then flingPlayer(m) end
-                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(sh) end
+                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(s) end 
                 elseif keyStr == "T" then grabGun()
                 elseif keyStr == "C" then toggleSlideGlitch()
                 elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled) end
             end
         end
     end)
+
+    -- Оповещения в чат при раскрытии ролей (Только для вас)
+    local lastMurder, lastSheriff = nil, nil
+    local function notifyRolesInChat()
+        pcall(function()
+            local mPlayer = Murder and Players:FindFirstChild(Murder)
+            local sPlayer = Sheriff and Players:FindFirstChild(Sheriff)
+            
+            local message = ""
+            if mPlayer then
+                message = message .. "[FogyHub] Убийца: " .. mPlayer.DisplayName .. " (@" .. mPlayer.Name .. ")"
+            end
+            if sPlayer then
+                if message ~= "" then message = message .. " | " end
+                message = message .. "Шериф: " .. sPlayer.DisplayName .. " (@" .. sPlayer.Name .. ")"
+            end
+            
+            if message ~= "" then
+                game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+                    Text = message,
+                    Color = Color3.fromRGB(0, 150, 255),
+                    Font = Enum.Font.SourceSansBold,
+                    TextSize = 15
+                })
+            end
+        end)
+    end
 
     -- Цикл ESP (Фоновый опрос роли и статуса с сервера раз в 0.3 сек для максимальной оптимизации сети)
     task.spawn(function()
@@ -1355,6 +1514,15 @@ local function main()
                         Hero = i
                     end
                 end
+                
+                -- Локальные оповещения о ролях при смене раунда
+                if Config.Utility.ChatAlertsEnabled then
+                    if Murder ~= lastMurder or Sheriff ~= lastSheriff then
+                        lastMurder = Murder
+                        lastSheriff = Sheriff
+                        task.spawn(notifyRolesInChat)
+                    end
+                end
             end
             
             for _, player in ipairs(Players:GetPlayers()) do
@@ -1363,14 +1531,13 @@ local function main()
                     local isM, isS, isH = false, false, false
                     local alive = IsAlive(player)
                     
-                    -- Определение ролей на основе серверных API данных
+                    -- Определение ролей на основе серверных данных
                     if player.Name == Murder and alive then
                         isM = true
                     elseif player.Name == Sheriff and alive then
                         isS = true
                     elseif player.Name == Hero and alive then
                         local sheriffPlayer = Sheriff and Players:FindFirstChild(Sheriff)
-                        -- Если Шериф мертв, красим Героя в желтый. Если жив — считаем его мирным.
                         if sheriffPlayer and not IsAlive(sheriffPlayer) then
                             isH = true
                         end
@@ -1387,7 +1554,6 @@ local function main()
                     
                     -- Отрисовка ESP цветов в зависимости от условий
                     if not alive or inLobby then
-                        -- Мертвые или наблюдатели в лобби подсвечиваются серым
                         if Config.Visuals.MurdererESP or Config.Visuals.SheriffESP or Config.Visuals.InnocentESP then
                             applyHighlight(player, Color3.fromRGB(150, 150, 150))
                         else
@@ -1399,7 +1565,6 @@ local function main()
                             removeBoxESP(player)
                         end
                     else
-                        -- Активные выжившие на карте красятся по своим ролям
                         local renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый по умолчанию
                         
                         if isM then
@@ -1428,11 +1593,88 @@ local function main()
         end
     end)
 
-    -- Цикл автоподбора
+    -- Цикл автоподбора пистолета
     task.spawn(function()
         while true do
             task.wait(0.2)
-            if Config.Utility.AutoGrabGun and workspace:FindFirstChild("GunDrop") then grabGun() task.wait(1) end
+            if Config.Utility.AutoGrabGun and (workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)) then 
+                grabGun() 
+                task.wait(1) 
+            end
+        end
+    end)
+
+    -- Цикл автофарма монет (Плавное бесшумное скольжение на Heartbeat!)
+    local function getCoinsOnMap()
+        local coins = {}
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") and (v.Name == "Coin_Highlight" or v.Name == "CoinContainer" or v.Name == "Coin") then
+                table.insert(coins, v)
+            end
+        end
+        return coins
+    end
+
+    task.spawn(function()
+        while true do
+            task.wait(0.1)
+            if Config.Utility.AutoFarmCoins then
+                local char = LocalPlayer.Character
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local coins = getCoinsOnMap()
+                    local nearestCoin, minDist = nil, math.huge
+                    
+                    for _, coin in ipairs(coins) do
+                        local dist = (coin.Position - hrp.Position).Magnitude
+                        if dist < minDist then
+                            minDist = dist
+                            nearestCoin = coin
+                        end
+                    end
+                    
+                    if nearestCoin then
+                        local stepConn
+                        stepConn = RunService.Heartbeat:Connect(function(dt)
+                            if not Config.Utility.AutoFarmCoins or not nearestCoin or not nearestCoin.Parent or not hrp.Parent then
+                                if stepConn then stepConn:Disconnect() end
+                                return
+                            end
+                            local dir = (nearestCoin.Position - hrp.Position).Unit
+                            -- Скорость 22 studs/s (безопасный порог против анти-чита Roblox)
+                            hrp.CFrame = hrp.CFrame + (dir * (22 * dt))
+                            if (nearestCoin.Position - hrp.Position).Magnitude < 4 then
+                                if stepConn then stepConn:Disconnect() end
+                            end
+                        end)
+                        
+                        local timeout = 0
+                        while nearestCoin and nearestCoin.Parent and Config.Utility.AutoFarmCoins and timeout < 100 do
+                            if (nearestCoin.Position - hrp.Position).Magnitude < 4 then break end
+                            task.wait(0.05)
+                            timeout = timeout + 1
+                        end
+                        if stepConn then stepConn:Disconnect() end
+                    end
+                end
+            end
+        end
+    end)
+
+    -- Цикл Спама Эмоций (Zen/Sit Глитч вашего хитбокса)
+    task.spawn(function()
+        while true do
+            task.wait(0.2)
+            if Config.Utility.EmoteSpamEnabled then
+                pcall(function()
+                    local playEmote = game:GetService("ReplicatedStorage"):FindFirstChild("PlayEmote")
+                    if playEmote and playEmote:IsA("RemoteEvent") then
+                        playEmote:FireServer("zen")
+                        task.wait(0.1)
+                        playEmote:FireServer("sit")
+                    end
+                end)
+            end
         end
     end)
 
@@ -1468,14 +1710,34 @@ local function main()
         end
     end)
 
-    -- Бесконечный спидглитч
-    RunService.Heartbeat:Connect(function()
+    -- Бесконечный спидглитч (Откалиброван под любые герцовки мониторов с защитой от вылета!)
+    RunService.Heartbeat:Connect(function(deltaTime)
         local char = LocalPlayer.Character
         local hum = char and char:FindFirstChildOfClass("Humanoid")
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
         if hrp and hum and Config.Utility.SlideGlitchEnabled and hum.MoveDirection.Magnitude > 0 then
             local slideVector = Vector3.new(hum.MoveDirection.X, 0, hum.MoveDirection.Z).Unit
-            hrp.CFrame = hrp.CFrame + (slideVector * (Config.Utility.SlideSpeedForce / 100))
+            hrp.CFrame = hrp.CFrame + (slideVector * (Config.Utility.SlideSpeedForce * deltaTime))
+        end
+    end)
+
+    -- Silent Aim (Сетевой перехват пули без дергания камеры!)
+    pcall(function()
+        if hookmetamethod then
+            local oldNamecall
+            oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+                local args = {...}
+                local method = getnamecallmethod()
+                if tostring(self) == "ShootGun" and method == "InvokeServer" and Config.Combat.SilentAimEnabled then
+                    local m = getMurderer()
+                    if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
+                        local targetPos = m.Character.HumanoidRootPart.Position
+                        args[2] = targetPos
+                        args[3] = targetPos
+                    end
+                end
+                return oldNamecall(self, unpack(args))
+            end)
         end
     end)
 
@@ -1496,8 +1758,11 @@ local function main()
                         if dist <= Config.Combat.KillAuraRange then
                             knife:Activate()
                             pcall(function()
-                                firetouchinterest(victim.Character.HumanoidRootPart, knife.Handle, 0)
-                                firetouchinterest(victim.Character.HumanoidRootPart, knife.Handle, 1)
+                                local targetPart = victim.Character:FindFirstChild("HumanoidRootPart") or victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                                if targetPart then
+                                    firetouchinterest(targetPart, knife.Handle, 0)
+                                    firetouchinterest(targetPart, knife.Handle, 1)
+                                end
                             end)
                         end
                     end
