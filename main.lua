@@ -38,7 +38,7 @@ local Config = {
     Combat = {
         AutoShootMurderer = false,
         AimlockEnabled = false,
-        SilentAimEnabled = false, -- Новое!
+        SilentAimEnabled = false,
         AutoDodgeKnife = false, 
         KillAuraEnabled = false,
         KillAuraRange = 25,
@@ -49,15 +49,16 @@ local Config = {
         SlideSpeedForce = 45,
         NoclipEnabled = false,
         AntiFling = false,
-        AutoFarmCoins = false,      -- Новое!
-        EmoteSpamEnabled = false,   -- Новое!
-        ChatAlertsEnabled = false,  -- Новое!
+        AutoFarmCoins = false,      
+        EmoteSpamEnabled = false,   
+        ChatAlertsEnabled = false,  
     },
     MobileButtons = {
         LockMobileButtons = false,
         ButtonScale = 1.0,
         ["Fling Murderer"] = false,
         ["Fling Sheriff"] = false,
+        ["Fling Hero"] = false, -- Новое!
         ["Grab Gun"] = false,
         ["Slide Glitch"] = false,
         ["Noclip"] = false,
@@ -72,16 +73,17 @@ local Config = {
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100},
         ["Fling Sheriff"] = {X = 30, Y = 145},
-        ["Grab Gun"] = {X = 30, Y = 190},
-        ["Slide Glitch"] = {X = 30, Y = 235},
-        ["Noclip"] = {X = 30, Y = 280},
-        ["Kill Aura"] = {X = 30, Y = 325},
-        ["Auto Kill All"] = {X = 30, Y = 370},
-        ["Godmode"] = {X = 30, Y = 415},
-        ["TP Lobby"] = {X = 30, Y = 460},
-        ["TP Map"] = {X = 30, Y = 505},
-        ["Aimlock"] = {X = 30, Y = 550},
-        ["TP & Shoot"] = {X = 30, Y = 595}
+        ["Fling Hero"] = {X = 30, Y = 190}, -- Новое!
+        ["Grab Gun"] = {X = 30, Y = 235},
+        ["Slide Glitch"] = {X = 30, Y = 280},
+        ["Noclip"] = {X = 30, Y = 325},
+        ["Kill Aura"] = {X = 30, Y = 370},
+        ["Auto Kill All"] = {X = 30, Y = 415},
+        ["Godmode"] = {X = 30, Y = 460},
+        ["TP Lobby"] = {X = 30, Y = 505},
+        ["TP Map"] = {X = 30, Y = 550},
+        ["Aimlock"] = {X = 30, Y = 595},
+        ["TP & Shoot"] = {X = 30, Y = 640}
     }
 }
 
@@ -133,11 +135,11 @@ local L = {
         EspM = "ESP Murderer", EspS = "ESP Sheriff", EspI = "ESP Innocents", EspBoxes = "3D Box ESP (For Low-End PC)", Stretch = "Screen Stretch (4:3)", StretchForce = "Stretch Force",
         NebulaSky = "Sky: Space Nebula", SunsetSky = "Sky: Beautiful Sunset", ClassicSky = "Sky: Default Classic", NoFog = "Disable Map Fog", TimeOfDay = "Time of Day",
         AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", TpShoot = "TP Behind & Shoot", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
-        FlingM = "Fling Murderer", FlingS = "Fling Sheriff", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
-        LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
+        FlingM = "Fling Murderer", FlingS = "Fling Sheriff", FlingH = "Fling Hero", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
+        LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnFlingH = "Button: Fling Hero", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
         BtnNoclip = "Button: Noclip", BtnKillAura = "Button: Kill Aura", BtnKillAll = "Button: Auto Kill All", RobloxId = "Roblox Audio ID", PlayId = "Play Roblox ID", HttpUrl = "HTTP Link to MP3 / OGG",
         PlayHttp = "Play HTTP Link", StopRadio = "Stop Radio", Volume = "Volume", Loop = "Loop Audio", NoKnife = "Knife not found!", NoGun = "Sheriff's gun not found!", NoM = "Murderer not found or dead",
-        NoS = "Sheriff not found or dead", SitError = " is sitting (fling impossible)", Flinging = "Flinging: ", RadioNoSupport = "Your exploit does not support writefile/getcustomasset!",
+        NoS = "Sheriff not found or dead", NoH = "Hero not found or dead", SitError = " is sitting (fling impossible)", Flinging = "Flinging: ", RadioNoSupport = "Your exploit does not support writefile/getcustomasset!",
         RadioDownloading = "Downloading audio file...", RadioHttpSuccess = "External audio started successfully!", RadioHttpError = "Failed to parse asset from file.", RadioHttpFail = "Failed to download audio file.",
         RadioCache = "Audio loaded from persistent local cache!", NoclipToggle = "Noclip", NoclipOn = "Enabled", NoclipOff = "Disabled", SpeedOn = "Enabled", SpeedOff = "Disabled",
         DodgeKnife = "Auto-Dodge Thrown Knife (Jump Right)", BtnDodgeKnife = "Button: Dodge Knife", TpLobby = "Teleport to Lobby", TpMap = "Teleport to Map", BtnTpLobby = "Button: TP Lobby",
@@ -153,10 +155,10 @@ local L = {
         EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
         NebulaSky = "Небо: Космическая Туманность", SunsetSky = "Небо: Красивый Закат", ClassicSky = "Небо: Стандартное", NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
         AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", TpShoot = "ТП за Спину & Выстрел", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
-        FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
-        LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
+        FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
+        LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
         BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
-        PlayHttp = "Играть по внешней ссылке", StopRadio = "Стоп Радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден!", NoM = "Убийца не найден или мертв", NoS = "Шериф не найден или мертв",
+        PlayHttp = "Играть по внешней ссылке", StopRadio = "Стоп Радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден!", NoM = "Убийца не найден или мертв", NoS = "Шериф не найден или мертв", NoH = "Герой не найден или мертв",
         SitError = " сидит (флинг невозможен)", Flinging = "Выбиваем: ", RadioNoSupport = "Ваш эксплойт не поддерживает writefile/getcustomasset!",
         RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Внешнее аудио успешно запущено!", RadioHttpError = "Не удалось преобразовать файл в ассет.", RadioHttpFail = "Не удалось скачать аудиофайл.",
         RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
@@ -541,6 +543,29 @@ local function main()
                 local hasGun = (backpack and (backpack:FindFirstChild("Gun") or backpack:FindFirstChild("Revolver"))) or p.Character:FindFirstChild("Gun") or p.Character:FindFirstChild("Revolver")
                 if hasGun then
                     return p
+                end
+            end
+        end
+        return nil
+    end
+
+    -- Динамический поиск живого Героя на карте (Новое!)
+    local function getHero()
+        if Hero then
+            local p = Players:FindFirstChild(Hero)
+            if p and IsAlive(p) then return p end
+        end
+        -- Если кэш сервера отсутствует, ищем выжившего мирного, владеющего пистолетом
+        local murderPlayer = getMurderer()
+        local sheriffPlayer = getSheriff()
+        for _, p in ipairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and IsAlive(p) then
+                if p ~= murderPlayer and p ~= sheriffPlayer then
+                    local backpack = p:FindFirstChild("Backpack")
+                    local hasGun = (backpack and (backpack:FindFirstChild("Gun") or backpack:FindFirstChild("Revolver"))) or p.Character:FindFirstChild("Gun") or p.Character:FindFirstChild("Revolver")
+                    if hasGun then
+                        return p
+                    end
                 end
             end
         end
@@ -1109,10 +1134,10 @@ local function main()
             frame.Position = UDim2.new(0, savedPos.X, 0, savedPos.Y)
         else
             local offsets = {
-                ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Grab Gun"] = 190,
-                ["Slide Glitch"] = 235, ["Noclip"] = 280, ["Kill Aura"] = 325,
-                ["Auto Kill All"] = 370, ["Godmode"] = 415, ["TP Lobby"] = 460, 
-                ["TP Map"] = 505, ["Aimlock"] = 550, ["TP & Shoot"] = 595
+                ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Fling Hero"] = 190,
+                ["Grab Gun"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325, 
+                ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460, 
+                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["TP & Shoot"] = 640
             }
             frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         end
@@ -1201,7 +1226,7 @@ local function main()
         -- 2. Бой
         setToggle(UI_Elements.Combat.AutoShootMurderer, Config.Combat.AutoShootMurderer)
         setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled)
-        setToggle(UI_Elements.Combat.SilentAimEnabled, Config.Combat.SilentAimEnabled) -- Новое!
+        setToggle(UI_Elements.Combat.SilentAimEnabled, Config.Combat.SilentAimEnabled) 
         setToggle(UI_Elements.Combat.AutoDodgeKnife, Config.Combat.AutoDodgeKnife)
         setToggle(UI_Elements.Combat.KillAuraEnabled, Config.Combat.KillAuraEnabled)
         setSlider(UI_Elements.Combat.KillAuraRange, Config.Combat.KillAuraRange)
@@ -1212,16 +1237,16 @@ local function main()
         setSlider(UI_Elements.Utility.SlideSpeedForce, Config.Utility.SlideSpeedForce)
         setToggle(UI_Elements.Utility.NoclipEnabled, Config.Utility.NoclipEnabled)
         setToggle(UI_Elements.Utility.AntiFling, Config.Utility.AntiFling)
-        setToggle(UI_Elements.Utility.AutoFarmCoins, Config.Utility.AutoFarmCoins)         -- Новое!
-        setToggle(UI_Elements.Utility.EmoteSpamEnabled, Config.Utility.EmoteSpamEnabled)   -- Новое!
-        setToggle(UI_Elements.Utility.ChatAlertsEnabled, Config.Utility.ChatAlertsEnabled)   -- Новое!
+        setToggle(UI_Elements.Utility.AutoFarmCoins, Config.Utility.AutoFarmCoins)         
+        setToggle(UI_Elements.Utility.EmoteSpamEnabled, Config.Utility.EmoteSpamEnabled)   
+        setToggle(UI_Elements.Utility.ChatAlertsEnabled, Config.Utility.ChatAlertsEnabled)   
         
         -- 4. Мобильные кнопки
         setToggle(UI_Elements.MobileButtons.LockMobileButtons, Config.MobileButtons.LockMobileButtons)
         setSlider(UI_Elements.MobileButtons.ButtonScale, Config.MobileButtons.ButtonScale)
         
         for name, key in pairs({
-            ["Fling Murderer"] = "BtnFlingM", ["Fling Sheriff"] = "BtnFlingS",
+            ["Fling Murderer"] = "BtnFlingM", ["Fling Sheriff"] = "BtnFlingS", ["Fling Hero"] = "BtnFlingH", -- Добавлено!
             ["Grab Gun"] = "BtnGrab", ["Slide Glitch"] = "BtnSlide", ["Noclip"] = "BtnNoclip",
             ["Kill Aura"] = "BtnKillAura", ["Auto Kill All"] = "BtnKillAll",
             ["Godmode"] = "BtnGodMode", ["TP Lobby"] = "BtnTpLobby", ["TP Map"] = "BtnTpMap",
@@ -1237,6 +1262,7 @@ local function main()
                 if state then
                     if name == "Fling Murderer" then createFloatingButton("Fling Murderer", "FlingM", function() local m = getMurderer() if m then flingPlayer(m) end end)
                     elseif name == "Fling Sheriff" then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(sh) end end)
+                    elseif name == "Fling Hero" then createFloatingButton("Fling Hero", "FlingH", function() local h = getHero() if h then flingPlayer(h) end end) -- Добавлено!
                     elseif name == "Grab Gun" then createFloatingButton("Grab Gun", "AutoGrab", grabGun)
                     elseif name == "Slide Glitch" then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch)
                     elseif name == "Noclip" then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.Utility.NoclipEnabled) end)
@@ -1292,7 +1318,7 @@ local function main()
     -- Вкладка Бой
     UI_Elements.Combat.AutoShootMurderer = CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.Combat.AutoShootMurderer, Callback = function(s) Config.Combat.AutoShootMurderer = s saveConfig() end })
     UI_Elements.Combat.AimlockEnabled = CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.Combat.AimlockEnabled, Callback = function(s) Config.Combat.AimlockEnabled = s saveConfig() end })
-    UI_Elements.Combat.SilentAimEnabled = CombatTab:Toggle({ Title = T("SilentAim"), Value = Config.Combat.SilentAimEnabled, Callback = function(s) Config.Combat.SilentAimEnabled = s saveConfig() end }) -- Новое!
+    UI_Elements.Combat.SilentAimEnabled = CombatTab:Toggle({ Title = T("SilentAim"), Value = Config.Combat.SilentAimEnabled, Callback = function(s) Config.Combat.SilentAimEnabled = s saveConfig() end }) 
     CombatTab:Button({ Title = T("TpShoot"), Callback = tpBehindAndShoot })
     
     -- Авто-уклонение от ножей
@@ -1302,9 +1328,10 @@ local function main()
     UI_Elements.Combat.KillAuraEnabled = CombatTab:Toggle({ Title = T("KillAura"), Value = Config.Combat.KillAuraEnabled, Callback = function(s) Config.Combat.KillAuraEnabled = s saveConfig() end })
     UI_Elements.Combat.KillAuraRange = CombatTab:Slider({ Title = T("KillAuraRange"), Step = 5, Value = { Min = 10, Max = 45, Default = Config.Combat.KillAuraRange }, Callback = function(v) Config.Combat.KillAuraRange = v saveConfig() end })
     CombatTab:Button({ Title = T("AutoKillAll"), Callback = autoKillAll })
+    
+    -- Кнопки Флинга (Выбивания)
     CombatTab:Button({ Title = T("FlingM"), Callback = function() local m = getMurderer() if m then flingPlayer(m) else WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 }) end end })
     
-    -- Флинг Шерифа
     CombatTab:Button({ 
         Title = T("FlingS"), 
         Callback = function() 
@@ -1317,13 +1344,26 @@ local function main()
         end 
     })
 
+    -- Новая кнопка флинга Героя! (Добавлено)
+    CombatTab:Button({ 
+        Title = T("FlingH"), 
+        Callback = function() 
+            local h = getHero() 
+            if h then 
+                flingPlayer(h) 
+            else 
+                WindUI:Notify({ Title = "Error", Content = T("NoH"), Icon = "x", Duration = 3 }) 
+            end 
+        end 
+    })
+
     -- Вкладка Утилиты
     UI_Elements.Utility.AutoGrabGun = UtilityTab:Toggle({ Title = T("AutoGrab"), Value = Config.Utility.AutoGrabGun, Callback = function(s) Config.Utility.AutoGrabGun = s saveConfig() end })
     UI_Elements.Utility.SlideGlitchEnabled = UtilityTab:Toggle({ Title = T("SlideGlitch"), Value = Config.Utility.SlideGlitchEnabled, Callback = function(s) if s ~= Config.Utility.SlideGlitchEnabled then toggleSlideGlitch(s) end end })
     UI_Elements.Utility.SlideSpeedForce = UtilityTab:Slider({ Title = T("SlideSpeed"), Step = 5, Value = { Min = 15, Max = 100, Default = Config.Utility.SlideSpeedForce }, Callback = function(v) Config.Utility.SlideSpeedForce = v saveConfig() end })
     UI_Elements.Utility.NoclipEnabled = UtilityTab:Toggle({ Title = T("Noclip"), Value = Config.Utility.NoclipEnabled, Callback = function(s) if s ~= Config.Utility.NoclipEnabled then toggleNoclip(s) end end })
     
-    -- Новые утилиты!
+    -- Новые утилиты
     UI_Elements.Utility.AutoFarmCoins = UtilityTab:Toggle({ Title = T("AutoFarmCoins"), Value = Config.Utility.AutoFarmCoins, Callback = function(s) Config.Utility.AutoFarmCoins = s saveConfig() end })
     UI_Elements.Utility.EmoteSpamEnabled = UtilityTab:Toggle({ Title = T("EmoteSpam"), Value = Config.Utility.EmoteSpamEnabled, Callback = function(s) Config.Utility.EmoteSpamEnabled = s saveConfig() end })
     UI_Elements.Utility.ChatAlertsEnabled = UtilityTab:Toggle({ Title = T("ChatAlerts"), Value = Config.Utility.ChatAlertsEnabled, Callback = function(s) Config.Utility.ChatAlertsEnabled = s saveConfig() end })
@@ -1380,6 +1420,10 @@ local function main()
     
     UI_Elements.MobileButtons["Fling Murderer"] = ButtonsTab:Toggle({ Title = T("BtnFlingM"), Value = Config.MobileButtons["Fling Murderer"], Callback = function(s) Config.MobileButtons["Fling Murderer"] = s saveConfig() if s then createFloatingButton("Fling Murderer", "FlingM", function() local m = getMurderer() if m then flingPlayer(m) end end) else removeFloatingButton("Fling Murderer") end end })
     UI_Elements.MobileButtons["Fling Sheriff"] = ButtonsTab:Toggle({ Title = T("BtnFlingS"), Value = Config.MobileButtons["Fling Sheriff"], Callback = function(s) Config.MobileButtons["Fling Sheriff"] = s saveConfig() if s then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(sh) end end) else removeFloatingButton("Fling Sheriff") end end })
+    
+    -- Новая мобильная кнопка для Героя! (Добавлено)
+    UI_Elements.MobileButtons["Fling Hero"] = ButtonsTab:Toggle({ Title = T("BtnFlingH"), Value = Config.MobileButtons["Fling Hero"], Callback = function(s) Config.MobileButtons["Fling Hero"] = s saveConfig() if s then createFloatingButton("Fling Hero", "FlingH", function() local h = getHero() if h then flingPlayer(h) end end) else removeFloatingButton("Fling Hero") end end })
+    
     UI_Elements.MobileButtons["Grab Gun"] = ButtonsTab:Toggle({ Title = T("BtnGrab"), Value = Config.MobileButtons["Grab Gun"], Callback = function(s) Config.MobileButtons["Grab Gun"] = s saveConfig() if s then createFloatingButton("Grab Gun", "AutoGrab", grabGun) else removeFloatingButton("Grab Gun") end end })
     UI_Elements.MobileButtons["Slide Glitch"] = ButtonsTab:Toggle({ Title = T("BtnSlide"), Value = Config.MobileButtons["Slide Glitch"], Callback = function(s) Config.MobileButtons["Slide Glitch"] = s saveConfig() if s then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch) else removeFloatingButton("Slide Glitch") end end })
     UI_Elements.MobileButtons["Noclip"] = ButtonsTab:Toggle({ Title = T("BtnNoclip"), Value = Config.MobileButtons["Noclip"], Callback = function(s) Config.MobileButtons["Noclip"] = s saveConfig() if s then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.Utility.NoclipEnabled) end) else removeFloatingButton("Noclip") end end })
@@ -1389,7 +1433,7 @@ local function main()
     UI_Elements.MobileButtons["TP Lobby"] = ButtonsTab:Toggle({ Title = T("BtnTpLobby"), Value = Config.MobileButtons["TP Lobby"], Callback = function(s) Config.MobileButtons["TP Lobby"] = s saveConfig() if s then createFloatingButton("TP Lobby", "TpLobby", tpToLobby) else removeFloatingButton("TP Lobby") end end }) 
     UI_Elements.MobileButtons["TP Map"] = ButtonsTab:Toggle({ Title = T("BtnTpMap"), Value = Config.MobileButtons["TP Map"], Callback = function(s) Config.MobileButtons["TP Map"] = s saveConfig() if s then createFloatingButton("TP Map", "TpMap", tpToMap) else removeFloatingButton("TP Map") end end }) 
     UI_Elements.MobileButtons["Aimlock"] = ButtonsTab:Toggle({ Title = T("BtnAimlock"), Value = Config.MobileButtons["Aimlock"], Callback = function(s) Config.MobileButtons["Aimlock"] = s saveConfig() if s then createFloatingButton("Aimlock", "Aimlock", function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) WindUI:Notify({ Title = "Aimlock", Content = Config.Combat.AimlockEnabled and T("NoclipOn") or T("NoclipOff"), Icon = "eye", Duration = 2 }) end) else removeFloatingButton("Aimlock") end end }) 
-    UI_Elements.MobileButtons["TP & Shoot"] = ButtonsTab:Toggle({ Title = T("BtnTpShoot"), Value = Config.MobileButtons["TP & Shoot"], Callback = function(s) Config.MobileButtons["TP & Shoot"] = s saveConfig() if s then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) else removeFloatingButton("TP & Shoot") end end }) -- Кнопка ТП-Выстрел
+    UI_Elements.MobileButtons["TP & Shoot"] = ButtonsTab:Toggle({ Title = T("BtnTpShoot"), Value = Config.MobileButtons["TP & Shoot"], Callback = function(s) Config.MobileButtons["TP & Shoot"] = s saveConfig() if s then createFloatingButton("TP & Shoot", "TpShoot", tpBehindAndShoot) else removeFloatingButton("TP & Shoot") end end }) 
 
     -- Вкладка Конфиги
     ConfigsTab:Button({ Title = T("SaveConfigBtn"), Callback = function() saveConfig() WindUI:Notify({ Title = "FogyHub", Content = T("ConfSaved"), Icon = "check", Duration = 3 }) end })
@@ -1398,7 +1442,7 @@ local function main()
         Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14 }
         Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
         Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false }
-        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["TP & Shoot"] = false }
+        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["TP & Shoot"] = false }
         saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
     end })
     ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() Config.Language = "ru" currentLang = "ru" saveConfig() WindUI:Notify({ Title = "Язык", Content = "Язык успешно изменен на Русский!", Icon = "globe", Duration = 3 }) end })
@@ -1437,6 +1481,7 @@ local function main()
             if state and btnName ~= "LockMobileButtons" and btnName ~= "ButtonScale" then
                 if btnName == "Fling Murderer" then createFloatingButton("Fling Murderer", "FlingM", function() local m = getMurderer() if m then flingPlayer(m) end end)
                 elseif btnName == "Fling Sheriff" then createFloatingButton("Fling Sheriff", "FlingS", function() local sh = getSheriff() if sh then flingPlayer(sh) end end)
+                elseif btnName == "Fling Hero" then createFloatingButton("Fling Hero", "FlingH", function() local h = getHero() if h then flingPlayer(h) end end) -- Добавлено!
                 elseif btnName == "Grab Gun" then createFloatingButton("Grab Gun", "AutoGrab", grabGun)
                 elseif btnName == "Slide Glitch" then createFloatingButton("Slide Glitch", "SlideGlitch", toggleSlideGlitch)
                 elseif btnName == "Noclip" then createFloatingButton("Noclip", "Noclip", function() toggleNoclip(not Config.Utility.NoclipEnabled) end)
