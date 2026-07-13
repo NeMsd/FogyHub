@@ -1,5 +1,4 @@
 
-
 -- ======================================================
 -- FogyHub (MM2 Custom Multi-Tool)
 -- Authors: MsD, Gemini
@@ -58,7 +57,7 @@ local Config = {
         ButtonScale = 1.0,
         ["Fling Murderer"] = false,
         ["Fling Sheriff"] = false,
-        ["Fling Hero"] = false, -- Новое!
+        ["Fling Hero"] = false, 
         ["Grab Gun"] = false,
         ["Slide Glitch"] = false,
         ["Noclip"] = false,
@@ -73,7 +72,7 @@ local Config = {
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100},
         ["Fling Sheriff"] = {X = 30, Y = 145},
-        ["Fling Hero"] = {X = 30, Y = 190}, -- Новое!
+        ["Fling Hero"] = {X = 30, Y = 190}, 
         ["Grab Gun"] = {X = 30, Y = 235},
         ["Slide Glitch"] = {X = 30, Y = 280},
         ["Noclip"] = {X = 30, Y = 325},
@@ -147,7 +146,8 @@ local L = {
         SkinNotFound = "Player not found!", SkinSuccess = "Skins visual unlock complete!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
         BtnTpShoot = "Button: TP & Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
-        SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat", SkinsUnlocked = "Skins unlocked! Open your in-game Inventory."
+        SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat", SkinsUnlocked = "Skins unlocked! Open your in-game Inventory.",
+        MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
     ru = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub загружен!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
@@ -167,7 +167,8 @@ local L = {
         SkinNotFound = "Игрок не найден!", SkinSuccess = "Скины визуально разблокированы!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
         BtnTpShoot = "Кнопка: TP & Shoot", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
-        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат", SkinsUnlocked = "Скины разблокированы! Откройте игровой инвентарь."
+        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат", SkinsUnlocked = "Скины разблокированы! Откройте игровой инвентарь.",
+        MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
 }
 
@@ -409,7 +410,7 @@ local function main()
         return nil
     end
 
-    -- Генерация уникального безопасного имени файла на основе URL для физического кэширования аудио
+    --  Генерация уникального безопасного имени файла на основе URL для физического кэширования аудио
     local function getFileNameFromUrl(url)
         local clean = url:gsub("[^%w]", "") -- Только латиница и цифры
         if #clean > 25 then
@@ -1855,6 +1856,20 @@ local function main()
                     break
                 end
             end
+        end
+    end)
+
+    -- Проверка на неофициальный кастомный сервер / копию игры (например, MMB / MMV)
+    task.spawn(function()
+        task.wait(1.5) -- Небольшая задержка перед выводом окна
+        local officialMM2Ids = {142823291, 3383406159}
+        if not table.find(officialMM2Ids, game.PlaceId) then
+            WindUI:Notify({
+                Title = T("MMBWarningTitle"),
+                Content = T("MMBWarningContent"),
+                Icon = "alert-triangle",
+                Duration = 6
+            })
         end
     end)
 
