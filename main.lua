@@ -113,7 +113,7 @@ local L = {
         FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
         LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
         BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
-        PlayHttp = "Играть по внешней ссылке", StopRadio = "Стоп Радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден!", NoM = "Убийца не найден или мертв", NoS = "Шериф не найден или мертв", NoH = "Герой не найден или мертв",
+        PlayHttp = "Играть по внешней ссылке", StopRadio = "Стоп Радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден!", NoGun = "Шерифский пистолет не найден!", NoM = "Убийца не найден или мертв", NoS = "Шериф не найден или мертв", NoH = "Герой не найден или мертв",
         SitError = " сидит (флинг невозможен)", Flinging = "Выбиваем: ", RadioNoSupport = "Ваш эксплойт не поддерживает writefile/getcustomasset!",
         RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Внешнее аудио успешно запущено!", RadioHttpError = "Не удалось декодировать аудио.", RadioHttpFail = "Не удалось скачать аудиофайл.",
         RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
@@ -255,11 +255,25 @@ end
 -- ==================== 3. ОСНОВНОЙ КОД СКРИПТА ====================
 local function main()
     local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
     local RunService = game:GetService("RunService")
     local UserInputService = game:GetService("UserInputService")
     local VirtualInputManager = game:GetService("VirtualInputManager")
     local Lighting = game:GetService("Lighting")
     local LocalPlayer = Players.LocalPlayer
+
+    -- Вспомогательные функции для установки значений UI
+    local function setToggle(element, value)
+        if element and element.Set then
+            pcall(function() element:Set(value) end)
+        end
+    end
+
+    local function setSlider(element, value)
+        if element and element.Set then
+            pcall(function() element:Set(value) end)
+        end
+    end
 
     -- Полноценный, безопасный загрузчик WindUI
     local WindUI
@@ -534,6 +548,115 @@ local function main()
             end
         end
         return nil
+    end
+
+    -- Полноценная реализация флинга (выбивания) игроков
+    local function flingPlayer(targetPlayer)
+        local localChar = LocalPlayer.Character
+        local targetChar = targetPlayer.Character
+        if not localChar or not targetChar then return end
+        
+        local localHrp = localChar:FindFirstChild("HumanoidRootPart")
+        local targetHrp = targetChar:FindFirstChild("HumanoidRootPart")
+        local localHum = localChar:FindFirstChildOfClass("Humanoid")
+        local targetHum = targetChar:FindFirstChildOfClass("Humanoid")
+        
+        if localHrp and targetHrp and localHum and targetHum then
+            if targetHum.Sit then
+                WindUI:Notify({ Title = "FogyHub", Content = targetPlayer.Name .. T("SitError"), Icon = "x", Duration = 3 })
+                return
+            end
+            
+            WindUI:Notify({ Title = "FogyHub", Content = T("Flinging") .. targetPlayer.DisplayName, Icon = "swords", Duration = 3 })
+            
+            local originalCFrame = localHrp.CFrame
+            local wasAnchored = localHrp.Anchored
+            localHrp.Anchored = false
+            
+            local bV = Instance.new("BodyVelocity")
+            bV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bV.Velocity = Vector3.new(999999, 999999, 999999)
+            bV.Parent = localHrp
+            
+            local bAV = Instance.new("BodyAngularVelocity")
+            bAV.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+            bAV.AngularVelocity = Vector3.new(0, 999999, 0)
+            bAV.Parent = localHrp
+            
+            local duration = 0.8
+            local startTime = tick()
+            local connection
+            
+            connection = RunService.Heartbeat:Connect(function()
+                if tick() - startTime > duration or not targetHrp.Parent or not localHrp.Parent then
+                    if connection then connection:Disconnect() end
+                    return
+                end
+                localHrp.CFrame = targetHrp.CFrame
+            end)
+            
+            task.wait(duration)
+            if connection then connection:Disconnect() end
+            
+            bV:Destroy()
+            bAV:Destroy()
+            
+            localHrp.Velocity = Vector3.new(0, 0, 0)
+            localHrp.RotVelocity = Vector3.new(0, 0, 0)
+            
+            safeTeleport(originalCFrame)
+        end
+    end
+
+    -- Управление спидглитчем (Slide Glitch)
+    local function toggleSlideGlitch(state)
+        if state == nil then
+            state = not Config.Utility.SlideGlitchEnabled
+        end
+        Config.Utility.SlideGlitchEnabled = state
+        if UI_Elements.Utility.SlideGlitchEnabled then
+            setToggle(UI_Elements.Utility.SlideGlitchEnabled, state)
+        end
+        saveConfig()
+    end
+
+    -- Управление Noclip (Проход сквозь стены)
+    local function toggleNoclip(state)
+        if state == nil then
+            state = not Config.Utility.NoclipEnabled
+        end
+        Config.Utility.NoclipEnabled = state
+        if UI_Elements.Utility.NoclipEnabled then
+            setToggle(UI_Elements.Utility.NoclipEnabled, state)
+        end
+        saveConfig()
+    end
+
+    -- Реализация смены текстуры неба (Skybox)
+    local function applySkybox(style)
+        for _, obj in ipairs(Lighting:GetChildren()) do
+            if obj:IsA("Sky") then obj:Destroy() end
+        end
+        
+        if style == "Nebula" then
+            local sky = Instance.new("Sky")
+            sky.SkyboxBk = "rbxassetid://159454299"
+            sky.SkyboxDn = "rbxassetid://159454296"
+            sky.SkyboxFt = "rbxassetid://159454293"
+            sky.SkyboxLf = "rbxassetid://159454300"
+            sky.SkyboxRt = "rbxassetid://159454297"
+            sky.SkyboxUp = "rbxassetid://159454290"
+            sky.Parent = Lighting
+        elseif style == "Sunset" then
+            local sky = Instance.new("Sky")
+            sky.SkyboxBk = "rbxassetid://60083044"
+            sky.SkyboxDn = "rbxassetid://60083161"
+            sky.SkyboxFt = "rbxassetid://60083271"
+            sky.SkyboxLf = "rbxassetid://60083378"
+            sky.SkyboxRt = "rbxassetid://60083516"
+            sky.SkyboxUp = "rbxassetid://60083627"
+            sky.Parent = Lighting
+        end
     end
 
     -- Прикрепление радио на спину
@@ -871,12 +994,94 @@ local function main()
         workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPosition)
         local shotFired = false
         pcall(function()
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
             if ReplicatedStorage:FindFirstChild("ShootGun") then
                 ReplicatedStorage.ShootGun:InvokeServer(1, targetPosition, targetPosition) shotFired = true
             end
         end)
         if not shotFired then simulatePhysicalClick() end
+    end
+
+    -- Авто-килл всех (для убийцы)
+    local function autoKillAll()
+        local char = LocalPlayer.Character
+        local bp = LocalPlayer:FindFirstChild("Backpack")
+        local knife = char and char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
+        
+        if not knife then
+            WindUI:Notify({ Title = "Error", Content = T("NoKnife"), Icon = "x", Duration = 3 })
+            return
+        end
+        
+        local isMurderer = (char and char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) or (Murder and LocalPlayer.Name == Murder)
+        if not isMurderer then
+            WindUI:Notify({ Title = "Error", Content = "You must be the Murderer to use Auto Kill All!", Icon = "x", Duration = 3 })
+            return
+        end
+        
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            if knife.Parent == bp then char.Humanoid:EquipTool(knife) end
+            
+            local originalPos = char.HumanoidRootPart.CFrame
+            local wasAnchored = char.HumanoidRootPart.Anchored
+            
+            for _, victim in ipairs(Players:GetPlayers()) do
+                if victim ~= LocalPlayer and victim.Character and victim.Character:FindFirstChild("HumanoidRootPart") then
+                    local vHum = victim.Character:FindFirstChildOfClass("Humanoid")
+                    if vHum and vHum.Health > 0 and IsAlive(victim) then
+                        char.HumanoidRootPart.Anchored = true
+                        safeTeleport(victim.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1.5))
+                        task.wait(0.15)
+                        
+                        knife:Activate()
+                        local targetPart = victim.Character:FindFirstChild("HumanoidRootPart") or victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                        if targetPart then
+                            pcall(function()
+                                firetouchinterest(targetPart, knife.Handle, 0)
+                                task.wait(0.05)
+                                firetouchinterest(targetPart, knife.Handle, 1)
+                            end)
+                        end
+                        task.wait(0.1)
+                    end
+                end
+            end
+            char.HumanoidRootPart.Anchored = wasAnchored
+            safeTeleport(originalPos)
+        end
+    end
+
+    -- ТП за спину и выстрел в убийцу
+    local function tpBehindAndShoot()
+        local m = getMurderer()
+        if not m or not m.Character or not m.Character:FindFirstChild("HumanoidRootPart") then
+            WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 })
+            return
+        end
+        
+        local char = LocalPlayer.Character
+        local bp = LocalPlayer:FindFirstChild("Backpack")
+        local gun = char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
+        
+        if not gun then
+            WindUI:Notify({ Title = "Error", Content = T("NoGun"), Icon = "x", Duration = 3 })
+            return
+        end
+        
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            if gun.Parent == bp then char.Humanoid:EquipTool(gun) end
+            
+            local originalPos = char.HumanoidRootPart.CFrame
+            local mHrp = m.Character.HumanoidRootPart
+            
+            local targetCFrame = mHrp.CFrame * CFrame.new(0, 0, 3) 
+            safeTeleport(targetCFrame)
+            task.wait(0.2)
+            
+            fireGun(gun, mHrp.Position)
+            
+            task.wait(0.2)
+            safeTeleport(originalPos)
+        end
     end
 
     -- ==================== АКТИВАЦИОННЫЕ ХЭЛПЕРЫ ДЛЯ КОНФИГА ====================
