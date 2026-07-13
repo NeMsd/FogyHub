@@ -1,3 +1,5 @@
+
+
 -- ======================================================
 -- FogyHub (MM2 Custom Multi-Tool)
 -- Authors: MsD, Gemini
@@ -105,7 +107,7 @@ local L = {
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
     ru = {
-        CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub загружен!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
+        CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub loaded!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
         Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
         EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
         NebulaSky = "Небо: Космическая Туманность", SunsetSky = "Небо: Красивый Закат", ClassicSky = "Небо: Стандартное", NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
@@ -122,7 +124,7 @@ local L = {
         SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
         BtnTpShoot = "Кнопка: TP & Shoot", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
-        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат", SkinsUnlocked = "Скины разблокированы! Откройте игровой инвентарь.",
+        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат", SkinsUnlocked = "Skins unlocked! Open your in-game Inventory.",
         MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
 }
@@ -392,7 +394,8 @@ local function main()
         local character = player.Character
         if not character then return end
         
-        local highlight = character:FindFirstChild("FogyHub_ESP")
+        -- Поиск подсветки (совместимо со стандартным именем "Highlight")
+        local highlight = character:FindFirstChild("FogyHub_ESP") or character:FindFirstChild("Highlight")
         if not highlight then
             highlight = Instance.new("Highlight")
             highlight.Name = "FogyHub_ESP"
@@ -419,8 +422,10 @@ local function main()
     -- Функция удаления подсветки
     local function removeHighlight(player)
         local character = player.Character
-        local highlight = character and character:FindFirstChild("FogyHub_ESP")
-        if highlight then highlight:Destroy() end
+        if character then
+            local highlight = character:FindFirstChild("FogyHub_ESP") or character:FindFirstChild("Highlight")
+            if highlight then highlight:Destroy() end
+        end
     end
 
     -- 3D Box ESP на базе BoxHandleAdornment
@@ -550,61 +555,133 @@ local function main()
         return nil
     end
 
-    -- Полноценная реализация флинга (выбивания) игроков
+    -- Полноценная реализация ультра-агрессивного физического флинга (Kilasik's Multi-Target Fling)
     local function flingPlayer(targetPlayer)
-        local localChar = LocalPlayer.Character
-        local targetChar = targetPlayer.Character
-        if not localChar or not targetChar then return end
+        local Character = LocalPlayer.Character
+        local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+        local RootPart = Humanoid and Humanoid.RootPart or (Character and Character:FindFirstChild("HumanoidRootPart"))
         
-        local localHrp = localChar:FindFirstChild("HumanoidRootPart")
-        local targetHrp = targetChar:FindFirstChild("HumanoidRootPart")
-        local localHum = localChar:FindFirstChildOfClass("Humanoid")
-        local targetHum = targetChar:FindFirstChildOfClass("Humanoid")
+        local TCharacter = targetPlayer.Character
+        if not TCharacter then return end
         
-        if localHrp and targetHrp and localHum and targetHum then
-            if targetHum.Sit then
+        local THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
+        local TRootPart = THumanoid and THumanoid.RootPart or TCharacter:FindFirstChild("HumanoidRootPart")
+        local THead = TCharacter:FindFirstChild("Head")
+        local Accessory = TCharacter:FindFirstChildOfClass("Accessory")
+        local Handle = Accessory and Accessory:FindFirstChild("Handle")
+        
+        if Character and Humanoid and RootPart then
+            if RootPart.Velocity.Magnitude < 50 then
+                getgenv().OldPos = RootPart.CFrame
+            end
+            
+            if THumanoid and THumanoid.Sit then
                 WindUI:Notify({ Title = "FogyHub", Content = targetPlayer.Name .. T("SitError"), Icon = "x", Duration = 3 })
                 return
             end
             
             WindUI:Notify({ Title = "FogyHub", Content = T("Flinging") .. targetPlayer.DisplayName, Icon = "swords", Duration = 3 })
             
-            local originalCFrame = localHrp.CFrame
-            local wasAnchored = localHrp.Anchored
-            localHrp.Anchored = false
+            if THead then
+                workspace.CurrentCamera.CameraSubject = THead
+            elseif Handle then
+                workspace.CurrentCamera.CameraSubject = Handle
+            elseif THumanoid and TRootPart then
+                workspace.CurrentCamera.CameraSubject = THumanoid
+            end
             
-            local bV = Instance.new("BodyVelocity")
-            bV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            bV.Velocity = Vector3.new(999999, 999999, 999999)
-            bV.Parent = localHrp
+            if not TCharacter:FindFirstChildWhichIsA("BasePart") then
+                return
+            end
             
-            local bAV = Instance.new("BodyAngularVelocity")
-            bAV.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-            bAV.AngularVelocity = Vector3.new(0, 999999, 0)
-            bAV.Parent = localHrp
+            local FPos = function(BasePart, Pos, Ang)
+                RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
+                Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
+                RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+                RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+            end
             
-            local duration = 0.8
-            local startTime = tick()
-            local connection
+            local SFBasePart = function(BasePart)
+                local TimeToWait = 2
+                local Time = tick()
+                local Angle = 0
+                repeat
+                    if RootPart and THumanoid then
+                        if BasePart.Velocity.Magnitude < 50 then
+                            Angle = Angle + 100
+                            FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle),0 ,0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle), 0, 0))
+                            task.wait()
+                        else
+                            FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                            task.wait()
+                            
+                            FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                            task.wait()
+                            FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                            task.wait()
+                        end
+                    end
+                until Time + TimeToWait < tick()
+            end
             
-            connection = RunService.Heartbeat:Connect(function()
-                if tick() - startTime > duration or not targetHrp.Parent or not localHrp.Parent then
-                    if connection then connection:Disconnect() end
-                    return
-                end
-                localHrp.CFrame = targetHrp.CFrame
-            end)
+            workspace.FallenPartsDestroyHeight = 0/0
             
-            task.wait(duration)
-            if connection then connection:Disconnect() end
+            local BV = Instance.new("BodyVelocity")
+            BV.Parent = RootPart
+            BV.Velocity = Vector3.new(0, 0, 0)
+            BV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
             
-            bV:Destroy()
-            bAV:Destroy()
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
             
-            localHrp.Velocity = Vector3.new(0, 0, 0)
-            localHrp.RotVelocity = Vector3.new(0, 0, 0)
+            if TRootPart then
+                SFBasePart(TRootPart)
+            elseif THead then
+                SFBasePart(THead)
+            elseif Handle then
+                SFBasePart(Handle)
+            else
+                WindUI:Notify({ Title = "Error", Content = targetPlayer.Name .. " has no valid parts", Icon = "x", Duration = 3 })
+            end
             
-            safeTeleport(originalCFrame)
+            BV:Destroy()
+            Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            workspace.CurrentCamera.CameraSubject = Humanoid
+            
+            -- Возвращение на исходную позицию без остаточной физической силы
+            if getgenv().OldPos then
+                repeat
+                    RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
+                    Character:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
+                    Humanoid:ChangeState("GettingUp")
+                    for _, part in pairs(Character:GetChildren()) do
+                        if part:IsA("BasePart") then
+                            part.Velocity, part.RotVelocity = Vector3.new(), Vector3.new()
+                        end
+                    end
+                    task.wait()
+                until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
+                workspace.FallenPartsDestroyHeight = getgenv().FPDH
+            end
+        else
+            WindUI:Notify({ Title = "Error", Content = "Your character is not ready", Icon = "x", Duration = 3 })
         end
     end
 
@@ -1473,6 +1550,7 @@ local function main()
                 sound.Volume = radioVolume
                 sound.Looped = radioLooped
                 sound:Play()
+                sound.Volume = radioVolume
                 radioSound = sound
             end
         end
@@ -1520,104 +1598,111 @@ local function main()
         end)
     end
 
-    -- Цикл ESP (Защищен от аварийных вылетов)
-    task.spawn(function()
-        while true do
-            pcall(function()
-                local success, serverRoles = pcall(function()
-                    local remote = game:GetService("ReplicatedStorage"):FindFirstChild("GetPlayerData", true)
-                    return remote and remote:InvokeServer()
-                end)
-                
-                if success and serverRoles then
-                    roles = serverRoles
-                    Murder, Sheriff, Hero = nil, nil, nil
-                    for i, v in pairs(roles) do
-                        if v.Role == "Murderer" then
-                            Murder = i
-                        elseif v.Role == "Sheriff" then
-                            Sheriff = i
-                        elseif v.Role == "Hero" then
-                            Hero = i
+    -- Оптимизированный и высокоскоростной ESP обработчик (0.1 секунд задержки для мгновенного обновления без просадок)
+    local function updateESP()
+        local success, serverRoles = pcall(function()
+            local remote = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
+            return remote and remote:InvokeServer()
+        end)
+        
+        if success and serverRoles then
+            roles = serverRoles
+            Murder, Sheriff, Hero = nil, nil, nil
+            for i, v in pairs(roles) do
+                if v.Role == "Murderer" then
+                    Murder = i
+                elseif v.Role == "Sheriff" then
+                    Sheriff = i
+                elseif v.Role == "Hero" then
+                    Hero = i
+                end
+            end
+            
+            -- Локальные оповещения о ролях при смене раунда
+            if Config.Utility.ChatAlertsEnabled then
+                if Murder ~= lastMurder or Sheriff ~= lastSheriff then
+                    lastMurder = Murder
+                    lastSheriff = Sheriff
+                    task.spawn(notifyRolesInChat)
+                end
+            end
+        end
+        
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                local character = player.Character
+                if character then
+                    local isM, isS, isH = false, false, false
+                    local alive = IsAlive(player)
+                    
+                    -- Определение ролей на основе серверных данных
+                    if player.Name == Murder and alive then
+                        isM = true
+                    elseif player.Name == Sheriff and alive then
+                        isS = true
+                    elseif player.Name == Hero and alive then
+                        local sheriffPlayer = Sheriff and Players:FindFirstChild(Sheriff)
+                        if sheriffPlayer and not IsAlive(sheriffPlayer) then
+                            isH = true
                         end
                     end
                     
-                    -- Локальные оповещения о ролях при смене раунда
-                    if Config.Utility.ChatAlertsEnabled then
-                        if Murder ~= lastMurder or Sheriff ~= lastSheriff then
-                            lastMurder = Murder
-                            lastSheriff = Sheriff
-                            task.spawn(notifyRolesInChat)
+                    -- Проверка нахождения зрителей на спавне лобби
+                    local inLobby = false
+                    local hrp = character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local distToLobby = (hrp.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
+                        if distToLobby < 150 then
+                            inLobby = true
                         end
                     end
-                end
-                
-                for _, player in ipairs(Players:GetPlayers()) do
-                    if player ~= LocalPlayer then
-                        local character = player.Character
-                        local isM, isS, isH = false, false, false
-                        local alive = IsAlive(player)
-                        
-                        -- Определение ролей на основе серверных данных
-                        if player.Name == Murder and alive then
-                            isM = true
-                        elseif player.Name == Sheriff and alive then
-                            isS = true
-                        elseif player.Name == Hero and alive then
-                            local sheriffPlayer = Sheriff and Players:FindFirstChild(Sheriff)
-                            if sheriffPlayer and not IsAlive(sheriffPlayer) then
-                                isH = true
-                            end
+                    
+                    -- Отрисовка ESP цветов в зависимости от условий и конфигурации
+                    local espEnabled = false
+                    local renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый по умолчанию
+                    
+                    if not alive or inLobby then
+                        if Config.Visuals.MurdererESP or Config.Visuals.SheriffESP or Config.Visuals.InnocentESP then
+                            espEnabled = true
+                            renderColor = Color3.fromRGB(150, 150, 150)
                         end
-                        
-                        -- Проверка нахождения зрителей на спавне лобби
-                        local inLobby = false
-                        if character and character:FindFirstChild("HumanoidRootPart") then
-                            local distToLobby = (character.HumanoidRootPart.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
-                            if distToLobby < 150 then
-                                inLobby = true
-                            end
-                        end
-                        
-                        -- Отрисовка ESP цветов в зависимости от условий
-                        if not alive or inLobby then
-                            if Config.Visuals.MurdererESP or Config.Visuals.SheriffESP or Config.Visuals.InnocentESP then
-                                applyHighlight(player, Color3.fromRGB(150, 150, 150))
-                            else
-                                removeHighlight(player)
-                            end
-                            if Config.Visuals.EspBoxes then
-                                applyBoxESP(player, Color3.fromRGB(150, 150, 150))
-                            else
-                                removeBoxESP(player)
-                            end
+                    else
+                        if isM then
+                            espEnabled = Config.Visuals.MurdererESP
+                            renderColor = Color3.fromRGB(255, 0, 0) -- Красный (Мардер)
+                        elseif isS then
+                            espEnabled = Config.Visuals.SheriffESP
+                            renderColor = Color3.fromRGB(0, 0, 255) -- Синий (Шериф)
+                        elseif isH then
+                            espEnabled = Config.Visuals.SheriffESP -- Герой отслеживается через Шериф ESP
+                            renderColor = Color3.fromRGB(255, 250, 0) -- Желтый (Герой)
                         else
-                            local renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый по умолчанию
-                            
-                            if isM then
-                                renderColor = Color3.fromRGB(255, 0, 0) -- Красный (Мардер)
-                            elseif isS then
-                                renderColor = Color3.fromRGB(0, 0, 255) -- Синий (Шериф)
-                            elseif isH then
-                                renderColor = Color3.fromRGB(255, 250, 0) -- Желтый (Герой)
-                            end
-                            
-                            if (isM and Config.Visuals.MurdererESP) or (isS and Config.Visuals.SheriffESP) or (not isM and not isS and Config.Visuals.InnocentESP) or (isH and Config.Visuals.SheriffESP) then
-                                applyHighlight(player, renderColor)
-                            else
-                                removeHighlight(player)
-                            end
-
-                            if (isM and Config.Visuals.EspBoxes) or (isS and Config.Visuals.EspBoxes) or (not isM and not isS and Config.Visuals.EspBoxes) or (isH and Config.Visuals.EspBoxes) then
-                                applyBoxESP(player, renderColor)
-                            else
-                                removeBoxESP(player)
-                            end
+                            espEnabled = Config.Visuals.InnocentESP
+                            renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый (Мирный)
                         end
                     end
+                    
+                    if espEnabled then
+                        applyHighlight(player, renderColor)
+                    else
+                        removeHighlight(player)
+                    end
+
+                    if Config.Visuals.EspBoxes then
+                        applyBoxESP(player, renderColor)
+                    else
+                        removeBoxESP(player)
+                    end
                 end
-            end)
-            task.wait(0.3)
+            end
+        end
+    end
+
+    -- Запуск цикла ESP
+    task.spawn(function()
+        while true do
+            pcall(updateESP)
+            task.wait(0.1)
         end
     end)
 
