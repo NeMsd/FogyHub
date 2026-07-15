@@ -1,9 +1,7 @@
 
-
 -- ======================================================
--- FogyHub (MM2 Custom Multi-Tool)
+-- FogyHub (MM2 Custom Multi-Tool - REBUILT BY HACKER)
 -- Authors: MsD, Gemini
--- Credits: Kiriot22 & Felix (for Server Role logic)
 -- ======================================================
 
 -- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ ====================
@@ -43,13 +41,13 @@ local Config = {
         ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, 
         ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false,
         ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, 
-        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["TP & Shoot"] = false
+        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Shoot Murderer"] = false
     },
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100}, ["Fling Sheriff"] = {X = 30, Y = 145}, ["Fling Hero"] = {X = 30, Y = 190}, 
         ["Grab Gun"] = {X = 30, Y = 235}, ["Slide Glitch"] = {X = 30, Y = 280}, ["Noclip"] = {X = 30, Y = 325},
         ["Kill Aura"] = {X = 30, Y = 370}, ["Auto Kill All"] = {X = 30, Y = 415}, ["Godmode"] = {X = 30, Y = 460},
-        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["TP & Shoot"] = {X = 30, Y = 640}
+        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["Shoot Murderer"] = {X = 30, Y = 640}
     }
 }
 
@@ -89,8 +87,8 @@ local L = {
         CrashTitle = "🚨 FogyHub — Crash Handler", CopyLog = "Copy Log", Copied = "Log Copied!", BufError = "Clipboard Error!", Close = "Close", Loaded = "FogyHub loaded!", FailedUI = "Failed to load WindUI library.",
         Visuals = "Visuals", Combat = "Combat", Utility = "Utility", MobileBinds = "Mobile Buttons", Radio = "Radio", Teleports = "Teleports", Configs = "Configs / Settings",
         EspM = "ESP Murderer", EspS = "ESP Sheriff", EspI = "ESP Innocents", EspBoxes = "3D Box ESP (For Low-End PC)", Stretch = "Screen Stretch (4:3)", StretchForce = "Stretch Force",
-        NebulaSky = "Sky: Space Nebula", SunsetSky = "Sky: Beautiful Sunset", ClassicSky = "Sky: Default Classic", NoFog = "Disable Map Fog", TimeOfDay = "Time of Day",
-        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", TpShoot = "TP Behind & Shoot", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
+        NoFog = "Disable Map Fog", TimeOfDay = "Time of Day",
+        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", ShootM = "Shoot Murderer", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
         FlingM = "Fling Murderer", FlingS = "Fling Sheriff", FlingH = "Fling Hero", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
         LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnFlingH = "Button: Fling Hero", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
         BtnNoclip = "Button: Noclip", BtnKillAura = "Button: Kill Aura", BtnKillAll = "Button: Auto Kill All", RobloxId = "Roblox Audio ID", PlayId = "Play Roblox ID", HttpUrl = "HTTP Link to MP3 / OGG",
@@ -99,19 +97,19 @@ local L = {
         RadioDownloading = "Downloading audio file...", RadioHttpSuccess = "External audio started successfully!", RadioHttpError = "Failed to parse asset from file.", RadioHttpFail = "Failed to download audio file.",
         RadioCache = "Audio loaded from persistent local cache!", NoclipToggle = "Noclip", NoclipOn = "Enabled", NoclipOff = "Disabled", SpeedOn = "Enabled", SpeedOff = "Disabled",
         DodgeKnife = "Auto-Dodge Thrown Knife (Jump Right)", BtnDodgeKnife = "Button: Dodge Knife", TpLobby = "Teleport to Lobby", TpMap = "Teleport to Map", BtnTpLobby = "Button: TP Lobby",
-        BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins", UnlockInventory = "Unlock All Skins (Bypass)",
+        BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username", SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
-        BtnTpShoot = "Button: TP & Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
-        SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat", SkinsUnlocked = "Skins unlocked! Open your in-game Inventory.",
+        BtnShootM = "Button: Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
+        SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat",
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
     ru = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub loaded!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
         Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
         EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
-        NebulaSky = "Небо: Космическая Туманность", SunsetSky = "Небо: Красивый Закат", ClassicSky = "Небо: Стандартное", NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
-        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", TpShoot = "ТП за Спину & Выстрел", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
+        NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
+        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", ShootM = "Выстрелить в Мардера", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
         FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
         LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
         BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
@@ -120,11 +118,11 @@ local L = {
         RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Внешнее аудио успешно запущено!", RadioHttpError = "Не удалось декодировать аудио.", RadioHttpFail = "Не удалось скачать аудиофайл.",
         RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
         DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
-        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины", UnlockInventory = "Разблокировать ВСЕ скины инвентаря",
+        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
         SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
-        BtnTpShoot = "Кнопка: TP & Shoot", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
-        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат", SkinsUnlocked = "Skins unlocked! Open your in-game Inventory.",
+        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
 }
@@ -143,7 +141,7 @@ local function getSafeUIContainer()
     else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
--- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER (ПОЛНОСТЬЮ ИСПРАВЛЕННЫЙ) ====================
+-- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
 local function showCrashMenu(err)
     local traceback = debug.traceback()
     local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
@@ -709,33 +707,6 @@ local function main()
         saveConfig()
     end
 
-    -- Реализация смены текстуры неба (Skybox)
-    local function applySkybox(style)
-        for _, obj in ipairs(Lighting:GetChildren()) do
-            if obj:IsA("Sky") then obj:Destroy() end
-        end
-        
-        if style == "Nebula" then
-            local sky = Instance.new("Sky")
-            sky.SkyboxBk = "rbxassetid://159454299"
-            sky.SkyboxDn = "rbxassetid://159454296"
-            sky.SkyboxFt = "rbxassetid://159454293"
-            sky.SkyboxLf = "rbxassetid://159454300"
-            sky.SkyboxRt = "rbxassetid://159454297"
-            sky.SkyboxUp = "rbxassetid://159454290"
-            sky.Parent = Lighting
-        elseif style == "Sunset" then
-            local sky = Instance.new("Sky")
-            sky.SkyboxBk = "rbxassetid://60083044"
-            sky.SkyboxDn = "rbxassetid://60083161"
-            sky.SkyboxFt = "rbxassetid://60083271"
-            sky.SkyboxLf = "rbxassetid://60083378"
-            sky.SkyboxRt = "rbxassetid://60083516"
-            sky.SkyboxUp = "rbxassetid://60083627"
-            sky.Parent = Lighting
-        end
-    end
-
     -- Прикрепление радио на спину
     local function attachRadio()
         if radioModel then radioModel:Destroy() end
@@ -935,7 +906,7 @@ local function main()
         safeTeleport(targetCFrame)
     end
 
-    -- Умный анализ геометрии активной карты и безопасное приземление (Полностью обновлено)
+    -- Умный анализ геометрии активной карты и безопасное приземление
     local function tpToMap()
         local center = Vector3.new(12.0, 291.7, 9040.0) -- Координаты центра всех карт MM2
         local normal = workspace:FindFirstChild("Normal")
@@ -994,62 +965,106 @@ local function main()
         end
     end
 
-    -- ==================== СОВРЕМЕННЫЙ СКИНЧЕНДЖЕР (ОБХОД ПАТЧА) ====================
-    local function applyClientSkinChanger()
-        pcall(function()
-            local clientDataObj = findSystemModule("ClientData")
-            local itemDatabaseObj = findSystemModule("ItemDatabase")
-            if not clientDataObj or not itemDatabaseObj then return end
-
-            local ClientData = require(clientDataObj)
-            local ItemDatabase = require(itemDatabaseObj)
-            local myData = ClientData.get_data()[tostring(LocalPlayer.UserId)] or ClientData.get_data()[LocalPlayer.Name]
-            
-            if myData and myData.Inventory then
-                local itemsAdded = 0
-                for category, items in pairs(ItemDatabase) do
-                    if type(items) == "table" then
-                        for itemName, _ in pairs(items) do
-                            if not myData.Inventory[itemName] then
-                                myData.Inventory[itemName] = 1
-                                itemsAdded = itemsAdded + 1
-                            end
-                        end
-                    end
-                end
-                if itemsAdded > 0 then
-                    WindUI:Notify({ 
-                        Title = T("Visuals"), 
-                        Content = T("SkinsUnlocked"), 
-                        Icon = "check", 
-                        Duration = 4 
-                    })
-                end
+    -- Сетевой выстрел без дергания камеры (ОБНОВЛЁННЫЙ ВЫСОКОКЛАССНЫЙ ШОТТЕР)
+    local function fireGun(gun, targetPosition)
+        local char = LocalPlayer.Character
+        local bp = LocalPlayer:FindFirstChild("Backpack")
+        if gun.Parent == bp then char.Humanoid:EquipTool(gun) task.wait(0.1) end
+        
+        local originCF
+        local gunServer = gun:FindFirstChild("GunServer")
+        if gunServer then
+            local attachment = gunServer:FindFirstChild("GunRaycastAttachment1") or gunServer:FindFirstChild("RaycastAttachment")
+            if attachment then
+                originCF = attachment.WorldCFrame
             end
-        end)
+        end
+        
+        if not originCF then
+            local handle = gun:FindFirstChild("Handle") or gun:FindFirstChild("Gun")
+            if handle and handle:IsA("BasePart") then
+                originCF = handle.CFrame
+            end
+        end
+        
+        if not originCF then
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if hrp then originCF = hrp.CFrame end
+        end
+        
+        if not originCF then return end
+        
+        local shootRemote = gun:FindFirstChild("Shoot") or gun:FindFirstChild("Fire")
+        if shootRemote then
+            local args = {
+                CFrame.new(originCF.Position, targetPosition),
+                CFrame.new(targetPosition)
+            }
+            shootRemote:FireServer(unpack(args))
+        else
+            -- Фоллбэк под классические сервера
+            pcall(function()
+                if ReplicatedStorage:FindFirstChild("ShootGun") then
+                    ReplicatedStorage.ShootGun:InvokeServer(1, targetPosition, targetPosition)
+                else
+                    simulatePhysicalClick()
+                end
+            end)
+        end
     end
 
-    -- Локальный 3D Скинченджер по никнейму игрока (ВОССТАНОВЛЕНО)
+    -- Стабильный скинченджер без затупов и патчей
     local function changeVisualSkin(username)
         task.spawn(function()
-            local success, userId = pcall(function()
-                return Players:GetUserIdFromNameAsync(username)
-            end)
-            
-            if not success or not userId then
-                WindUI:Notify({ Title = T("Visuals"), Content = T("SkinNotFound"), Icon = "x", Duration = 3 })
-                return
+            local targetPlr = nil
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p.Name:lower() == username:lower() or p.DisplayName:lower() == username:lower() then
+                    targetPlr = p
+                    break
+                end
             end
-            
+
             local char = LocalPlayer.Character
             local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if char and hum then
+            if not char or not hum then return end
+
+            if targetPlr and targetPlr.Character then
+                -- Если цель на сервере — клонируем её элементы напрямую (100% обход любых патчей API)
+                pcall(function()
+                    for _, obj in ipairs(char:GetChildren()) do
+                        if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") or obj:IsA("ShirtGraphic") then
+                            obj:Destroy()
+                        end
+                    end
+                    for _, obj in ipairs(targetPlr.Character:GetChildren()) do
+                        if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") or obj:IsA("ShirtGraphic") then
+                            local clone = obj:Clone()
+                            clone.Parent = char
+                        end
+                    end
+                    WindUI:Notify({ Title = T("Visuals"), Content = T("SkinSuccess"), Icon = "check", Duration = 3 })
+                end)
+            else
+                -- Оффлайн-загрузка через описание
+                local success, userId = pcall(function()
+                    return Players:GetUserIdFromNameAsync(username)
+                end)
+                
+                if not success or not userId then
+                    WindUI:Notify({ Title = T("Visuals"), Content = T("SkinNotFound"), Icon = "x", Duration = 3 })
+                    return
+                end
+                
                 local descSuccess, desc = pcall(function()
                     return Players:GetHumanoidDescriptionFromUserId(userId)
                 end)
                 
                 if descSuccess and desc then
                     local applySuccess, err = pcall(function()
+                        -- Чистим старые аксы во избежание наложений
+                        for _, obj in ipairs(char:GetChildren()) do
+                            if obj:IsA("Accessory") then obj:Destroy() end
+                        end
                         hum:ApplyDescription(desc)
                     end)
                     
@@ -1058,24 +1073,11 @@ local function main()
                     else
                         warn("SkinChanger Error:", err)
                     end
+                else
+                    WindUI:Notify({ Title = T("Visuals"), Content = T("SkinNotFound"), Icon = "x", Duration = 3 })
                 end
             end
         end)
-    end
-
-    -- Сетевая стрельба по цели
-    local function fireGun(gun, targetPosition)
-        local char = LocalPlayer.Character
-        local bp = LocalPlayer:FindFirstChild("Backpack")
-        if gun.Parent == bp then char.Humanoid:EquipTool(gun) task.wait(0.1) end
-        workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPosition)
-        local shotFired = false
-        pcall(function()
-            if ReplicatedStorage:FindFirstChild("ShootGun") then
-                ReplicatedStorage.ShootGun:InvokeServer(1, targetPosition, targetPosition) shotFired = true
-            end
-        end)
-        if not shotFired then simulatePhysicalClick() end
     end
 
     -- Авто-килл всех (для убийцы)
@@ -1127,8 +1129,8 @@ local function main()
         end
     end
 
-    -- ТП за спину и выстрел в убийцу
-    local function tpBehindAndShoot()
+    -- Моментальный прямой шот в убийцу без палевных телепортов
+    local function shootMurdererDirect()
         local m = getMurderer()
         if not m or not m.Character or not m.Character:FindFirstChild("HumanoidRootPart") then
             WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 })
@@ -1146,18 +1148,8 @@ local function main()
         
         if char and char:FindFirstChild("HumanoidRootPart") then
             if gun.Parent == bp then char.Humanoid:EquipTool(gun) end
-            
-            local originalPos = char.HumanoidRootPart.CFrame
-            local mHrp = m.Character.HumanoidRootPart
-            
-            local targetCFrame = mHrp.CFrame * CFrame.new(0, 0, 3) 
-            safeTeleport(targetCFrame)
-            task.wait(0.2)
-            
-            fireGun(gun, mHrp.Position)
-            
-            task.wait(0.2)
-            safeTeleport(originalPos)
+            task.wait(0.05)
+            fireGun(gun, m.Character.HumanoidRootPart.Position)
         end
     end
 
@@ -1247,7 +1239,7 @@ local function main()
         local h = baseHeight * Config.MobileButtons.ButtonScale
         frame.Size = UDim2.new(0, w, 0, h)
         
-        -- Прогрузка сохраненных или дефолтных положений без багов автосохранения
+        -- Прогрузка сохраненных или дефолтных положений
         local savedPos = Config.ButtonPositions[name]
         if savedPos then
             frame.Position = UDim2.new(0, savedPos.X, 0, savedPos.Y)
@@ -1256,7 +1248,7 @@ local function main()
                 ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Fling Hero"] = 190,
                 ["Grab Gun"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325, 
                 ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460, 
-                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["TP & Shoot"] = 640
+                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["Shoot Murderer"] = 640
             }
             frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         end
@@ -1275,7 +1267,7 @@ local function main()
         
         btn.Activated:Connect(callback)
         
-        -- Стабильная логика драга (срабатывает как при зажатии рамки, так и при зажатии самой кнопки)
+        -- Стабильная логика драга
         local dragging = false
         local dragStart, startPos
         
@@ -1306,7 +1298,6 @@ local function main()
             if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                 if dragging then
                     dragging = false
-                    -- Сохраняем новую физическую позицию кнопки в конфиг
                     Config.ButtonPositions[name] = {
                         X = frame.Position.X.Offset,
                         Y = frame.Position.Y.Offset
@@ -1331,7 +1322,7 @@ local function main()
         MobileButtons = {}
     }
 
-    -- Таблица динамической настройки мобильных кнопок (Оптимизация на 350 строк!)
+    -- Таблица динамической настройки мобильных кнопок
     local buttonInfo = {
         ["Fling Murderer"] = {Translation = "BtnFlingM", Target = "FlingM", Callback = function() local m = getMurderer() if m then flingPlayer(m) end end},
         ["Fling Sheriff"] = {Translation = "BtnFlingS", Target = "FlingS", Callback = function() local sh = getSheriff() if sh then flingPlayer(sh) end end},
@@ -1345,10 +1336,10 @@ local function main()
         ["TP Lobby"] = {Translation = "BtnTpLobby", Target = "TpLobby", Callback = tpToLobby},
         ["TP Map"] = {Translation = "BtnTpMap", Target = "TpMap", Callback = tpToMap},
         ["Aimlock"] = {Translation = "BtnAimlock", Target = "Aimlock", Callback = function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) end},
-        ["TP & Shoot"] = {Translation = "BtnTpShoot", Target = "TpShoot", Callback = tpBehindAndShoot}
+        ["Shoot Murderer"] = {Translation = "BtnShootM", Target = "ShootM", Callback = shootMurdererDirect}
     }
 
-    -- Функция применения конфига ко всем графическим элементам меню (Решает рассинхрон)
+    -- Функция применения конфига ко всем графическим элементам меню
     local function applyConfigToUI()
         -- 1. Визуалы
         setToggle(UI_Elements.Visuals.MurdererESP, Config.Visuals.MurdererESP)
@@ -1359,7 +1350,6 @@ local function main()
         setSlider(UI_Elements.Visuals.StretchFactor, Config.Visuals.StretchFactor)
         setToggle(UI_Elements.Visuals.NoFogEnabled, Config.Visuals.NoFogEnabled)
         
-        -- Запуск визуальных функций (Stretch, NoFog, TimeOfDay)
         applyStretch(Config.Visuals.StretchEnabled)
         applyNoFog(Config.Visuals.NoFogEnabled)
         applyTimeOfDay(Config.Visuals.TimeOfDay)
@@ -1382,14 +1372,12 @@ local function main()
         setToggle(UI_Elements.Utility.EmoteSpamEnabled, Config.Utility.EmoteSpamEnabled)   
         setToggle(UI_Elements.Utility.ChatAlertsEnabled, Config.Utility.ChatAlertsEnabled)   
         
-        -- Запуск утилитарных функций (AntiFling)
         applyAntiFling(Config.Utility.AntiFling)
         
         -- 4. Мобильные кнопки
         setToggle(UI_Elements.MobileButtons.LockMobileButtons, Config.MobileButtons.LockMobileButtons)
         setSlider(UI_Elements.MobileButtons.ButtonScale, Config.MobileButtons.ButtonScale)
         
-        -- Синхронизация мобильных кнопок на экране и в меню по новой умной системе
         for name, info in pairs(buttonInfo) do
             local state = Config.MobileButtons[name]
             setToggle(UI_Elements.MobileButtons[name], state)
@@ -1417,25 +1405,19 @@ local function main()
         end
     })
     UI_Elements.Visuals.StretchFactor = VisualsTab:Slider({ Title = T("StretchForce"), Step = 0.05, Value = { Min = 0.5, Max = 1, Default = Config.Visuals.StretchFactor }, Callback = function(v) Config.Visuals.StretchFactor = v saveConfig() end })
-    VisualsTab:Button({ Title = T("NebulaSky"), Callback = function() applySkybox("Nebula") end })
-    VisualsTab:Button({ Title = T("SunsetSky"), Callback = function() applySkybox("Sunset") end })
-    VisualsTab:Button({ Title = T("ClassicSky"), Callback = function() applySkybox("Classic") end })
     
     UI_Elements.Visuals.NoFogEnabled = VisualsTab:Toggle({ Title = T("NoFog"), Value = Config.Visuals.NoFogEnabled, Callback = function(s) applyNoFog(s) saveConfig() end })
     VisualsTab:Slider({ Title = T("TimeOfDay"), Step = 1, Value = { Min = 0, Max = 24, Default = Config.Visuals.TimeOfDay }, Callback = function(v) applyTimeOfDay(v) saveConfig() end })
     
-    -- Локальный Скинченджер Персонажа (ВОССТАНОВЛЕНО)
+    -- Локальный Скинченджер Персонажа (ОБХОД ПАТЧА)
     VisualsTab:Input({ Title = T("SkinChangerInput"), Value = "", Placeholder = "Roblox Username...", Callback = function(t) skinChangerNick = t end })
     VisualsTab:Button({ Title = T("SkinChangerBtn"), Callback = function() changeVisualSkin(skinChangerNick) end })
-
-    -- Инновационный Скинченджер Оружия (Обход патча)
-    VisualsTab:Button({ Title = T("UnlockInventory"), Callback = applyClientSkinChanger })
 
     -- Вкладка Бой
     UI_Elements.Combat.AutoShootMurderer = CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.Combat.AutoShootMurderer, Callback = function(s) Config.Combat.AutoShootMurderer = s saveConfig() end })
     UI_Elements.Combat.AimlockEnabled = CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.Combat.AimlockEnabled, Callback = function(s) Config.Combat.AimlockEnabled = s saveConfig() end })
     UI_Elements.Combat.SilentAimEnabled = CombatTab:Toggle({ Title = T("SilentAim"), Value = Config.Combat.SilentAimEnabled, Callback = function(s) Config.Combat.SilentAimEnabled = s saveConfig() end }) 
-    CombatTab:Button({ Title = T("TpShoot"), Callback = tpBehindAndShoot })
+    CombatTab:Button({ Title = T("ShootM"), Callback = shootMurdererDirect })
     
     -- Авто-уклонение от ножей
     local lastDodgeTime = 0
@@ -1447,31 +1429,8 @@ local function main()
     
     -- Кнопки Флинга (Выбивания)
     CombatTab:Button({ Title = T("FlingM"), Callback = function() local m = getMurderer() if m then flingPlayer(m) else WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 }) end end })
-    
-    CombatTab:Button({ 
-        Title = T("FlingS"), 
-        Callback = function() 
-            local sh = getSheriff() 
-            if sh then 
-                flingPlayer(sh) 
-            else 
-                WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) 
-            end 
-        end 
-    })
-
-    -- Кнопка флинга Героя
-    CombatTab:Button({ 
-        Title = T("FlingH"), 
-        Callback = function() 
-            local h = getHero() 
-            if h then 
-                flingPlayer(h) 
-            else 
-                WindUI:Notify({ Title = "Error", Content = T("NoH"), Icon = "x", Duration = 3 }) 
-            end 
-        end 
-    })
+    CombatTab:Button({ Title = T("FlingS"), Callback = function() local sh = getSheriff() if sh then flingPlayer(sh) else WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) end end })
+    CombatTab:Button({ Title = T("FlingH"), Callback = function() local h = getHero() if h then flingPlayer(h) else WindUI:Notify({ Title = "Error", Content = T("NoH"), Icon = "x", Duration = 3 }) end end })
 
     -- Вкладка Утилиты
     UI_Elements.Utility.AutoGrabGun = UtilityTab:Toggle({ Title = T("AutoGrab"), Value = Config.Utility.AutoGrabGun, Callback = function(s) Config.Utility.AutoGrabGun = s saveConfig() end })
@@ -1495,11 +1454,11 @@ local function main()
     TeleportsTab:Button({ Title = T("TpLobby"), Callback = tpToLobby })
     TeleportsTab:Button({ Title = T("TpMap"), Callback = tpToMap })
 
-    -- Вкладка Тел. Кнопки (Оптимизирована до супер-компактного цикла!)
+    -- Вкладка Тел. Кнопки 
     UI_Elements.MobileButtons.LockMobileButtons = ButtonsTab:Toggle({ Title = T("LockButtons"), Value = Config.MobileButtons.LockMobileButtons, Callback = function(s) Config.MobileButtons.LockMobileButtons = s saveConfig() end })
-    UI_Elements.MobileButtons.ButtonScale = ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = Config.MobileButtons.ButtonScale }, Callback = function(v) Config.MobileButtons.ButtonScale = v saveConfig() updateButtonSizes() end }) -- Слайдер размера
+    UI_Elements.MobileButtons.ButtonScale = ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = Config.MobileButtons.ButtonScale }, Callback = function(v) Config.MobileButtons.ButtonScale = v saveConfig() updateButtonSizes() end })
     
-    -- Умный автоцикл генерации всех 13 кнопок в меню биндов
+    -- Умный автоцикл генерации кнопок
     for name, info in pairs(buttonInfo) do
         UI_Elements.MobileButtons[name] = ButtonsTab:Toggle({
             Title = T(info.Translation),
@@ -1523,23 +1482,23 @@ local function main()
         Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14 }
         Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
         Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false }
-        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["TP & Shoot"] = false }
+        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Shoot Murderer"] = false }
         saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
     end })
     ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() Config.Language = "ru" currentLang = "ru" saveConfig() WindUI:Notify({ Title = "Язык", Content = "Язык успешно изменен на Русский!", Icon = "globe", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("SetLangEn"), Callback = function() Config.Language = "en" currentLang = "en" saveConfig() WindUI:Notify({ Title = "Language", Content = "Language successfully changed to English!", Icon = "globe", Duration = 3 }) end })
 
     -- Вкладка Радио
-    local radioInput = RadioTab:Input({ Title = T("RobloxId"), Value = "", Placeholder = "ID...", Callback = function(text) currentSongId = text end })
+    local _ = RadioTab:Input({ Title = T("RobloxId"), Value = "", Placeholder = "ID...", Callback = function(text) currentSongId = text end })
     RadioTab:Button({ Title = T("PlayId"), Callback = playRadio })
-    local httpInput = RadioTab:Input({ Title = T("HttpUrl"), Value = "", Placeholder = "https://...", Callback = function(text) httpSongUrl = text end })
+    local _ = RadioTab:Input({ Title = T("HttpUrl"), Value = "", Placeholder = "https://...", Callback = function(text) httpSongUrl = text end })
     RadioTab:Button({ Title = T("PlayHttp"), Callback = playHttpRadio })
     RadioTab:Button({ Title = T("StopRadio"), Callback = stopRadio })
     RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
     RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
 
-    -- Автоматическое восстановление активного Радио на вашей спине при возрождении (QOL фича)
-    LocalPlayer.CharacterAdded:Connect(function(char)
+    -- Автоматическое восстановление активного Радио
+    LocalPlayer.CharacterAdded:Connect(function()
         task.wait(1)
         if radioSound and radioSound.Playing then
             attachRadio()
@@ -1571,7 +1530,7 @@ local function main()
         end
     end)
 
-    -- Оповещения в чат при раскрытии ролей (Только для вас)
+    -- Оповещения в чат при раскрытии ролей
     local lastMurder, lastSheriff = nil, nil
     local function notifyRolesInChat()
         pcall(function()
@@ -1598,7 +1557,7 @@ local function main()
         end)
     end
 
-    -- Оптимизированный и высокоскоростной ESP обработчик (0.1 секунд задержки для мгновенного обновления без просадок)
+    -- Оптимизированный ESP обработчик
     local function updateESP()
         local success, serverRoles = pcall(function()
             local remote = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
@@ -1618,7 +1577,6 @@ local function main()
                 end
             end
             
-            -- Локальные оповещения о ролях при смене раунда
             if Config.Utility.ChatAlertsEnabled then
                 if Murder ~= lastMurder or Sheriff ~= lastSheriff then
                     lastMurder = Murder
@@ -1635,7 +1593,6 @@ local function main()
                     local isM, isS, isH = false, false, false
                     local alive = IsAlive(player)
                     
-                    -- Определение ролей на основе серверных данных
                     if player.Name == Murder and alive then
                         isM = true
                     elseif player.Name == Sheriff and alive then
@@ -1647,7 +1604,6 @@ local function main()
                         end
                     end
                     
-                    -- Проверка нахождения зрителей на спавне лобби
                     local inLobby = false
                     local hrp = character:FindFirstChild("HumanoidRootPart")
                     if hrp then
@@ -1657,9 +1613,8 @@ local function main()
                         end
                     end
                     
-                    -- Отрисовка ESP цветов в зависимости от условий и конфигурации
                     local espEnabled = false
-                    local renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый по умолчанию
+                    local renderColor = Color3.fromRGB(0, 255, 0)
                     
                     if not alive or inLobby then
                         if Config.Visuals.MurdererESP or Config.Visuals.SheriffESP or Config.Visuals.InnocentESP then
@@ -1669,16 +1624,16 @@ local function main()
                     else
                         if isM then
                             espEnabled = Config.Visuals.MurdererESP
-                            renderColor = Color3.fromRGB(255, 0, 0) -- Красный (Мардер)
+                            renderColor = Color3.fromRGB(255, 0, 0)
                         elseif isS then
                             espEnabled = Config.Visuals.SheriffESP
-                            renderColor = Color3.fromRGB(0, 0, 255) -- Синий (Шериф)
+                            renderColor = Color3.fromRGB(0, 0, 255)
                         elseif isH then
-                            espEnabled = Config.Visuals.SheriffESP -- Герой отслеживается через Шериф ESP
-                            renderColor = Color3.fromRGB(255, 250, 0) -- Желтый (Герой)
+                            espEnabled = Config.Visuals.SheriffESP
+                            renderColor = Color3.fromRGB(255, 250, 0)
                         else
                             espEnabled = Config.Visuals.InnocentESP
-                            renderColor = Color3.fromRGB(0, 255, 0) -- Зеленый (Мирный)
+                            renderColor = Color3.fromRGB(0, 255, 0)
                         end
                     end
                     
@@ -1706,7 +1661,7 @@ local function main()
         end
     end)
 
-    -- Цикл автоподбора пистолета (С полной проверкой отмены)
+    -- Цикл автоподбора пистолета
     task.spawn(function()
         while true do
             pcall(function()
@@ -1727,7 +1682,7 @@ local function main()
         end
     end)
 
-    -- Цикл автофарма монет (Плавное бесшумное скольжение на Heartbeat!)
+    -- Цикл автофарма монет
     local function getCoinsOnMap()
         local coins = {}
         for _, v in ipairs(workspace:GetDescendants()) do
@@ -1785,7 +1740,7 @@ local function main()
         end
     end)
 
-    -- Цикл Спама Эмоций (Zen/Sit Глитч вашего хитбокса)
+    -- Цикл Спама Эмоций
     task.spawn(function()
         while true do
             pcall(function()
@@ -1812,7 +1767,6 @@ local function main()
                     if gun then
                         local m = getMurderer()
                         if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
-                            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, m.Character.HumanoidRootPart.Position)
                             fireGun(gun, m.Character.HumanoidRootPart.Position) 
                         end
                     end
@@ -1822,7 +1776,7 @@ local function main()
         end
     end)
 
-    -- Аимлок (Lerp наводка решает проблему занижения камеры на ПК и телефонах)
+    -- Аимлок
     RunService.RenderStepped:Connect(function()
         pcall(function()
             if Config.Combat.AimlockEnabled then
@@ -1838,7 +1792,7 @@ local function main()
         end)
     end)
 
-    -- Бесконечный спидглитч (Откалиброван под любые герцовки мониторов с защитой от вылета!)
+    -- Бесконечный спидглитч
     RunService.Heartbeat:Connect(function(deltaTime)
         pcall(function()
             local char = LocalPlayer.Character
@@ -1851,22 +1805,32 @@ local function main()
         end)
     end)
 
-    -- Silent Aim (Сетевой перехват пули без дергания камеры!)
+    -- Silent Aim (ПЕРЕДОВОЙ СЕТЕВОЙ ПЕРЕХВАТ ПУЛИ В ТАРГЕТ)
     pcall(function()
         if hookmetamethod then
             local oldNamecall
             oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
                 local args = {...}
                 local method = getnamecallmethod()
-                if tostring(self) == "ShootGun" and method == "InvokeServer" and Config.Combat.SilentAimEnabled then
+                if Config.Combat.SilentAimEnabled then
                     local m = getMurderer()
                     if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
                         local targetPos = m.Character.HumanoidRootPart.Position
-                        args[2] = targetPos
-                        args[3] = targetPos
+                        -- Хук для современных копий игры (RemoteEvent)
+                        if method == "FireServer" and (self.Name == "Shoot" or self.Name == "Fire") and self.Parent == LocalPlayer.Character:FindFirstChild("Gun") then
+                            local origin = args[1] and args[1].Position or LocalPlayer.Character.HumanoidRootPart.Position
+                            args[1] = CFrame.new(origin, targetPos)
+                            args[2] = targetPos
+                            return oldNamecall(self, unpack(args))
+                        -- Хук для классических серверов (RemoteFunction)
+                        elseif method == "InvokeServer" and self.Name == "ShootGun" then
+                            args[2] = targetPos
+                            args[3] = targetPos
+                            return oldNamecall(self, unpack(args))
+                        end
                     end
                 end
-                return oldNamecall(self, unpack(args))
+                return oldNamecall(self, ...)
             end)
         end
     end)
@@ -1903,7 +1867,7 @@ local function main()
         end)
     end)
 
-    -- Noclip (Свободное перемещение)
+    -- Noclip
     RunService.Stepped:Connect(function()
         pcall(function()
             if not Config.Utility.NoclipEnabled then return end
@@ -1916,7 +1880,7 @@ local function main()
         end)
     end)
 
-    -- Потоковая проверка для авто-уклонения (Auto-Dodge Thrown Knife)
+    -- Потоковая проверка для авто-уклонения
     RunService.Heartbeat:Connect(function()
         pcall(function()
             if not Config.Combat.AutoDodgeKnife then return end
@@ -1924,23 +1888,20 @@ local function main()
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
             if not hrp then return end
             
-            -- Поиск летящего ножа в workspace
             for _, obj in ipairs(workspace:GetChildren()) do
                 if obj.Name == "ThrownKnife" and obj:IsA("BasePart") then
                     local distance = (hrp.Position - obj.Position).Magnitude
                     
-                    -- Если нож близко и кулдаун прошел (0.6 сек)
                     if distance < 22 and (tick() - lastDodgeTime > 0.6) then
                         lastDodgeTime = tick()
                         
-                        -- Мгновенно смещаемся строго вправо относительно направления взгляда
                         local targetCFrame = hrp.CFrame + (hrp.CFrame.RightVector * 14)
                         
                         local wasAnchored = hrp.Anchored
                         hrp.Anchored = true
                         hrp.CFrame = targetCFrame
                         char:PivotTo(targetCFrame)
-                        task.wait(0.04) -- Кратковременный анкор для фиксации положения
+                        task.wait(0.04)
                         hrp.Anchored = wasAnchored
                         break
                     end
@@ -1949,9 +1910,9 @@ local function main()
         end)
     end)
 
-    -- Проверка на неофициальный кастомный сервер / копию игры (например, MMB / MMV)
+    -- Проверка на неофициальный сервер
     task.spawn(function()
-        task.wait(1.5) -- Небольшая задержка перед выводом окна
+        task.wait(1.5)
         local officialMM2Ids = {142823291, 3383406159}
         if not table.find(officialMM2Ids, game.PlaceId) then
             WindUI:Notify({
@@ -1963,9 +1924,9 @@ local function main()
         end
     end)
 
-    -- Автоматическое и правильное применение сохраненного конфига при каждом старте!
+    -- Автоматическое применение конфига
     task.spawn(function()
-        task.wait(0.5) -- Ожидание прогрузки GUI
+        task.wait(0.5)
         applyConfigToUI()
     end)
 
@@ -1978,7 +1939,6 @@ if container then
     local saveFileName = "fogyhub_lang.txt"
     local hasSavedLang = false
     
-    -- Проверка сохраненного языка
     if readfile and isfile and isfile(saveFileName) then
         local saved = pcall(function() return readfile(saveFileName) end) and readfile(saveFileName)
         if saved == "ru" or saved == "en" then
