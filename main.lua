@@ -377,9 +377,9 @@ local function main()
         return nil
     end
 
-    -- Генерация уникального безопасного имени файла на основе URL для физического кэширования аудио
+    -- Название файла кэша
     local function getFileNameFromUrl(url)
-        local clean = url:gsub("[^%w]", "") -- Только латиница и цифры
+        local clean = url:gsub("[^%w]", "")
         if #clean > 25 then
             clean = clean:sub(#clean - 24)
         end
@@ -391,7 +391,6 @@ local function main()
         local character = player.Character
         if not character then return end
         
-        -- Поиск подсветки (совместимо со стандартным именем "Highlight")
         local highlight = character:FindFirstChild("FogyHub_ESP") or character:FindFirstChild("Highlight")
         if not highlight then
             highlight = Instance.new("Highlight")
@@ -478,17 +477,16 @@ local function main()
         if hrp and hum then
             local wasAnchored = hrp.Anchored
             
-            -- Сбрасываем инерцию
             hrp.Velocity = Vector3.new(0, 0, 0)
             hrp.RotVelocity = Vector3.new(0, 0, 0)
             
             hrp.Anchored = true
-            hum.PlatformStand = true -- Временно отключаем анимации
+            hum.PlatformStand = true
             
             hrp.CFrame = targetCFrame
             char:PivotTo(targetCFrame)
             
-            task.wait(0.15) -- Безопасная задержка
+            task.wait(0.15)
             
             hrp.Velocity = Vector3.new(0, 0, 0)
             hrp.RotVelocity = Vector3.new(0, 0, 0)
@@ -824,15 +822,14 @@ local function main()
         if radioModel then radioModel:Destroy() radioModel = nil end
     end
 
-    -- Умный бесконфликтный автоподбор пистолета (ФИЗИЧЕСКИ СТАБИЛИЗИРОВАННЫЙ С СЕТЕВЫМ ТАЧЕМ)
+    -- Ультра-простой автоподбор пистолета (БЕЗ КОСТЫЛЕЙ, ТОЛЬКО ТЕПОРТ И ПАКЕТ)
     local function grabGun()
         if grabbingGun then return end
         if not IsAlive(LocalPlayer) then return end
         
         local char = LocalPlayer.Character
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
-        if not char or not hum or not hrp then return end
+        if not char or not hrp then return end
         
         local bp = LocalPlayer:FindFirstChild("Backpack")
         local isMurderer = (char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) or (Murder and LocalPlayer.Name == Murder)
@@ -850,60 +847,18 @@ local function main()
         
         grabbingGun = true
         
-        -- Полностью сохраняем исходное состояние физики перед подбором
         local originalCFrame = hrp.CFrame
-        local wasAnchored = hrp.Anchored
-        local wasPlatformStand = hum.PlatformStand
-        
-        -- Костыль №1: Временный локальный ноуклип
-        local noclipConn = RunService.Stepped:Connect(function()
-            if char then
-                for _, part in ipairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") then part.CanCollide = false end
-                end
-            end
-        end)
-        
-        -- Костыль №2: Гасим инерцию и блокируем падение персонажа
-        hrp.Velocity = Vector3.new()
-        hrp.RotVelocity = Vector3.new()
-        hrp.Anchored = true
-        hum.PlatformStand = true
-        
         local targetCFrame = handle:IsA("Model") and handle:GetPivot() or handle.CFrame
         
-        -- Телепортируемся прямо в эпицентр пушки
-        hrp.CFrame = targetCFrame
-        task.wait(0.1)
+        -- Просто телепортируемся на ствол
+        hrp.CFrame = targetCFrame * CFrame.new(0, -1, 0)
+        task.wait(0.2) -- Даем долю секунды на дефолтный подбор физикой движка
         
-        -- Костыль №3: Принудительный сетевой тач для моментального подъема без задержек
-        if firetouchinterest then
-            pcall(function()
-                firetouchinterest(hrp, handle, 0)
-                task.wait(0.05)
-                firetouchinterest(hrp, handle, 1)
-            end)
-        end
-        
-        -- Резервный пошаговый спуск (на случай если ремут тача не сработал)
-        local timeout = 0
-        while not hasGun() and timeout < 8 and IsAlive(LocalPlayer) do
-            hrp.CFrame = targetCFrame * CFrame.new(0, -0.5 - (timeout * 0.1), 0)
-            task.wait(0.05)
-            timeout = timeout + 1
-        end
-        
-        -- ГАРАНТИРОВАННЫЙ СБРОС И ОТКАТ ВСЕХ КОСТЫЛЕЙ (БЕЗ ЗАСТРЕВАНИЙ И ФРИЗОВ)
+        -- И моментально возвращаемся обратно
         if IsAlive(LocalPlayer) then
             hrp.CFrame = originalCFrame
-            task.wait(0.05) -- Даем кадру обновиться
-            hrp.Velocity = Vector3.new()
-            hrp.RotVelocity = Vector3.new()
-            hrp.Anchored = wasAnchored
-            hum.PlatformStand = wasPlatformStand
         end
         
-        if noclipConn then noclipConn:Disconnect() end
         grabbingGun = false
     end
 
@@ -1607,6 +1562,23 @@ local function main()
         end)
     end
 
+    -- Умный автоматический поиск и подсветка упавшего пистолета на карте
+    local function highlightGunDrop()
+        local gunDrop = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
+        local handle = gunDrop and (gunDrop:FindFirstChild("Handle", true) or gunDrop:FindFirstChildOfClass("Part", true) or gunDrop)
+        
+        if handle then
+            local highlight = handle:FindFirstChild("FogyHub_GunESP") or Instance.new("Highlight")
+            highlight.Name = "FogyHub_GunESP"
+            highlight.FillColor = Color3.fromRGB(0, 255, 100) -- Яркий зеленый
+            highlight.OutlineColor = Color3.fromRGB(0, 255, 100)
+            highlight.FillTransparency = 0.5
+            highlight.OutlineTransparency = 0
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Parent = handle
+        end
+    end
+
     -- Оптимизированный ESP обработчик
     local function updateESP()
         local success, serverRoles = pcall(function()
@@ -1703,10 +1675,11 @@ local function main()
         end
     end
 
-    -- Запуск цикла ESP
+    -- Запуск цикла ESP и подсветки пистолета
     task.spawn(function()
         while true do
             pcall(updateESP)
+            pcall(highlightGunDrop)
             task.wait(0.1)
         end
     end)
@@ -1825,21 +1798,6 @@ local function main()
             task.wait(0.1)
         end
     end)
-
-    -- Высокоприоритетный плавный Аимлок (Решает проблему тряски камеры)
-    local function updateAimlock()
-        if Config.Combat.AimlockEnabled then
-            local m = getMurderer()
-            if m and m.Character and m.Character:FindFirstChild("Head") then
-                local camera = workspace.CurrentCamera
-                if camera then 
-                    local targetCFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
-                    camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
-                end
-            end
-        end
-    end
-    RunService:BindToRenderStep("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
 
     -- Бесконечный спидглитч
     RunService.Heartbeat:Connect(function(deltaTime)
@@ -2073,3 +2031,4 @@ if container then
 else
     xpcall(main, showCrashMenu)
 end
+
