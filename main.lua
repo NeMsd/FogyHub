@@ -40,13 +40,13 @@ local Config = {
         ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, 
         ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false,
         ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, 
-        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false
+        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Shoot Murderer"] = false
     },
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100}, ["Fling Sheriff"] = {X = 30, Y = 145}, ["Fling Hero"] = {X = 30, Y = 190}, 
         ["Grab Gun"] = {X = 30, Y = 235}, ["Slide Glitch"] = {X = 30, Y = 280}, ["Noclip"] = {X = 30, Y = 325},
         ["Kill Aura"] = {X = 30, Y = 370}, ["Auto Kill All"] = {X = 30, Y = 415}, ["Godmode"] = {X = 30, Y = 460},
-        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}
+        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["Shoot Murderer"] = {X = 30, Y = 640}
     }
 }
 
@@ -87,7 +87,7 @@ local L = {
         Visuals = "Visuals", Combat = "Combat", Utility = "Utility", MobileBinds = "Mobile Buttons", Radio = "Radio", Teleports = "Teleports", Configs = "Configs / Settings",
         EspM = "ESP Murderer", EspS = "ESP Sheriff", EspI = "ESP Innocents", EspBoxes = "3D Box ESP (For Low-End PC)", Stretch = "Screen Stretch (4:3)", StretchForce = "Stretch Force",
         NoFog = "Disable Map Fog", TimeOfDay = "Time of Day",
-        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
+        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", ShootM = "Shoot Murderer", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
         FlingM = "Fling Murderer", FlingS = "Fling Sheriff", FlingH = "Fling Hero", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
         LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnFlingH = "Button: Fling Hero", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
         BtnNoclip = "Button: Noclip", BtnKillAura = "Button: Kill Aura", BtnKillAll = "Button: Auto Kill All", RobloxId = "Roblox Audio ID", PlayId = "Play Roblox ID", HttpUrl = "HTTP Link to MP3 / OGG",
@@ -99,7 +99,7 @@ local L = {
         BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username", SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
-        GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
+        BtnShootM = "Button: Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
         SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat",
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
@@ -108,7 +108,7 @@ local L = {
         Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
         EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
         NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
-        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
+        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", ShootM = "Выстрелить в Мардера", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
         FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
         LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
         BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
@@ -120,7 +120,7 @@ local L = {
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
-        GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
@@ -1160,6 +1160,30 @@ local function main()
         end
     end
 
+    -- Прямой моментальный выстрел в убийцу на месте (без ТП и фризов)
+    local function shootMurdererDirect()
+        local m = getMurderer()
+        if not m or not m.Character or not m.Character:FindFirstChild("HumanoidRootPart") then
+            WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 })
+            return
+        end
+        
+        local char = LocalPlayer.Character
+        local bp = LocalPlayer:FindFirstChild("Backpack")
+        local gun = char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
+        
+        if not gun then
+            WindUI:Notify({ Title = "Error", Content = T("NoGun"), Icon = "x", Duration = 3 })
+            return
+        end
+        
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            if gun.Parent == bp then char.Humanoid:EquipTool(gun) end
+            task.wait(0.05)
+            fireGun(gun, m.Character.HumanoidRootPart.Position)
+        end
+    end
+
     -- ==================== АКТИВАЦИОННЫЕ ХЭЛПЕРЫ ДЛЯ КОНФИГА ====================
     
     local function applyStretch(state)
@@ -1255,7 +1279,7 @@ local function main()
                 ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Fling Hero"] = 190,
                 ["Grab Gun"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325, 
                 ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460, 
-                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
+                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["Shoot Murderer"] = 640
             }
             frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         end
@@ -1302,7 +1326,7 @@ local function main()
         end)
         
         UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch_Offset or input.UserInputType == Enum.UserInputType.Touch then
                 if dragging then
                     dragging = false
                     Config.ButtonPositions[name] = {
@@ -1329,7 +1353,7 @@ local function main()
         MobileButtons = {}
     }
 
-    -- Таблица динамической настройки мобильных кнопок (ВЫРЕЗАН ТП ШОТ)
+    -- Таблица динамической настройки мобильных кнопок (ВЫРЕЗАН ТП ШОТ, ВЕРНУТ ШУТ)
     local buttonInfo = {
         ["Fling Murderer"] = {Translation = "BtnFlingM", Target = "FlingM", Callback = function() local m = getMurderer() if m then flingPlayer(m) end end},
         ["Fling Sheriff"] = {Translation = "BtnFlingS", Target = "FlingS", Callback = function() local sh = getSheriff() if sh then flingPlayer(sh) end end},
@@ -1342,7 +1366,8 @@ local function main()
         ["Godmode"] = {Translation = "BtnGodMode", Target = "GodMode", Callback = function() Config.Combat.AutoDodgeKnife = not Config.Combat.AutoDodgeKnife setToggle(UI_Elements.Combat.AutoDodgeKnife, Config.Combat.AutoDodgeKnife) end},
         ["TP Lobby"] = {Translation = "BtnTpLobby", Target = "TpLobby", Callback = tpToLobby},
         ["TP Map"] = {Translation = "BtnTpMap", Target = "TpMap", Callback = tpToMap},
-        ["Aimlock"] = {Translation = "BtnAimlock", Target = "Aimlock", Callback = function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) end}
+        ["Aimlock"] = {Translation = "BtnAimlock", Target = "Aimlock", Callback = function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) end},
+        ["Shoot Murderer"] = {Translation = "BtnShootM", Target = "ShootM", Callback = shootMurdererDirect}
     }
 
     -- Функция применения конфига ко всем графическим элементам меню
@@ -1419,10 +1444,11 @@ local function main()
     VisualsTab:Input({ Title = T("SkinChangerInput"), Value = "", Placeholder = "Roblox Username...", Callback = function(t) skinChangerNick = t end })
     VisualsTab:Button({ Title = T("SkinChangerBtn"), Callback = function() changeVisualSkin(skinChangerNick) end })
 
-    -- Вкладка Бой (ТП ШОТ УДАЛЕН К ЧЕРТЯМ)
+    -- Вкладка Бой (ШУТ ВЕРНУТ К ЖИЗНИ)
     UI_Elements.Combat.AutoShootMurderer = CombatTab:Toggle({ Title = T("AutoShoot"), Value = Config.Combat.AutoShootMurderer, Callback = function(s) Config.Combat.AutoShootMurderer = s saveConfig() end })
     UI_Elements.Combat.AimlockEnabled = CombatTab:Toggle({ Title = T("Aimlock"), Value = Config.Combat.AimlockEnabled, Callback = function(s) Config.Combat.AimlockEnabled = s saveConfig() end })
     UI_Elements.Combat.SilentAimEnabled = CombatTab:Toggle({ Title = T("SilentAim"), Value = Config.Combat.SilentAimEnabled, Callback = function(s) Config.Combat.SilentAimEnabled = s saveConfig() end }) 
+    CombatTab:Button({ Title = T("ShootM"), Callback = shootMurdererDirect })
     
     -- Авто-уклонение от ножей
     local lastDodgeTime = 0
@@ -1799,6 +1825,21 @@ local function main()
         end
     end)
 
+    -- Высокоприоритетный плавный Аимлок (Решает проблему тряски камеры)
+    local function updateAimlock()
+        if Config.Combat.AimlockEnabled then
+            local m = getMurderer()
+            if m and m.Character and m.Character:FindFirstChild("Head") then
+                local camera = workspace.CurrentCamera
+                if camera then 
+                    local targetCFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
+                    camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
+                end
+            end
+        end
+    end
+    RunService:BindToRenderStep("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
+
     -- Бесконечный спидглитч
     RunService.Heartbeat:Connect(function(deltaTime)
         pcall(function()
@@ -2031,4 +2072,3 @@ if container then
 else
     xpcall(main, showCrashMenu)
 end
-
