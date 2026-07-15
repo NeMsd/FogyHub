@@ -1,12 +1,20 @@
+
 # 🌐 FogyHub — MM2 Multi-Tool
+
+### 🚀 Quick Loader / Быстрый запуск
+```lua
+-- FogyHub MM2 Loader (MsD & Gemini)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/NeMsd/FogyHub/refs/heads/main/main.lua"))()
+```
 
 <p align="center">
   <img src="https://img.shields.io/badge/Roblox-MM2-red?style=for-the-badge&logo=roblox&logoColor=white" />
   <img src="https://img.shields.io/badge/Language-English%20%7C%20Russian-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Authors-MsD%20%26%20Gemini-green?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 </p>
 
-**FogyHub** is a clean, multi-functional, and highly optimized script for Roblox Murder Mystery 2. Featuring professional on-screen customization, dynamic translations, traffic-saving music streaming, and solid FE-compatible combat, it is designed for both PC and mobile executors.
+**FogyHub** is a clean, multi-functional, and optimized script for Roblox Murder Mystery 2. Featuring professional on-screen customization, dynamic translations, traffic-saving music streaming, and solid FE-compatible combat, it is designed for both PC and mobile executors.
 
 ---
 
@@ -31,23 +39,26 @@
 * **ESP Highlights & 3D Boxes (ESP Силуэты и 3D Боксы):**
   * **[EN]** Outlines Murderers (Red), Sheriffs (Blue), and Innocents (Green). Features high-performance 3D Bounding Boxes as a safe, lag-free fallback for lower-end executors.
   * **[RU]** Подсвечивает Убийц (Красный), Шерифов (Синий) и Мирных жителей (Зеленый). Включает аппаратные 3D-боксы, которые гарантируют стабильную работу на любых слабых утилитах.
+* **Physical Skin Changer (Визуальный Скинченджер):**
+  * **[EN]** Copy any player's outfit by entering their username. The script visually recreates clothes and physically welds accessories directly to your character's body on the client.
+  * **[RU]** Копирует облик любого игрока по его никнейму. Скрипт воссоздаёт одежду и физически приваривает аксессуары к вашему персонажу на клиенте, обходя любые патчи.
 * **Screen Stretch (Растяг экрана):**
   * **[EN]** Emulates a stretched 4:3 resolution smoothly without screen tearing or standard distortion.
   * **[RU]** Плавно эмулирует растянутое разрешение экрана 4:3 без искажений интерфейса и разрывов изображения.
-* **Custom Skyboxes & Lighting (Смена неба и Освещение):**
-  * **[EN]** Instantly replace skyboxes with Space Nebula, Sunset, or default textures. Includes options to disable map fog (No Fog) and custom Time of Day.
-  * **[RU]** Позволяет менять небо на Космическую туманность, красивый Закат или возвращать стандартное. Убирает туман на карте и настраивает время суток.
+* **Lighting Tweaks (Освещение и эффекты):**
+  * **[EN]** Complete control over map environment. Easily disable map fog (No Fog) or set your custom Time of Day to get high-contrast shadows.
+  * **[RU]** Полный контроль над атмосферой карты. Позволяет убрать мешающий туман на карте и гибко настраивать время суток для получения сочных теней.
 
 ### ⚔️ Combat / Бой
 * **Auto-Shoot Murderer (Авто-выстрел):**
-  * **[EN]** Automatically aims and fires the revolver at the murderer once equipped, using direct packet emulation and physical click backups.
+  * **[EN]** Automatically aims and fires the revolver at the murderer once equipped, using direct network packet emulation and physical click backups.
   * **[RU]** Автоматически наводится и стреляет в убийцу по сети при взятии пистолета в руку, дублируя нажатия физическими кликами.
 * **Aimlock on Murderer (Аимлок):**
   * **[EN]** Smoothly locks your camera directly onto the murderer's head.
   * **[RU]** Плавно удерживает камеру сфокусированной на голове убийцы.
-* **TP Behind & Shoot (ТП за спину и выстрел):**
-  * **[EN]** Instantly teleports behind the murderer, freezes you in the air if they are jumping to ensure a clean shot, fires, and safely returns you back.
-  * **[RU]** Моментально переносит за спину убийцы, временно блокирует физику падения в воздухе для точного выстрела и возвращает вас обратно на землю.
+* **TP & Shoot / Rubber Band (ТП & Выстрел на резинке):**
+  * **[EN]** Instantly teleports behind the murderer, fires a clean shot, and immediately snaps you back to your original position before the server can register the teleport exploit.
+  * **[RU]** Моментально переносит за спину убийцы, делает точный выстрел и мгновенно возвращает на исходную позицию на "резиновой тяге", полностью обходя античит.
 * **Auto-Dodge Knife (Авто-Манс):**
   * **[EN]** Automatically detects thrown knives (`ThrownKnife`) and performs a rapid sideways dodge to the right to bypass the knife's hitbox.
   * **[RU]** Отслеживает летящие ножи и делает мгновенный уклоняющий отпрыг вправо при опасном приближении.
@@ -79,7 +90,8 @@
 
 ---
 
-## 🚀 How to Execute / Инструкция по запуску
+## 📜 License & Credits
 
--- FogyHub MM2 Loader (MsD & Gemini)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/NeMsd/FogyHub/refs/heads/main/main.lua"))()
+* **FogyHub** is licensed under the **MIT License**.
+* Special thanks to [WindUI](https://github.com/Footagesus/WindUI) for the clean UI library framework (licensed under MIT).
+```
