@@ -1,5 +1,5 @@
 -- ======================================================
--- FogyHub 
+-- FogyHub (MM2 Custom Multi-Tool - REBUILT BY HACKER)
 -- Authors: MsD, Gemini
 -- ======================================================
 
@@ -118,7 +118,7 @@ local L = {
         RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
         DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
-        SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
+        SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
         BtnTpShoot = "Кнопка: TP & Shoot", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
@@ -824,68 +824,73 @@ local function main()
         if radioModel then radioModel:Destroy() radioModel = nil end
     end
 
-    -- Умный бесконфликтный автоподбор пистолета
+    -- Умный бесконфликтный автоподбор пистолета (ФИЗИЧЕСКИ СТАБИЛИЗИРОВАННЫЙ)
     local function grabGun()
         if grabbingGun then return end
-        
-        -- УСЛОВИЕ ОТМЕНЫ: если мы мертвы или мы Убийца, отменяем подбор
         if not IsAlive(LocalPlayer) then return end
         
         local char = LocalPlayer.Character
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        if not char or not hum or not hrp then return end
+        
         local bp = LocalPlayer:FindFirstChild("Backpack")
-        local isMurderer = (char and char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) or (Murder and LocalPlayer.Name == Murder)
+        local isMurderer = (char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) or (Murder and LocalPlayer.Name == Murder)
         if isMurderer then return end
         
-        grabbingGun = true
+        local function hasGun()
+            local currentBp = LocalPlayer:FindFirstChild("Backpack")
+            return (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver")) or (currentBp and (currentBp:FindFirstChild("Gun") or currentBp:FindFirstChild("Revolver")))
+        end
+        if hasGun() then return end
         
         local gunDrop = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
         local handle = gunDrop and (gunDrop:FindFirstChild("Handle", true) or gunDrop:FindFirstChildOfClass("Part", true) or gunDrop)
-        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        if not handle then return end
         
-        -- Функция проверки наличия пистолета у игрока
-        local function hasGun()
-            local currentBp = LocalPlayer:FindFirstChild("Backpack")
-            return (char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver"))) or (currentBp and (currentBp:FindFirstChild("Gun") or currentBp:FindFirstChild("Revolver")))
-        end
+        grabbingGun = true
         
-        if handle and hrp and not hasGun() then
-            local originalPos = hrp.CFrame
-            local wasAnchored = hrp.Anchored
-            
-            local noclipConn = RunService.Stepped:Connect(function()
-                if char then
-                    for _, part in ipairs(char:GetDescendants()) do
-                        if part:IsA("BasePart") then part.CanCollide = false end
-                    end
-                end
-            end)
-            
-            hrp.Anchored = true
-            local targetCFrame = handle:IsA("Model") and handle:GetPivot() or (handle:IsA("BasePart") and handle.CFrame)
-            if targetCFrame then
-                safeTeleport(targetCFrame)
-                
-                local timeout = 0
-                local altHeight = 0
-                while not hasGun() and timeout < 15 do 
-                    timeout = timeout + 1
-                    altHeight = altHeight - 0.5
-                    if altHeight < -2.5 then altHeight = -2.5 end 
-                    
-                    safeTeleport(targetCFrame * CFrame.new(0, altHeight, 0))
-                    task.wait(0.1)
-                    
-                    local checkGun = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
-                    if not checkGun then break end
-                    
-                    -- Проверяем на всякий случай смерть во время процесса ТП-подбора
-                    if not IsAlive(LocalPlayer) then break end
+        -- Полностью сохраняем исходное состояние физики перед подбором
+        local originalCFrame = hrp.CFrame
+        local wasAnchored = hrp.Anchored
+        local wasPlatformStand = hum.PlatformStand
+        
+        -- Костыль №1: Временный локальный ноуклип
+        local noclipConn = RunService.Stepped:Connect(function()
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = false end
                 end
             end
-            
-            noclipConn:Disconnect()
-            safeTeleport(originalPos)
+        end)
+        
+        -- Костыль №2: Гасим инерцию и блокируем падение персонажа
+        hrp.Velocity = Vector3.new()
+        hrp.RotVelocity = Vector3.new()
+        hrp.Anchored = true
+        hum.PlatformStand = true
+        
+        local targetCFrame = handle:IsA("Model") and handle:GetPivot() or handle.CFrame
+        
+        -- Костыль №3: Пошаговый микро-спуск под пистолет для симуляции физического наступания
+        local timeout = 0
+        while not hasGun() and timeout < 10 and IsAlive(LocalPlayer) do
+            hrp.CFrame = targetCFrame * CFrame.new(0, -1 - (timeout * 0.1), 0)
+            task.wait(0.05)
+            timeout = timeout + 1
         end
+        
+        -- ГАРАНТИРОВАННЫЙ СБРОС И ОТКАТ ВСЕХ КОСТЫЛЕЙ (БЕЗ ЗАСТРЕВАНИЙ)
+        if IsAlive(LocalPlayer) then
+            hrp.CFrame = originalCFrame
+            task.wait(0.05) -- Даем кадру обновиться
+            hrp.Velocity = Vector3.new()
+            hrp.RotVelocity = Vector3.new()
+            hrp.Anchored = wasAnchored
+            hum.PlatformStand = wasPlatformStand
+        end
+        
+        if noclipConn then noclipConn:Disconnect() end
         grabbingGun = false
     end
 
@@ -1187,7 +1192,7 @@ local function main()
         end
     end
 
-    -- ТП за спину, моментальный выстрел и откат назад ("Резинка")
+    -- ТП за спину, моментальный выстрел и откат назад ("Резинка" с жесткой защитой от смерти)
     local function tpShootMurderer()
         local m = getMurderer()
         if not m or not m.Character or not m.Character:FindFirstChild("HumanoidRootPart") then
@@ -1205,9 +1210,11 @@ local function main()
         end
         
         local hrp = char and char:FindFirstChild("HumanoidRootPart")
-        if hrp then
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if hrp and hum then
             local originalPos = hrp.CFrame
             local wasAnchored = hrp.Anchored
+            local wasPlatformStand = hum.PlatformStand
             
             -- Экипируем пистолет
             if gun.Parent == bp then char.Humanoid:EquipTool(gun) end
@@ -1223,26 +1230,32 @@ local function main()
             end)
             
             hrp.Anchored = true
+            hum.PlatformStand = true
             
-            -- Мягкое смещение за спину Мардера (разворот на 180 градусов лицом к его затылку)
+            -- Смещение за спину Мардера
             local mHrp = m.Character.HumanoidRootPart
             local targetCFrame = mHrp.CFrame * CFrame.new(0, 0, 3.5) * CFrame.Angles(0, math.rad(180), 0)
             
             hrp.CFrame = targetCFrame
-            task.wait(0.1) -- Микро задержка перед шотом
+            task.wait(0.1)
             
-            -- Стреляем
-            fireGun(gun, mHrp.Position)
-            task.wait(0.05)
+            -- Выстрел
+            if IsAlive(LocalPlayer) then
+                fireGun(gun, mHrp.Position)
+                task.wait(0.05)
+            end
             
-            -- Притяжка обратно ("Резинка ломается")
-            hrp.CFrame = originalPos
-            task.wait(0.05)
+            -- Возврат на место
+            if IsAlive(LocalPlayer) then
+                hrp.CFrame = originalPos
+                task.wait(0.05)
+                hrp.Velocity = Vector3.new()
+                hrp.RotVelocity = Vector3.new()
+                hrp.Anchored = wasAnchored
+                hum.PlatformStand = wasPlatformStand
+            end
             
-            noclipConn:Disconnect()
-            hrp.Velocity = Vector3.new(0, 0, 0)
-            hrp.RotVelocity = Vector3.new(0, 0, 0)
-            hrp.Anchored = wasAnchored
+            if noclipConn then noclipConn:Disconnect() end
         end
     end
 
@@ -1869,21 +1882,20 @@ local function main()
         end
     end)
 
-    -- Аимлок
-    RunService.RenderStepped:Connect(function()
-        pcall(function()
-            if Config.Combat.AimlockEnabled then
-                local m = getMurderer()
-                if m and m.Character and m.Character:FindFirstChild("Head") then
-                    local camera = workspace.CurrentCamera
-                    if camera then 
-                        local targetCFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
-                        camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
-                    end
+    -- Высокоприоритетный плавный Аимлок (Решает проблему тряски камеры)
+    local function updateAimlock()
+        if Config.Combat.AimlockEnabled then
+            local m = getMurderer()
+            if m and m.Character and m.Character:FindFirstChild("Head") then
+                local camera = workspace.CurrentCamera
+                if camera then 
+                    local targetCFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
+                    camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
                 end
             end
-        end)
-    end)
+        end
+    end
+    RunService:BindToRenderStep("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
 
     -- Бесконечный спидглитч
     RunService.Heartbeat:Connect(function(deltaTime)
