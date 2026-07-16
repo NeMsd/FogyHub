@@ -34,20 +34,20 @@ local Config = {
     Utility = {
         AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45,
         NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false,      
-        EmoteSpamEnabled = false, ChatAlertsEnabled = false,  
+        EmoteSpamEnabled = false, ChatAlertsEnabled = false, InvisEnabled = false
     },
     MobileButtons = {
         LockMobileButtons = false, ButtonScale = 1.0,
         ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, 
         ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false,
         ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, 
-        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Shoot Murderer"] = false
+        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Invisibility"] = false
     },
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100}, ["Fling Sheriff"] = {X = 30, Y = 145}, ["Fling Hero"] = {X = 30, Y = 190}, 
         ["Grab Gun"] = {X = 30, Y = 235}, ["Slide Glitch"] = {X = 30, Y = 280}, ["Noclip"] = {X = 30, Y = 325},
         ["Kill Aura"] = {X = 30, Y = 370}, ["Auto Kill All"] = {X = 30, Y = 415}, ["Godmode"] = {X = 30, Y = 460},
-        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["Shoot Murderer"] = {X = 30, Y = 640}
+        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["Invisibility"] = {X = 30, Y = 640}
     }
 }
 
@@ -87,7 +87,7 @@ local L = {
         CrashTitle = "🚨 FogyHub — Crash Handler", CopyLog = "Copy Log", Copied = "Log Copied!", BufError = "Clipboard Error!", Close = "Close", Loaded = "FogyHub loaded!", FailedUI = "Failed to load WindUI library.",
         Visuals = "Visuals", Combat = "Combat", Utility = "Utility", MobileBinds = "Mobile Buttons", Radio = "Radio", Teleports = "Teleports", Configs = "Configs / Settings",
         EspM = "ESP Murderer", EspS = "ESP Sheriff", EspI = "ESP Innocents", EspBoxes = "3D Box ESP (For Low-End PC)", Stretch = "Screen Stretch (4:3)", StretchForce = "Stretch Force",
-        NoFog = "Disable Map Fog", TimeOfDay = "Time of Day", EspG = "ESP Gun Drop",
+        NoFog = "Disable Map Fog", TimeOfDay = "Time of Day", EspG = "ESP Gun Drop", Invis = "Invisibility", BtnInvis = "Button: Invisibility",
         AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
         FlingM = "Fling Murderer", FlingS = "Fling Sheriff", FlingH = "Fling Hero", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
         LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnFlingH = "Button: Fling Hero", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
@@ -100,7 +100,7 @@ local L = {
         BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username", SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
-        BtnShootM = "Button: Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
+        GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
         SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat",
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
@@ -108,7 +108,7 @@ local L = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub loaded!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
         Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
         EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
-        NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре", EspG = "ESP Упавший пистолет",
+        NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре", EspG = "ESP Упавший пистолет", Invis = "Невидимка", BtnInvis = "Кнопка: Невидимка",
         AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
         FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
         LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
@@ -121,7 +121,7 @@ local L = {
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
-        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
@@ -319,6 +319,12 @@ local function main()
     local ScreenButtons, BindsScreenGui, originalFog = {}, nil, Lighting.FogEnd 
     local roles, Murder, Sheriff, Hero = {}, nil, nil, nil
     local stretchConnection, antiFlingConnection = nil, nil
+
+    -- Состояния невидимки (локальные для избежания конфликтов в _G)
+    local invisOn = false
+    local invisConnection, rotationConnection
+    local savedCFrame, originalCameraSubject, originalAutoRotate
+    local invisOutline
 
     getgenv().OldPos = nil
     getgenv().FPDH = workspace.FallenPartsDestroyHeight
@@ -1188,6 +1194,125 @@ local function main()
         end
     end
 
+    -- Сидячая невидимость (Glitch-based FE Invisibility)
+    local function toggleInvis(state)
+        if state == nil then
+            state = not Config.Utility.InvisEnabled
+        end
+        Config.Utility.InvisEnabled = state
+        if UI_Elements.Utility.InvisEnabled then
+            setToggle(UI_Elements.Utility.InvisEnabled, state)
+        end
+        saveConfig()
+
+        local char = LocalPlayer.Character
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+
+        if state then
+            if not char or not hum or not hrp then return end
+            invisOn = true
+            savedCFrame = hrp.CFrame
+            originalCameraSubject = workspace.CurrentCamera.CameraSubject
+            originalAutoRotate = hum.AutoRotate
+
+            local function isTool(part)
+                local parent = part.Parent
+                while parent and parent ~= char do
+                    if parent:IsA("Tool") then return true end
+                    parent = parent.Parent
+                end
+                return false
+            end
+
+            -- Локальная прозрачность для игрока
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") and not isTool(part) then
+                    part.LocalTransparencyModifier = 1
+                end
+            end
+
+            invisConnection = char.DescendantAdded:Connect(function(descendant)
+                if descendant:IsA("BasePart") and not isTool(descendant) then
+                    descendant.LocalTransparencyModifier = 1
+                end
+            end)
+
+            if invisOutline then invisOutline:Destroy() end
+            invisOutline = Instance.new("Highlight")
+            invisOutline.FillTransparency = 1
+            invisOutline.OutlineColor = Color3.new(1, 1, 1)
+            invisOutline.Parent = char
+
+            -- Смещаем за рамки карты
+            char:PivotTo(CFrame.new(-25.95, 84, 3537.55))
+            task.wait(0.15)
+
+            local seat = Instance.new("Seat")
+            seat.Name = "FogyHub_InvisChair"
+            seat.Anchored = false
+            seat.CanCollide = false
+            seat.Transparency = 1
+            seat.Position = Vector3.new(-25.95, 84, 3537.55)
+            seat.Parent = workspace
+
+            workspace.CurrentCamera.CameraSubject = hrp
+
+            local weld = Instance.new("Weld")
+            weld.Part0 = seat
+            weld.Part1 = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+            weld.Parent = seat
+
+            task.wait()
+            seat.CFrame = savedCFrame
+
+            -- Поворот сиденья за камерой
+            if rotationConnection then rotationConnection:Disconnect() end
+            rotationConnection = RunService.RenderStepped:Connect(function()
+                if not invisOn or not seat or not seat.Parent then return end
+                if not hum then return end
+
+                if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then
+                    hum.AutoRotate = false
+                    local cam = workspace.CurrentCamera
+                    local look = cam.CFrame.LookVector
+                    look = Vector3.new(look.X, 0, look.Z).Unit
+                    if look.Magnitude > 0 then
+                        seat.CFrame = CFrame.new(seat.Position, seat.Position + look)
+                    end
+                else
+                    hum.AutoRotate = true
+                end
+            end)
+        else
+            invisOn = false
+            if invisConnection then invisConnection:Disconnect() invisConnection = nil end
+            if rotationConnection then rotationConnection:Disconnect() rotationConnection = nil end
+
+            if char then
+                for _, part in pairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.LocalTransparencyModifier = 0
+                    end
+                end
+                if hum then
+                    hum.AutoRotate = originalAutoRotate ~= nil and originalAutoRotate or true
+                end
+                if originalCameraSubject then
+                    workspace.CurrentCamera.CameraSubject = originalCameraSubject
+                end
+            end
+
+            if invisOutline then invisOutline:Destroy() invisOutline = nil end
+            local seat = workspace:FindFirstChild("FogyHub_InvisChair")
+            if seat then seat:Destroy() end
+
+            savedCFrame = nil
+            originalCameraSubject = nil
+            originalAutoRotate = nil
+        end
+    end
+
     -- ==================== АКТИВАЦИОННЫЕ ХЭЛПЕРЫ ДЛЯ КОНФИГА ====================
     
     local function applyStretch(state)
@@ -1283,7 +1408,7 @@ local function main()
                 ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Fling Hero"] = 190,
                 ["Grab Gun"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325, 
                 ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460, 
-                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
+                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["Invisibility"] = 640
             }
             frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         end
@@ -1371,7 +1496,8 @@ local function main()
         ["TP Lobby"] = {Translation = "BtnTpLobby", Target = "TpLobby", Callback = tpToLobby},
         ["TP Map"] = {Translation = "BtnTpMap", Target = "TpMap", Callback = tpToMap},
         ["Aimlock"] = {Translation = "BtnAimlock", Target = "Aimlock", Callback = function() Config.Combat.AimlockEnabled = not Config.Combat.AimlockEnabled setToggle(UI_Elements.Combat.AimlockEnabled, Config.Combat.AimlockEnabled) end},
-        ["Shoot Murderer"] = {Translation = "BtnShootM", Target = "ShootM", Callback = shootMurdererDirect}
+        ["Shoot Murderer"] = {Translation = "BtnShootM", Target = "ShootM", Callback = shootMurdererDirect},
+        ["Invisibility"] = {Translation = "BtnInvis", Target = "Invis", Callback = function() toggleInvis() end}
     }
 
     -- Функция применения конфига ко всем графическим элементам меню
@@ -1407,6 +1533,7 @@ local function main()
         setToggle(UI_Elements.Utility.AutoFarmCoins, Config.Utility.AutoFarmCoins)         
         setToggle(UI_Elements.Utility.EmoteSpamEnabled, Config.Utility.EmoteSpamEnabled)   
         setToggle(UI_Elements.Utility.ChatAlertsEnabled, Config.Utility.ChatAlertsEnabled)   
+        setToggle(UI_Elements.Utility.InvisEnabled, Config.Utility.InvisEnabled)
         
         applyAntiFling(Config.Utility.AntiFling)
         
@@ -1474,6 +1601,7 @@ local function main()
     UI_Elements.Utility.SlideGlitchEnabled = UtilityTab:Toggle({ Title = T("SlideGlitch"), Value = Config.Utility.SlideGlitchEnabled, Callback = function(s) if s ~= Config.Utility.SlideGlitchEnabled then toggleSlideGlitch(s) end end })
     UI_Elements.Utility.SlideSpeedForce = UtilityTab:Slider({ Title = T("SlideSpeed"), Step = 5, Value = { Min = 15, Max = 100, Default = Config.Utility.SlideSpeedForce }, Callback = function(v) Config.Utility.SlideSpeedForce = v saveConfig() end })
     UI_Elements.Utility.NoclipEnabled = UtilityTab:Toggle({ Title = T("Noclip"), Value = Config.Utility.NoclipEnabled, Callback = function(s) if s ~= Config.Utility.NoclipEnabled then toggleNoclip(s) end end })
+    UI_Elements.Utility.InvisEnabled = UtilityTab:Toggle({ Title = T("Invis"), Value = Config.Utility.InvisEnabled, Callback = function(s) if s ~= Config.Utility.InvisEnabled then toggleInvis(s) end end })
     
     -- Новые утилиты
     UI_Elements.Utility.AutoFarmCoins = UtilityTab:Toggle({ Title = T("AutoFarmCoins"), Value = Config.Utility.AutoFarmCoins, Callback = function(s) Config.Utility.AutoFarmCoins = s saveConfig() end })
@@ -1518,8 +1646,8 @@ local function main()
     ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
         Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14, GunDropESP = false }
         Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
-        Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false }
-        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false }
+        Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false, InvisEnabled = false }
+        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Invisibility"] = false }
         saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
     end })
     ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() Config.Language = "ru" currentLang = "ru" saveConfig() WindUI:Notify({ Title = "Язык", Content = "Язык успешно изменен на Русский!", Icon = "globe", Duration = 3 }) end })
@@ -1534,8 +1662,18 @@ local function main()
     RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
     RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
 
-    -- Автоматическое восстановление активного Радио
+    -- Безопасный автосброс при смерти
     LocalPlayer.CharacterAdded:Connect(function()
+        invisOn = false
+        if invisConnection then invisConnection:Disconnect() invisConnection = nil end
+        if rotationConnection then rotationConnection:Disconnect() rotationConnection = nil end
+        if invisOutline then invisOutline:Destroy() invisOutline = nil end
+        local seat = workspace:FindFirstChild("FogyHub_InvisChair")
+        if seat then seat:Destroy() end
+        Config.Utility.InvisEnabled = false
+        setToggle(UI_Elements.Utility.InvisEnabled, false)
+
+        -- Автоматическое восстановление активного Радио
         task.wait(1)
         if radioSound and radioSound.Playing then
             attachRadio()
@@ -1562,7 +1700,8 @@ local function main()
                 elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(s) end 
                 elseif keyStr == "T" then grabGun()
                 elseif keyStr == "C" then toggleSlideGlitch()
-                elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled) end
+                elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled)
+                elseif keyStr == "Y" then toggleInvis() end
             end
         end
     end)
