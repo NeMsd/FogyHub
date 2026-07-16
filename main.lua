@@ -1,7 +1,14 @@
 -- ======================================================
 -- FogyHub (MM2 Custom Multi-Tool - REBUILT BY HACKER)
 -- Authors: MsD, Gemini, Vertex Logic Integration
+-- License: MIT (Пиздите на здоровье, нам похуй)
 -- ======================================================
+
+-- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ (НА САМОМ ВЕРХУ) ====================
+local getgenv = getgenv or function()
+    _G.custom_env = _G.custom_env or {}
+    return _G.custom_env
+end
 
 -- ЭМУЛЯТОР NEWPROXY (ОБХОД КРАША ОБФУСКАТОРОВ НА DELTA / SOLARA)
 if not getgenv().newproxy then
@@ -49,12 +56,6 @@ getgenv().FogyHub_Cleanup = function()
             end
         end
     end)
-end
-
--- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ ====================
-local getgenv = getgenv or function()
-    _G.custom_env = _G.custom_env or {}
-    return _G.custom_env
 end
 
 local setclipboard = setclipboard or toclipboard or (Clipboard and Clipboard.set) or function(text)
@@ -167,9 +168,9 @@ local L = {
         RadioCache = "Врубил из локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
         DodgeKnife = "Мансить от ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карты нет, один туман!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
-        SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник жертвы для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден, бля!", SkinSuccess = "Скин применен!", SaveConfigBtn = "Запомнить эту конфигурацию", LoadConfigBtn = "Загрузить конфиг",
+        SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник жертвы для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден, бля!", SkinSuccess = "Скин применен!", SaveConfigBtn = "Запомнить эту конфигурацию", LoadConfigBtn = "Загрузить конфиг",
         ResetConfigBtn = "Сбросить всё к хуям", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Конфиг сохранён!", ConfLoaded = "Конфиг загружен!", ConfReset = "Параметры сброшены до заводских.",
-        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Шоты сквозь стены)", AutoFarmCoins = "Автофарм монет", EmoteSpam = "Спам Эмоций (Глитч хитбокса)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Кастомная залупа вместо MM2", MMBWarningContent = "Ты играешь на неофициальной копии (типа MMB). Некоторые функции могут пойти по пизде."
     }
@@ -178,15 +179,6 @@ local L = {
 -- Вспомогательная функция перевода
 local function T(key)
     return L[currentLang][key] or L["en"][key] or key
-end
-
--- Безопасный выбор контейнера
-local function getSafeUIContainer()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    if gethui then return gethui()
-    elseif game:GetService("CoreGui") then return game:GetService("CoreGui")
-    else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
 -- ==================== 3. ОСНОВНОЙ КОД СКРИПТА ====================
@@ -1503,640 +1495,644 @@ local function main()
     UI_Elements.Utility.ChatAlertsEnabled = UtilityTab:Toggle({ Title = T("ChatAlerts"), Value = Config.Utility.ChatAlertsEnabled, Callback = function(s) Config.Utility.ChatAlertsEnabled = s saveConfig() end })
 
     UI_Elements.Utility.AntiFling = UtilityTab:Toggle({
-        Title = T("AntiFling"), Value = Config.Utility.AntiFling, CallbackapplyAntiFling(state)
-                            saveConfig()
-                        end
-                    })
+        Title = T("AntiFling"), 
+        Value = Config.Utility.AntiFling, 
+        Callback = function(state)
+            applyAntiFling(state)
+            saveConfig()
+        end
+    })
 
-                    -- Вкладка Телепорты
-                    TeleportsTab:Button({ Title = T("TpLobby"), Callback = tpToLobby })
-                    TeleportsTab:Button({ Title = T("TpMap"), Callback = tpToMap })
+    -- Вкладка Телепорты
+    TeleportsTab:Button({ Title = T("TpLobby"), Callback = tpToLobby })
+    TeleportsTab:Button({ Title = T("TpMap"), Callback = tpToMap })
 
-                    -- Вкладка Тел. Кнопки 
-                    UI_Elements.MobileButtons.LockMobileButtons = ButtonsTab:Toggle({ Title = T("LockButtons"), Value = Config.MobileButtons.LockMobileButtons, Callback = function(s) Config.MobileButtons.LockMobileButtons = s saveConfig() end })
-                    UI_Elements.MobileButtons.ButtonScale = ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = Config.MobileButtons.ButtonScale }, Callback = function(v) Config.MobileButtons.ButtonScale = v saveConfig() updateButtonSizes() end })
-                    
-                    -- Умный автоцикл генерации кнопок
-                    for name, info in pairs(buttonInfo) do
-                        UI_Elements.MobileButtons[name] = ButtonsTab:Toggle({
-                            Title = T(info.Translation),
-                            Value = Config.MobileButtons[name],
-                            Callback = function(s)
-                                Config.MobileButtons[name] = s
-                                saveConfig()
-                                if s then
-                                    createFloatingButton(name, info.Target, info.Callback)
-                                else
-                                    removeFloatingButton(name)
-                                end
-                            end
-                        })
-                    end
-
-                    -- Вкладка Конфиги (ОБНОВЛЁН ПЕРЕЗАПУСК ПРИ СМЕНЕ ЯЗЫКА)
-                    ConfigsTab:Button({ Title = T("SaveConfigBtn"), Callback = function() saveConfig() WindUI:Notify({ Title = "FogyHub", Content = T("ConfSaved"), Icon = "check", Duration = 3 }) end })
-                    ConfigsTab:Button({ Title = T("LoadConfigBtn"), Callback = function() loadConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfLoaded"), Icon = "check", Duration = 3 }) end })
-                    ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
-                        Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14, GunDropESP = false }
-                        Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
-                        Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false, InvisEnabled = false }
-                        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Invisibility"] = false }
-                        saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
-                    end })
-                    ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() 
-                        Config.Language = "ru" 
-                        currentLang = "ru" 
-                        saveConfig() 
-                        if writefile then pcall(function() writefile("fogyhub_lang.txt", "ru") end) end
-                        WindUI:Notify({ Title = "Язык", Content = "Перезапуск хуеты...", Icon = "globe", Duration = 3 })
-                        task.wait(1)
-                        pcall(getgenv().FogyHub_Cleanup)
-                        task.spawn(main)
-                    end })
-                    ConfigsTab:Button({ Title = T("SetLangEn"), Callback = function() 
-                        Config.Language = "en" 
-                        currentLang = "en" 
-                        saveConfig() 
-                        if writefile then pcall(function() writefile("fogyhub_lang.txt", "en") end) end
-                        WindUI:Notify({ Title = "Language", Content = "Restarting script...", Icon = "globe", Duration = 3 })
-                        task.wait(1)
-                        pcall(getgenv().FogyHub_Cleanup)
-                        task.spawn(main)
-                    end })
-
-                    -- Вкладка Радио
-                    local _ = RadioTab:Input({ Title = T("RobloxId"), Value = "", Placeholder = "ID...", Callback = function(text) currentSongId = text end })
-                    RadioTab:Button({ Title = T("PlayId"), Callback = playRadio })
-                    local _ = RadioTab:Input({ Title = T("HttpUrl"), Value = "", Placeholder = "https://...", Callback = function(text) httpSongUrl = text end })
-                    RadioTab:Button({ Title = T("PlayHttp"), Callback = playHttpRadio })
-                    RadioTab:Button({ Title = T("StopRadio"), Callback = stopRadio })
-                    RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
-                    RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
-
-                    -- Автоматическое восстановление активного Радио при респавне
-                    addConnection(LocalPlayer.CharacterAdded:Connect(function()
-                        invisOn = false
-                        if invisConnection then invisConnection:Disconnect() invisConnection = nil end
-                        if rotationConnection then rotationConnection:Disconnect() rotationConnection = nil end
-                        if invisOutline then invisOutline:Destroy() invisOutline = nil end
-                        local seat = workspace:FindFirstChild("FogyHub_InvisChair")
-                        if seat then seat:Destroy() end
-                        Config.Utility.InvisEnabled = false
-                        setToggle(UI_Elements.Utility.InvisEnabled, false)
-
-                        task.wait(1)
-                        if radioSound and radioSound.Playing then
-                            attachRadio()
-                            if radioModel then
-                                local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
-                                sound.Name = "RadioSound"
-                                sound.SoundId = radioSound.SoundId
-                                sound.Volume = radioVolume
-                                sound.Looped = radioLooped
-                                sound:Play()
-                                sound.Volume = radioVolume
-                                radioSound = sound
-                            end
-                        end
-                    end))
-
-                    -- ==================== ФОНОВЫЕ ЦИКЛЫ И ПРОСЛУШИВАТЕЛИ ====================
-                    addConnection(UserInputService.InputBegan:Connect(function(input, processed)
-                        if processed then return end
-                        if input.UserInputType == Enum.UserInputType.Keyboard then
-                            local success, keyStr = pcall(function() return input.KeyCode and input.KeyCode.Name end)
-                            if success and keyStr then
-                                if keyStr == "F" then local m = getMurderer() if m then flingPlayer(m) end
-                                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(s) end 
-                                elseif keyStr == "T" then grabGun()
-                                elseif keyStr == "C" then toggleSlideGlitch()
-                                elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled)
-                                elseif keyStr == "Y" then toggleInvis() end
-                            end
-                        end
-                    end))
-
-                    -- Оповещения в чат при раскрытии ролей
-                    local lastMurder, lastSheriff = nil, nil
-                    local function notifyRolesInChat()
-                        pcall(function()
-                            local mPlayer = Murder and Players:FindFirstChild(Murder)
-                            local sPlayer = Sheriff and Players:FindFirstChild(Sheriff)
-                            
-                            local message = ""
-                            if mPlayer then
-                                message = message .. "[FogyHub] Убийца: " .. mPlayer.DisplayName .. " (@" .. mPlayer.Name .. ")"
-                            end
-                            if sPlayer then
-                                if message ~= "" then message = message .. " | " end
-                                message = message .. "Шериф: " .. sPlayer.DisplayName .. " (@" .. sPlayer.Name .. ")"
-                            end
-                            
-                            if message ~= "" then
-                                game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
-                                    Text = message,
-                                    Color = Color3.fromRGB(0, 150, 255),
-                                    Font = Enum.Font.SourceSansBold,
-                                    TextSize = 15
-                                })
-                            end
-                        end)
-                    end
-
-                    -- Умный автоматический поиск и подсветка упавшего пистолета на карте
-                    local function highlightGunDrop()
-                        local gunDrop = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
-                        local handle = gunDrop and (gunDrop:FindFirstChild("Handle", true) or gunDrop:FindFirstChildOfClass("Part", true) or gunDrop)
-                        
-                        if handle then
-                            local highlight = handle:FindFirstChild("FogyHub_GunESP")
-                            if Config.Visuals.GunDropESP then
-                                if not highlight then
-                                    highlight = Instance.new("Highlight")
-                                    highlight.Name = "FogyHub_GunESP"
-                                    highlight.FillColor = Color3.fromRGB(0, 255, 100) -- Яркий зеленый
-                                    highlight.OutlineColor = Color3.fromRGB(0, 255, 100)
-                                    highlight.FillTransparency = 0.5
-                                    highlight.OutlineTransparency = 0
-                                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                                    highlight.Parent = handle
-                                end
-                            else
-                                if highlight then highlight:Destroy() end
-                            end
-                        end
-                    end
-
-                    -- Оптимизированный ESP обработчик (С жестким сканером инвентаря на кастомных серверах!)
-                    local function updateESP()
-                        local success, serverRoles = pcall(function()
-                            local remote = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
-                            return remote and remote:InvokeServer()
-                        end)
-                        
-                        local tempMurder, tempSheriff, tempHero = nil, nil, nil
-                        if success and serverRoles then
-                            roles = serverRoles
-                            for i, v in pairs(roles) do
-                                if v.Role == "Murderer" then
-                                    tempMurder = i
-                                elseif v.Role == "Sheriff" then
-                                    tempSheriff = i
-                                elseif v.Role == "Hero" then
-                                    tempHero = i
-                                end
-                            end
-                        end
-
-                        Murder = tempMurder
-                        Sheriff = tempSheriff
-                        Hero = tempHero
-                        
-                        if Config.Utility.ChatAlertsEnabled then
-                            if Murder ~= lastMurder or Sheriff ~= lastSheriff then
-                                lastMurder = Murder
-                                lastSheriff = Sheriff
-                                task.spawn(notifyRolesInChat)
-                            end
-                        end
-                        
-                        for _, player in ipairs(Players:GetPlayers()) do
-                            if player ~= LocalPlayer then
-                                local character = player.Character
-                                if character then
-                                    local isM, isS, isH = false, false, false
-                                    local alive = IsAlive(player)
-                                    
-                                    -- Фоллбэк сканирование инвентаря на оружие (для кастомных серверов)
-                                    local bp = player:FindFirstChild("Backpack")
-                                    local hasKnife = (character:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife"))
-                                    local hasGun = (character:FindFirstChild("Gun") or character:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
-
-                                    if player.Name == Murder or hasKnife then
-                                        isM = true
-                                    elseif player.Name == Sheriff or (hasGun and not isM) then
-                                        isS = true
-                                    elseif player.Name == Hero then
-                                        isH = true
-                                    end
-                                    
-                                    local inLobby = false
-                                    local hrp = character:FindFirstChild("HumanoidRootPart")
-                                    if hrp then
-                                        local distToLobby = (hrp.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
-                                        if distToLobby < 150 then
-                                            inLobby = true
-                                        end
-                                    end
-                                    
-                                    local espEnabled = false
-                                    local renderColor = Color3.fromRGB(0, 255, 0)
-                                    
-                                    if not alive or inLobby then
-                                        if Config.Visuals.MurdererESP or Config.Visuals.SheriffESP or Config.Visuals.InnocentESP then
-                                            espEnabled = true
-                                            renderColor = Color3.fromRGB(150, 150, 150)
-                                        end
-                                    else
-                                        if isM then
-                                            espEnabled = Config.Visuals.MurdererESP
-                                            renderColor = Color3.fromRGB(255, 0, 0)
-                                        elseif isS then
-                                            espEnabled = Config.Visuals.SheriffESP
-                                            renderColor = Color3.fromRGB(0, 0, 255)
-                                        elseif isH then
-                                            espEnabled = Config.Visuals.SheriffESP
-                                            renderColor = Color3.fromRGB(255, 250, 0)
-                                        else
-                                            espEnabled = Config.Visuals.InnocentESP
-                                            renderColor = Color3.fromRGB(0, 255, 0)
-                                        end
-                                    end
-                                    
-                                    if espEnabled then
-                                        applyHighlight(player, renderColor)
-                                    else
-                                        removeHighlight(player)
-                                    end
-
-                                    if Config.Visuals.EspBoxes then
-                                        applyBoxESP(player, renderColor)
-                                    else
-                                        removeBoxESP(player)
-                                    end
-                                end
-                            end
-                        end
-                    end
-
-                    -- Запуск цикла ESP и подсветки пистолета
-                    task.spawn(function()
-                        while getgenv().FogyHubActive do
-                            pcall(updateESP)
-                            pcall(highlightGunDrop)
-                            task.wait(0.1)
-                        end
-                    end)
-
-                    -- Цикл автоподбора пистолета
-                    task.spawn(function()
-                        while getgenv().FogyHubActive do
-                            pcall(function()
-                                if Config.Utility.AutoGrabGun then
-                                    local char = LocalPlayer.Character
-                                    local bp = LocalPlayer:FindFirstChild("Backpack")
-                                    local isMurderer = (char and char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) or (Murder and LocalPlayer.Name == Murder)
-                                    
-                                    if IsAlive(LocalPlayer) and not isMurderer then
-                                        if (workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)) then 
-                                            grabGun() 
-                                            task.wait(1) 
-                                        end
-                                    end
-                                end
-                            end)
-                            task.wait(0.2)
-                        end
-                    end)
-
-                    -- Цикл автофарма монет
-                    local function getCoinsOnMap()
-                        local coins = {}
-                        for _, v in ipairs(workspace:GetDescendants()) do
-                            if v:IsA("BasePart") and (v.Name == "Coin_Highlight" or v.Name == "CoinContainer" or v.Name == "Coin") then
-                                table.insert(coins, v)
-                            end
-                        end
-                        return coins
-                    end
-
-                    task.spawn(function()
-                        while getgenv().FogyHubActive do
-                            pcall(function()
-                                if Config.Utility.AutoFarmCoins then
-                                    local char = LocalPlayer.Character
-                                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                                    if hrp then
-                                        local coins = getCoinsOnMap()
-                                        local nearestCoin, minDist = nil, math.huge
-                                        
-                                        for _, coin in ipairs(coins) do
-                                            local dist = (coin.Position - hrp.Position).Magnitude
-                                            if dist < minDist then
-                                                minDistance = dist
-                                                nearestCoin = coin
-                                            end
-                                        end
-                                        
-                                        if nearestCoin then
-                                            local stepConn
-                                            stepConn = addConnection(RunService.Heartbeat:Connect(function(dt)
-                                                if not Config.Utility.AutoFarmCoins or not nearestCoin or not nearestCoin.Parent or not hrp.Parent then
-                                                    if stepConn then stepConn:Disconnect() end
-                                                    return
-                                                end
-                                                local dir = (nearestCoin.Position - hrp.Position).Unit
-                                                hrp.CFrame = hrp.CFrame + (dir * (22 * dt))
-                                                if (nearestCoin.Position - hrp.Position).Magnitude < 4 then
-                                                    if stepConn then stepConn:Disconnect() end
-                                                end
-                                            end))
-                                            
-                                            local timeout = 0
-                                            while nearestCoin and nearestCoin.Parent and Config.Utility.AutoFarmCoins and timeout < 100 do
-                                                if (nearestCoin.Position - hrp.Position).Magnitude < 4 then break end
-                                                task.wait(0.05)
-                                                timeout = timeout + 1
-                                            end
-                                            if stepConn then stepConn:Disconnect() end
-                                        end
-                                    end
-                                end
-                            end)
-                            task.wait(0.1)
-                        end
-                    end)
-
-                    -- Цикл Спама Эмоций
-                    task.spawn(function()
-                        while getgenv().FogyHubActive do
-                            pcall(function()
-                                if Config.Utility.EmoteSpamEnabled then
-                                    local playEmote = game:GetService("ReplicatedStorage"):FindFirstChild("PlayEmote")
-                                    if playEmote and playEmote:IsA("RemoteEvent") then
-                                        playEmote:FireServer("zen")
-                                        task.wait(0.1)
-                                        playEmote:FireServer("sit")
-                                    end
-                                end
-                            end)
-                            task.wait(0.2)
-                        end
-                    end)
-
-                    -- Цикл авто-выстрела
-                    task.spawn(function()
-                        while getgenv().FogyHubActive do
-                            pcall(function()
-                                if Config.Combat.AutoShootMurderer then
-                                    local char = LocalPlayer.Character
-                                    local gun = char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver"))
-                                    if gun then
-                                        local m = getMurderer()
-                                        if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
-                                            fireGun(gun, m.Character.HumanoidRootPart.Position) 
-                                        end
-                                    end
-                                end
-                            end)
-                            task.wait(0.1)
-                        end
-                    end)
-
-                    -- Высокоприоритетный мгновенный Аимлок (ЖЕСТКАЯ НАВОДКА БЕЗ СГЛАЖИВАНИЯ)
-                    local function updateAimlock()
-                        if Config.Combat.AimlockEnabled then
-                            local m = getMurderer()
-                            if m and m.Character and m.Character:FindFirstChild("Head") then
-                                local camera = workspace.CurrentCamera
-                                if camera then 
-                                    -- Мгновенная наводка без Lerp
-                                    camera.CFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
-                                end
-                            end
-                        end
-                    end
-                    addBind("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
-
-                    -- Бесконечный спидглитч
-                    addConnection(RunService.Heartbeat:Connect(function(deltaTime)
-                        pcall(function()
-                            local char = LocalPlayer.Character
-                            local hum = char and char:FindFirstChildOfClass("Humanoid")
-                            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                            if hrp and hum and Config.Utility.SlideGlitchEnabled and hum.MoveDirection.Magnitude > 0 then
-                                local slideVector = Vector3.new(hum.MoveDirection.X, 0, hum.MoveDirection.Z).Unit
-                                hrp.CFrame = hrp.CFrame + (slideVector * (Config.Utility.SlideSpeedForce * deltaTime))
-                            end
-                        end)
-                    end))
-
-                    -- Silent Aim (ПЕРЕДОВОЙ СЕТЕВОЙ ПЕРЕХВАТ ПУЛИ В ТАРГЕТ)
-                    pcall(function()
-                        if hookmetamethod and getnamecallmethod then
-                            local oldNamecall
-                            oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-                                local args = {...}
-                                local method = getnamecallmethod()
-                                if Config.Combat.SilentAimEnabled then
-                                    local m = getMurderer()
-                                    if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
-                                        local targetPos = m.Character.HumanoidRootPart.Position
-                                        -- Хук для современных копий игры (RemoteEvent)
-                                        if method == "FireServer" and (self.Name == "Shoot" or self.Name == "Fire") and self.Parent == LocalPlayer.Character:FindFirstChild("Gun") then
-                                            local origin = args[1] and args[1].Position or LocalPlayer.Character.HumanoidRootPart.Position
-                                            args[1] = CFrame.new(origin, targetPos)
-                                            args[2] = targetPos
-                                            return oldNamecall(self, unpack(args))
-                                        -- Хук для классических серверов (RemoteFunction)
-                                        elseif method == "InvokeServer" and self.Name == "ShootGun" then
-                                            args[2] = targetPos
-                                            args[3] = targetPos
-                                            return oldNamecall(self, unpack(args))
-                                        end
-                                    end
-                                end
-                                return oldNamecall(self, ...)
-                            end)
-                        end
-                    end)
-
-                    -- Kill Aura
-                    addConnection(RunService.Heartbeat:Connect(function()
-                        pcall(function()
-                            if not Config.Combat.KillAuraEnabled then return end
-                            local char = LocalPlayer.Character
-                            local bp = LocalPlayer:FindFirstChild("Backpack")
-                            local knife = char and char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
-                            
-                            if knife and char and char:FindFirstChild("HumanoidRootPart") then
-                                if knife.Parent == bp then char.Humanoid:EquipTool(knife) end
-                                for _, victim in ipairs(Players:GetPlayers()) do
-                                    if victim ~= LocalPlayer and victim.Character and victim.Character:FindFirstChild("HumanoidRootPart") then
-                                        local vHum = victim.Character:FindFirstChildOfClass("Humanoid")
-                                        if vHum and vHum.Health > 0 then
-                                            local dist = (char.HumanoidRootPart.Position - victim.Character.HumanoidRootPart.Position).Magnitude
-                                            if dist <= Config.Combat.KillAuraRange then
-                                                knife:Activate()
-                                                pcall(function()
-                                                    local targetPart = victim.Character:FindFirstChild("HumanoidRootPart") or victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
-                                                    if targetPart then
-                                                        firetouchinterest(targetPart, knife.Handle, 0)
-                                                        firetouchinterest(targetPart, knife.Handle, 1)
-                                                    end
-                                                end)
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end)
-                    end))
-
-                    -- Noclip
-                    addConnection(RunService.Stepped:Connect(function()
-                        pcall(function()
-                            if not Config.Utility.NoclipEnabled then return end
-                            local char = LocalPlayer.Character
-                            if char then
-                                for _, part in ipairs(char:GetDescendants()) do
-                                    if part:IsA("BasePart") then part.CanCollide = false end
-                                end
-                            end
-                        end)
-                    end))
-
-                    -- Потоковая проверка для авто-уклонения
-                    addConnection(RunService.Heartbeat:Connect(function()
-                        pcall(function()
-                            if not Config.Combat.AutoDodgeKnife then return end
-                            local char = LocalPlayer.Character
-                            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                            if not hrp then return end
-                            
-                            for _, obj in ipairs(workspace:GetChildren()) do
-                                if obj.Name == "ThrownKnife" and obj:IsA("BasePart") then
-                                    local distance = (hrp.Position - obj.Position).Magnitude
-                                    
-                                    if distance < 22 and (tick() - lastDodgeTime > 0.6) then
-                                        lastDodgeTime = tick()
-                                        
-                                        local targetCFrame = hrp.CFrame + (hrp.CFrame.RightVector * 14)
-                                        
-                                        local wasAnchored = hrp.Anchored
-                                        hrp.Anchored = true
-                                        hrp.CFrame = targetCFrame
-                                        char:PivotTo(targetCFrame)
-                                        task.wait(0.04)
-                                        hrp.Anchored = wasAnchored
-                                        break
-                                    end
-                                end
-                            end
-                        end)
-                    end))
-
-                    -- Проверка на неофициальный сервер
-                    task.spawn(function()
-                        task.wait(1.5)
-                        local officialMM2Ids = {142823291, 3383406159}
-                        if not table.find(officialMM2Ids, game.PlaceId) then
-                            WindUI:Notify({
-                                Title = T("MMBWarningTitle"),
-                                Content = T("MMBWarningContent"),
-                                Icon = "alert-triangle",
-                                Duration = 6
-                            })
-                        end
-                    end)
-
-                    -- Автоматическое применение конфига
-                    task.spawn(function()
-                        task.wait(0.5)
-                        applyConfigToUI()
-                    end)
-
-                    WindUI:Notify({ Title = "FogyHub", Content = T("Loaded"), Icon = "shield", Duration = 3 })
-                end
-
-                -- ==================== ИНИЦИАЛИЗАЦИЯ И ИНТЕРАКТИВНЫЙ ВЫБОР ЯЗЫКА ====================
-                local container = getSafeUIContainer()
-                if container then
-                    local saveFileName = "fogyhub_lang.txt"
-                    local hasSavedLang = false
-                    
-                    if readfile and isfile and isfile(saveFileName) then
-                        local saved = pcall(function() return readfile(saveFileName) end) and readfile(saveFileName)
-                        if saved == "ru" or saved == "en" then
-                            currentLang = saved
-                            hasSavedLang = true
-                        end
-                    end
-                    
-                    if hasSavedLang or isfile(configFileName) then
-                        xpcall(main, showCrashMenu)
-                    else
-                        local langGui = Instance.new("ScreenGui")
-                        langGui.Name = "FogyHub_LanguageSelector"
-                        langGui.ResetOnSpawn = false
-                        langGui.Parent = container
-                        
-                        local frame = Instance.new("Frame")
-                        frame.Size = UDim2.new(0, 300, 0, 150)
-                        frame.Position = UDim2.new(0.5, -150, 0.5, -75)
-                        frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-                        frame.BorderSizePixel = 0
-                        frame.Parent = langGui
-                        
-                        local corner = Instance.new("UICorner")
-                        corner.CornerRadius = UDim.new(0, 8)
-                        corner.Parent = frame
-                        
-                        local stroke = Instance.new("UIStroke")
-                        stroke.Color = Color3.fromRGB(0, 150, 255)
-                        stroke.Thickness = 1.5
-                        stroke.Parent = frame
-                        
-                        local title = Instance.new("TextLabel")
-                        title.Size = UDim2.new(1, 0, 0, 40)
-                        title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-                        title.Text = "🌐 FogyHub — Select Language"
-                        title.TextColor3 = Color3.fromRGB(255, 255, 255)
-                        title.TextSize = 13
-                        title.Font = Enum.Font.SourceSansBold
-                        title.Parent = frame
-                        
-                        local titleCorner = Instance.new("UICorner")
-                        titleCorner.CornerRadius = UDim.new(0, 8)
-                        titleCorner.Parent = title
-                        
-                        local function createLangButton(text, pos, callback)
-                            local btn = Instance.new("TextButton")
-                            btn.Size = UDim2.new(0.4, 0, 0, 40)
-                            btn.Position = pos
-                            btn.Text = text
-                            btn.Font = Enum.Font.SourceSansBold
-                            btn.TextSize = 13
-                            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-                            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-                            btn.BorderSizePixel = 0
-                            btn.Parent = frame
-                            
-                            local btnCorner = Instance.new("UICorner")
-                            btnCorner.CornerRadius = UDim.new(0, 6)
-                            btnCorner.Parent = btn
-                            
-                            btn.Activated:Connect(callback)
-                        end
-                        
-                        createLangButton("Русский", UDim2.new(0.08, 0, 0.5, 0), function()
-                            currentLang = "ru"
-                            Config.Language = "ru"
-                            if writefile then pcall(function() writefile(saveFileName, "ru") end) end
-                            saveConfig()
-                            langGui:Destroy()
-                            xpcall(main, showCrashMenu)
-                        end)
-                        
-                        createLangButton("English", UDim2.new(0.52, 0, 0.5, 0), function()
-                            currentLang = "en"
-                            Config.Language = "en"
-                            if writefile then pcall(function() writefile(saveFileName, "en") end) end
-                            saveConfig()
-                            langGui:Destroy()
-                            xpcall(main, showCrashMenu)
-                        end)
-                    end
+    -- Вкладка Тел. Кнопки 
+    UI_Elements.MobileButtons.LockMobileButtons = ButtonsTab:Toggle({ Title = T("LockButtons"), Value = Config.MobileButtons.LockMobileButtons, Callback = function(s) Config.MobileButtons.LockMobileButtons = s saveConfig() end })
+    UI_Elements.MobileButtons.ButtonScale = ButtonsTab:Slider({ Title = T("BtnScale"), Step = 0.1, Value = { Min = 0.5, Max = 2.0, Default = Config.MobileButtons.ButtonScale }, Callback = function(v) Config.MobileButtons.ButtonScale = v saveConfig() updateButtonSizes() end })
+    
+    -- Умный автоцикл генерации кнопок
+    for name, info in pairs(buttonInfo) do
+        UI_Elements.MobileButtons[name] = ButtonsTab:Toggle({
+            Title = T(info.Translation),
+            Value = Config.MobileButtons[name],
+            Callback = function(s)
+                Config.MobileButtons[name] = s
+                saveConfig()
+                if s then
+                    createFloatingButton(name, info.Target, info.Callback)
                 else
-                    xpcall(main, showCrashMenu)
+                    removeFloatingButton(name)
                 end
+            end
+        })
+    end
+
+    -- Вкладка Конфиги (ОБНОВЛЁН ПЕРЕЗАПУСК ПРИ СМЕНЕ ЯЗЫКА)
+    ConfigsTab:Button({ Title = T("SaveConfigBtn"), Callback = function() saveConfig() WindUI:Notify({ Title = "FogyHub", Content = T("ConfSaved"), Icon = "check", Duration = 3 }) end })
+    ConfigsTab:Button({ Title = T("LoadConfigBtn"), Callback = function() loadConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfLoaded"), Icon = "check", Duration = 3 }) end })
+    ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
+        Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14, GunDropESP = false }
+        Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
+        Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false, InvisEnabled = false }
+        Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Invisibility"] = false }
+        saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
+    end })
+    ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() 
+        Config.Language = "ru" 
+        currentLang = "ru" 
+        saveConfig() 
+        if writefile then pcall(function() writefile("fogyhub_lang.txt", "ru") end) end
+        WindUI:Notify({ Title = "Язык", Content = "Перезапуск хуеты...", Icon = "globe", Duration = 3 })
+        task.wait(1)
+        pcall(getgenv().FogyHub_Cleanup)
+        task.spawn(main)
+    end })
+    ConfigsTab:Button({ Title = T("SetLangEn"), Callback = function() 
+        Config.Language = "en" 
+        currentLang = "en" 
+        saveConfig() 
+        if writefile then pcall(function() writefile("fogyhub_lang.txt", "en") end) end
+        WindUI:Notify({ Title = "Language", Content = "Restarting script...", Icon = "globe", Duration = 3 })
+        task.wait(1)
+        pcall(getgenv().FogyHub_Cleanup)
+        task.spawn(main)
+    end })
+
+    -- Вкладка Радио
+    local _ = RadioTab:Input({ Title = T("RobloxId"), Value = "", Placeholder = "ID...", Callback = function(text) currentSongId = text end })
+    RadioTab:Button({ Title = T("PlayId"), Callback = playRadio })
+    local _ = RadioTab:Input({ Title = T("HttpUrl"), Value = "", Placeholder = "https://...", Callback = function(text) httpSongUrl = text end })
+    RadioTab:Button({ Title = T("PlayHttp"), Callback = playHttpRadio })
+    RadioTab:Button({ Title = T("StopRadio"), Callback = stopRadio })
+    RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
+    RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
+
+    -- Автоматический сброс при смерти
+    addConnection(LocalPlayer.CharacterAdded:Connect(function()
+        invisOn = false
+        if invisConnection then invisConnection:Disconnect() invisConnection = nil end
+        if rotationConnection then rotationConnection:Disconnect() rotationConnection = nil end
+        if invisOutline then invisOutline:Destroy() invisOutline = nil end
+        local seat = workspace:FindFirstChild("FogyHub_InvisChair")
+        if seat then seat:Destroy() end
+        Config.Utility.InvisEnabled = false
+        setToggle(UI_Elements.Utility.InvisEnabled, false)
+
+        -- Автоматическое восстановление активного Радио
+        task.wait(1)
+        if radioSound and radioSound.Playing then
+            attachRadio()
+            if radioModel then
+                local sound = radioModel:FindFirstChild("RadioSound") or Instance.new("Sound", radioModel)
+                sound.Name = "RadioSound"
+                sound.SoundId = radioSound.SoundId
+                sound.Volume = radioVolume
+                sound.Looped = radioLooped
+                sound:Play()
+                sound.Volume = radioVolume
+                radioSound = sound
+            end
+        end
+    end))
+
+    -- ==================== ФОНОВЫЕ ЦИКЛЫ И ПРОСЛУШИВАТЕЛИ ====================
+    addConnection(UserInputService.InputBegan:Connect(function(input, processed)
+        if processed then return end
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            local success, keyStr = pcall(function() return input.KeyCode and input.KeyCode.Name end)
+            if success and keyStr then
+                if keyStr == "F" then local m = getMurderer() if m then flingPlayer(m) end
+                elseif keyStr == "G" then local s = getSheriff() if s then flingPlayer(s) end 
+                elseif keyStr == "T" then grabGun()
+                elseif keyStr == "C" then toggleSlideGlitch()
+                elseif keyStr == "V" then toggleNoclip(not Config.Utility.NoclipEnabled)
+                elseif keyStr == "Y" then toggleInvis() end
+            end
+        end
+    end))
+
+    -- Оповещения в чат при раскрытии ролей
+    local lastMurder, lastSheriff = nil, nil
+    local function notifyRolesInChat()
+        pcall(function()
+            local mPlayer = Murder and Players:FindFirstChild(Murder)
+            local sPlayer = Sheriff and Players:FindFirstChild(Sheriff)
+            
+            local message = ""
+            if mPlayer then
+                message = message .. "[FogyHub] Убийца: " .. mPlayer.DisplayName .. " (@" .. mPlayer.Name .. ")"
+            end
+            if sPlayer then
+                if message ~= "" then message = message .. " | " end
+                message = message .. "Шериф: " .. sPlayer.DisplayName .. " (@" .. sPlayer.Name .. ")"
+            end
+            
+            if message ~= "" then
+                game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+                    Text = message,
+                    Color = Color3.fromRGB(0, 150, 255),
+                    Font = Enum.Font.SourceSansBold,
+                    TextSize = 15
+                })
+            end
+        end)
+    end
+
+    -- Умный автоматический поиск и подсветка упавшего пистолета на карте
+    local function highlightGunDrop()
+        local gunDrop = workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)
+        local handle = gunDrop and (gunDrop:FindFirstChild("Handle", true) or gunDrop:FindFirstChildOfClass("Part", true) or gunDrop)
+        
+        if handle then
+            local highlight = handle:FindFirstChild("FogyHub_GunESP")
+            if Config.Visuals.GunDropESP then
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "FogyHub_GunESP"
+                    highlight.FillColor = Color3.fromRGB(0, 255, 100) -- Яркий зеленый
+                    highlight.OutlineColor = Color3.fromRGB(0, 255, 100)
+                    highlight.FillTransparency = 0.5
+                    highlight.OutlineTransparency = 0
+                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    highlight.Parent = handle
+                end
+            else
+                if highlight then highlight:Destroy() end
+            end
+        end
+    end
+
+    -- Оптимизированный ESP обработчик (С жестким сканером инвентаря на кастомных серверах!)
+    local function updateESP()
+        local success, serverRoles = pcall(function()
+            local remote = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
+            return remote and remote:InvokeServer()
+        end)
+        
+        local tempMurder, tempSheriff, tempHero = nil, nil, nil
+        if success and serverRoles then
+            roles = serverRoles
+            for i, v in pairs(roles) do
+                if v.Role == "Murderer" then
+                    tempMurder = i
+                elseif v.Role == "Sheriff" then
+                    tempSheriff = i
+                elseif v.Role == "Hero" then
+                    tempHero = i
+                end
+            end
+        end
+
+        Murder = tempMurder
+        Sheriff = tempSheriff
+        Hero = tempHero
+        
+        if Config.Utility.ChatAlertsEnabled then
+            if Murder ~= lastMurder or Sheriff ~= lastSheriff then
+                lastMurder = Murder
+                lastSheriff = Sheriff
+                task.spawn(notifyRolesInChat)
+            end
+        end
+        
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                local character = player.Character
+                if character then
+                    local isM, isS, isH = false, false, false
+                    local alive = IsAlive(player)
+                    
+                    -- Фоллбэк сканирование инвентаря на оружие (для кастомных серверов)
+                    local bp = player:FindFirstChild("Backpack")
+                    local hasKnife = (character:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife"))
+                    local hasGun = (character:FindFirstChild("Gun") or character:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
+
+                    if player.Name == Murder or hasKnife then
+                        isM = true
+                    elseif player.Name == Sheriff or (hasGun and not isM) then
+                        isS = true
+                    elseif player.Name == Hero then
+                        isH = true
+                    end
+                    
+                    local inLobby = false
+                    local hrp = character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local distToLobby = (hrp.Position - Vector3.new(6.0, 505.2, -35.0)).Magnitude
+                        if distToLobby < 150 then
+                            inLobby = true
+                        end
+                    end
+                    
+                    local espEnabled = false
+                    local renderColor = Color3.fromRGB(0, 255, 0)
+                    
+                    if not alive or inLobby then
+                        if Config.Visuals.MurdererESP or Config.Visuals.SheriffESP or Config.Visuals.InnocentESP then
+                            espEnabled = true
+                            renderColor = Color3.fromRGB(150, 150, 150)
+                        end
+                    else
+                        if isM then
+                            espEnabled = Config.Visuals.MurdererESP
+                            renderColor = Color3.fromRGB(255, 0, 0)
+                        elseif isS then
+                            espEnabled = Config.Visuals.SheriffESP
+                            renderColor = Color3.fromRGB(0, 0, 255)
+                        elseif isH then
+                            espEnabled = Config.Visuals.SheriffESP
+                            renderColor = Color3.fromRGB(255, 250, 0)
+                        else
+                            espEnabled = Config.Visuals.InnocentESP
+                            renderColor = Color3.fromRGB(0, 255, 0)
+                        end
+                    end
+                    
+                    if espEnabled then
+                        applyHighlight(player, renderColor)
+                    else
+                        removeHighlight(player)
+                    end
+
+                    if Config.Visuals.EspBoxes then
+                        applyBoxESP(player, renderColor)
+                    else
+                        removeBoxESP(player)
+                    end
+                end
+            end
+        end
+    end
+
+    -- Запуск цикла ESP и подсветки пистолета
+    task.spawn(function()
+        while getgenv().FogyHubActive do
+            pcall(updateESP)
+            pcall(highlightGunDrop)
+            task.wait(0.1)
+        end
+    end)
+
+    -- Цикл автоподбора пистолета
+    task.spawn(function()
+        while getgenv().FogyHubActive do
+            pcall(function()
+                if Config.Utility.AutoGrabGun then
+                    local char = LocalPlayer.Character
+                    local bp = LocalPlayer:FindFirstChild("Backpack")
+                    local isMurderer = (char and char:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife")) or (Murder and LocalPlayer.Name == Murder)
+                    
+                    if IsAlive(LocalPlayer) and not isMurderer then
+                        if (workspace:FindFirstChild("GunDrop", true) or workspace:FindFirstChild("DroppedGun", true)) then 
+                            grabGun() 
+                            task.wait(1) 
+                        end
+                    end
+                end
+            end)
+            task.wait(0.2)
+        end
+    end)
+
+    -- Цикл автофарма монет
+    local function getCoinsOnMap()
+        local coins = {}
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") and (v.Name == "Coin_Highlight" or v.Name == "CoinContainer" or v.Name == "Coin") then
+                table.insert(coins, v)
+            end
+        end
+        return coins
+    end
+
+    task.spawn(function()
+        while getgenv().FogyHubActive do
+            pcall(function()
+                if Config.Utility.AutoFarmCoins then
+                    local char = LocalPlayer.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local coins = getCoinsOnMap()
+                        local nearestCoin, minDist = nil, math.huge
+                        
+                        for _, coin in ipairs(coins) do
+                            local dist = (coin.Position - hrp.Position).Magnitude
+                            if dist < minDist then
+                                minDist = dist
+                                nearestCoin = coin
+                            end
+                        end
+                        
+                        if nearestCoin then
+                            local stepConn
+                            stepConn = addConnection(RunService.Heartbeat:Connect(function(dt)
+                                if not Config.Utility.AutoFarmCoins or not nearestCoin or not nearestCoin.Parent or not hrp.Parent then
+                                    if stepConn then stepConn:Disconnect() end
+                                    return
+                                end
+                                local dir = (nearestCoin.Position - hrp.Position).Unit
+                                hrp.CFrame = hrp.CFrame + (dir * (22 * dt))
+                                if (nearestCoin.Position - hrp.Position).Magnitude < 4 then
+                                    if stepConn then stepConn:Disconnect() end
+                                end
+                            end))
+                            
+                            local timeout = 0
+                            while nearestCoin and nearestCoin.Parent and Config.Utility.AutoFarmCoins and timeout < 100 do
+                                if (nearestCoin.Position - hrp.Position).Magnitude < 4 then break end
+                                task.wait(0.05)
+                                timeout = timeout + 1
+                            end
+                            if stepConn then stepConn:Disconnect() end
+                        end
+                    end
+                end
+            end)
+            task.wait(0.1)
+        end
+    end)
+
+    -- Цикл Спама Эмоций
+    task.spawn(function()
+        while getgenv().FogyHubActive do
+            pcall(function()
+                if Config.Utility.EmoteSpamEnabled then
+                    local playEmote = game:GetService("ReplicatedStorage"):FindFirstChild("PlayEmote")
+                    if playEmote and playEmote:IsA("RemoteEvent") then
+                        playEmote:FireServer("zen")
+                        task.wait(0.1)
+                        playEmote:FireServer("sit")
+                    end
+                end
+            end)
+            task.wait(0.2)
+        end
+    end)
+
+    -- Цикл авто-выстрела
+    task.spawn(function()
+        while getgenv().FogyHubActive do
+            pcall(function()
+                if Config.Combat.AutoShootMurderer then
+                    local char = LocalPlayer.Character
+                    local gun = char and (char:FindFirstChild("Gun") or char:FindFirstChild("Revolver"))
+                    if gun then
+                        local m = getMurderer()
+                        if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
+                            fireGun(gun, m.Character.HumanoidRootPart.Position) 
+                        end
+                    end
+                end
+            end)
+            task.wait(0.1)
+        end
+    end)
+
+    -- Высокоприоритетный мгновенный Аимлок (ЖЕСТКАЯ НАВОДКА БЕЗ СГЛАЖИВАНИЯ)
+    local function updateAimlock()
+        if Config.Combat.AimlockEnabled then
+            local m = getMurderer()
+            if m and m.Character and m.Character:FindFirstChild("Head") then
+                local camera = workspace.CurrentCamera
+                if camera then 
+                    -- Мгновенная наводка без Lerp
+                    camera.CFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
+                end
+            end
+        end
+    end
+    addBind("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
+
+    -- Бесконечный спидглитч
+    addConnection(RunService.Heartbeat:Connect(function(deltaTime)
+        pcall(function()
+            local char = LocalPlayer.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if hrp and hum and Config.Utility.SlideGlitchEnabled and hum.MoveDirection.Magnitude > 0 then
+                local slideVector = Vector3.new(hum.MoveDirection.X, 0, hum.MoveDirection.Z).Unit
+                hrp.CFrame = hrp.CFrame + (slideVector * (Config.Utility.SlideSpeedForce * deltaTime))
+            end
+        end)
+    end))
+
+    -- Silent Aim (ПЕРЕДОВОЙ СЕТЕВОЙ ПЕРЕХВАТ ПУЛИ В ТАРГЕТ)
+    pcall(function()
+        if hookmetamethod and getnamecallmethod then
+            local oldNamecall
+            oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+                local args = {...}
+                local method = getnamecallmethod()
+                if Config.Combat.SilentAimEnabled then
+                    local m = getMurderer()
+                    if m and m.Character and m.Character:FindFirstChild("HumanoidRootPart") then
+                        local targetPos = m.Character.HumanoidRootPart.Position
+                        -- Хук для современных копий игры (RemoteEvent)
+                        if method == "FireServer" and (self.Name == "Shoot" or self.Name == "Fire") and self.Parent == LocalPlayer.Character:FindFirstChild("Gun") then
+                            local origin = args[1] and args[1].Position or LocalPlayer.Character.HumanoidRootPart.Position
+                            args[1] = CFrame.new(origin, targetPos)
+                            args[2] = targetPos
+                            return oldNamecall(self, unpack(args))
+                        -- Хук для классических серверов (RemoteFunction)
+                        elseif method == "InvokeServer" and self.Name == "ShootGun" then
+                            args[2] = targetPos
+                            args[3] = targetPos
+                            return oldNamecall(self, unpack(args))
+                        end
+                    end
+                end
+                return oldNamecall(self, ...)
+            end)
+        end
+    end)
+
+    -- Kill Aura
+    addConnection(RunService.Heartbeat:Connect(function()
+        pcall(function()
+            if not Config.Combat.KillAuraEnabled then return end
+            local char = LocalPlayer.Character
+            local bp = LocalPlayer:FindFirstChild("Backpack")
+            local knife = char and char:FindFirstChild("Knife") or (bp and bp:FindFirstChild("Knife"))
+            
+            if knife and char and char:FindFirstChild("HumanoidRootPart") then
+                if knife.Parent == bp then char.Humanoid:EquipTool(knife) end
+                for _, victim in ipairs(Players:GetPlayers()) do
+                    if victim ~= LocalPlayer and victim.Character and victim.Character:FindFirstChild("HumanoidRootPart") then
+                        local vHum = victim.Character:FindFirstChildOfClass("Humanoid")
+                        if vHum and vHum.Health > 0 then
+                            local dist = (char.HumanoidRootPart.Position - victim.Character.HumanoidRootPart.Position).Magnitude
+                            if dist <= Config.Combat.KillAuraRange then
+                                knife:Activate()
+                                pcall(function()
+                                    local targetPart = victim.Character:FindFirstChild("HumanoidRootPart") or victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                                    if targetPart then
+                                        firetouchinterest(targetPart, knife.Handle, 0)
+                                        firetouchinterest(targetPart, knife.Handle, 1)
+                                    end
+                                end)
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end))
+
+    -- Noclip
+    addConnection(RunService.Stepped:Connect(function()
+        pcall(function()
+            if not Config.Utility.NoclipEnabled then return end
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in ipairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = false end
+                end
+            end
+        end)
+    end))
+
+    -- Потоковая проверка для авто-уклонения
+    addConnection(RunService.Heartbeat:Connect(function()
+        pcall(function()
+            if not Config.Combat.AutoDodgeKnife then return end
+            local char = LocalPlayer.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+            
+            for _, obj in ipairs(workspace:GetChildren()) do
+                if obj.Name == "ThrownKnife" and obj:IsA("BasePart") then
+                    local distance = (hrp.Position - obj.Position).Magnitude
+                    
+                    if distance < 22 and (tick() - lastDodgeTime > 0.6) then
+                        lastDodgeTime = tick()
+                        
+                        local targetCFrame = hrp.CFrame + (hrp.CFrame.RightVector * 14)
+                        
+                        local wasAnchored = hrp.Anchored
+                        hrp.Anchored = true
+                        hrp.CFrame = targetCFrame
+                        char:PivotTo(targetCFrame)
+                        task.wait(0.04)
+                        hrp.Anchored = wasAnchored
+                        break
+                    end
+                end
+            end
+        end)
+    end))
+
+    -- Проверка на неофициальный сервер
+    task.spawn(function()
+        task.wait(1.5)
+        local officialMM2Ids = {142823291, 3383406159}
+        if not table.find(officialMM2Ids, game.PlaceId) then
+            WindUI:Notify({
+                Title = T("MMBWarningTitle"),
+                Content = T("MMBWarningContent"),
+                Icon = "alert-triangle",
+                Duration = 6
+            })
+        end
+    end)
+
+    -- Автоматическое применение конфига
+    task.spawn(function()
+        task.wait(0.5)
+        applyConfigToUI()
+    end)
+
+    WindUI:Notify({ Title = "FogyHub", Content = T("Loaded"), Icon = "shield", Duration = 3 })
+end -- ЭТОТ END ЗАКРЫВАЕТ ФУНКЦИЮ main() НАМЕРТВО!
+
+-- ==================== ИНИЦИАЛИЗАЦИЯ И ИНТЕРАКТИВНЫЙ ВЫБОР ЯЗЫКА ====================
+local container = getSafeUIContainer()
+if container then
+    local saveFileName = "fogyhub_lang.txt"
+    local hasSavedLang = false
+    
+    if readfile and isfile and isfile(saveFileName) then
+        local saved = pcall(function() return readfile(saveFileName) end) and readfile(saveFileName)
+        if saved == "ru" or saved == "en" then
+            currentLang = saved
+            hasSavedLang = true
+        end
+    end
+    
+    if hasSavedLang or isfile(configFileName) then
+        xpcall(main, showCrashMenu)
+    else
+        local langGui = Instance.new("ScreenGui")
+        langGui.Name = "FogyHub_LanguageSelector"
+        langGui.ResetOnSpawn = false
+        langGui.Parent = container
+        
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0, 300, 0, 150)
+        frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+        frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        frame.BorderSizePixel = 0
+        frame.Parent = langGui
+        
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = frame
+        
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(0, 150, 255)
+        stroke.Thickness = 1.5
+        stroke.Parent = frame
+        
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, 0, 0, 40)
+        title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        title.Text = "🌐 FogyHub — Select Language"
+        title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        title.TextSize = 13
+        title.Font = Enum.Font.SourceSansBold
+        title.Parent = frame
+        
+        local titleCorner = Instance.new("UICorner")
+        titleCorner.CornerRadius = UDim.new(0, 8)
+        titleCorner.Parent = title
+        
+        local function createLangButton(text, pos, callback)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0.4, 0, 0, 40)
+            btn.Position = pos
+            btn.Text = text
+            btn.Font = Enum.Font.SourceSansBold
+            btn.TextSize = 13
+            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            btn.BorderSizePixel = 0
+            btn.Parent = frame
+            
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 6)
+            btnCorner.Parent = btn
+            
+            btn.Activated:Connect(callback)
+        end
+        
+        createLangButton("Русский", UDim2.new(0.08, 0, 0.5, 0), function()
+            currentLang = "ru"
+            Config.Language = "ru"
+            if writefile then pcall(function() writefile(saveFileName, "ru") end) end
+            saveConfig()
+            langGui:Destroy()
+            xpcall(main, showCrashMenu)
+        end)
+        
+        createLangButton("English", UDim2.new(0.52, 0, 0.5, 0), function()
+            currentLang = "en"
+            Config.Language = "en"
+            if writefile then pcall(function() writefile(saveFileName, "en") end) end
+            saveConfig()
+            langGui:Destroy()
+            xpcall(main, showCrashMenu)
+        end)
+    end
+else
+    xpcall(main, showCrashMenu)
+end
