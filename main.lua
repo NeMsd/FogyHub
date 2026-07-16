@@ -25,6 +25,7 @@ local Config = {
     Visuals = {
         MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, 
         StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14,
+        GunDropESP = false
     },
     Combat = {
         AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false,
@@ -40,13 +41,13 @@ local Config = {
         ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, 
         ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false,
         ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, 
-        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Shoot Murderer"] = false
+        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false
     },
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100}, ["Fling Sheriff"] = {X = 30, Y = 145}, ["Fling Hero"] = {X = 30, Y = 190}, 
         ["Grab Gun"] = {X = 30, Y = 235}, ["Slide Glitch"] = {X = 30, Y = 280}, ["Noclip"] = {X = 30, Y = 325},
         ["Kill Aura"] = {X = 30, Y = 370}, ["Auto Kill All"] = {X = 30, Y = 415}, ["Godmode"] = {X = 30, Y = 460},
-        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["Shoot Murderer"] = {X = 30, Y = 640}
+        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}
     }
 }
 
@@ -86,8 +87,8 @@ local L = {
         CrashTitle = "🚨 FogyHub — Crash Handler", CopyLog = "Copy Log", Copied = "Log Copied!", BufError = "Clipboard Error!", Close = "Close", Loaded = "FogyHub loaded!", FailedUI = "Failed to load WindUI library.",
         Visuals = "Visuals", Combat = "Combat", Utility = "Utility", MobileBinds = "Mobile Buttons", Radio = "Radio", Teleports = "Teleports", Configs = "Configs / Settings",
         EspM = "ESP Murderer", EspS = "ESP Sheriff", EspI = "ESP Innocents", EspBoxes = "3D Box ESP (For Low-End PC)", Stretch = "Screen Stretch (4:3)", StretchForce = "Stretch Force",
-        NoFog = "Disable Map Fog", TimeOfDay = "Time of Day",
-        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", ShootM = "Shoot Murderer", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
+        NoFog = "Disable Map Fog", TimeOfDay = "Time of Day", EspG = "ESP Gun Drop",
+        AutoShoot = "Auto-Shoot Murderer", Aimlock = "Aimlock on Murderer", KillAura = "Kill Aura", KillAuraRange = "Kill Aura Range", AutoKillAll = "Auto Kill All",
         FlingM = "Fling Murderer", FlingS = "Fling Sheriff", FlingH = "Fling Hero", AutoGrab = "Auto Grab Gun", SlideGlitch = "Infinite Speed Glitch", SlideSpeed = "Movement Speed", Noclip = "Noclip (Walk Through Walls)", AntiFling = "Anti-Fling",
         LockButtons = "Lock Button Positions", BtnScale = "Mobile Buttons Scale", BtnFlingM = "Button: Fling Murderer", BtnFlingS = "Button: Fling Sheriff", BtnFlingH = "Button: Fling Hero", BtnGrab = "Button: Grab Gun", BtnSlide = "Button: Slide Glitch",
         BtnNoclip = "Button: Noclip", BtnKillAura = "Button: Kill Aura", BtnKillAll = "Button: Auto Kill All", RobloxId = "Roblox Audio ID", PlayId = "Play Roblox ID", HttpUrl = "HTTP Link to MP3 / OGG",
@@ -99,7 +100,7 @@ local L = {
         BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username", SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
-        BtnShootM = "Button: Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
+        GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
         SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat",
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
@@ -107,8 +108,8 @@ local L = {
         CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub loaded!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
         Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
         EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
-        NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре",
-        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", ShootM = "Выстрелить в Мардера", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
+        NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре", EspG = "ESP Упавший пистолет",
+        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
         FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
         LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
         BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
@@ -120,7 +121,7 @@ local L = {
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
-        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
@@ -1279,7 +1280,7 @@ local function main()
                 ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Fling Hero"] = 190,
                 ["Grab Gun"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325, 
                 ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460, 
-                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["Shoot Murderer"] = 640
+                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
             }
             frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         end
@@ -1380,6 +1381,7 @@ local function main()
         setToggle(UI_Elements.Visuals.StretchEnabled, Config.Visuals.StretchEnabled)
         setSlider(UI_Elements.Visuals.StretchFactor, Config.Visuals.StretchFactor)
         setToggle(UI_Elements.Visuals.NoFogEnabled, Config.Visuals.NoFogEnabled)
+        setToggle(UI_Elements.Visuals.GunDropESP, Config.Visuals.GunDropESP)
         
         applyStretch(Config.Visuals.StretchEnabled)
         applyNoFog(Config.Visuals.NoFogEnabled)
@@ -1428,6 +1430,7 @@ local function main()
     UI_Elements.Visuals.SheriffESP = VisualsTab:Toggle({ Title = T("EspS"), Value = Config.Visuals.SheriffESP, Callback = function(s) Config.Visuals.SheriffESP = s saveConfig() end })
     UI_Elements.Visuals.InnocentESP = VisualsTab:Toggle({ Title = T("EspI"), Value = Config.Visuals.InnocentESP, Callback = function(s) Config.Visuals.InnocentESP = s saveConfig() end })
     UI_Elements.Visuals.EspBoxes = VisualsTab:Toggle({ Title = T("EspBoxes"), Value = Config.Visuals.EspBoxes, Callback = function(s) Config.Visuals.EspBoxes = s saveConfig() end })
+    UI_Elements.Visuals.GunDropESP = VisualsTab:Toggle({ Title = T("EspG"), Value = Config.Visuals.GunDropESP, Callback = function(s) Config.Visuals.GunDropESP = s saveConfig() end })
     
     UI_Elements.Visuals.StretchEnabled = VisualsTab:Toggle({
         Title = T("Stretch"), Value = Config.Visuals.StretchEnabled, Callback = function(state)
@@ -1510,7 +1513,7 @@ local function main()
     ConfigsTab:Button({ Title = T("SaveConfigBtn"), Callback = function() saveConfig() WindUI:Notify({ Title = "FogyHub", Content = T("ConfSaved"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("LoadConfigBtn"), Callback = function() loadConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfLoaded"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
-        Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14 }
+        Config.Visuals = { MurdererESP = false, SheriffESP = false, InnocentESP = false, EspBoxes = false, StretchEnabled = false, StretchFactor = 0.75, NoFogEnabled = false, TimeOfDay = 14, GunDropESP = false }
         Config.Combat = { AutoShootMurderer = false, AimlockEnabled = false, SilentAimEnabled = false, AutoDodgeKnife = false, KillAuraEnabled = false, KillAuraRange = 25 }
         Config.Utility = { AutoGrabGun = false, SlideGlitchEnabled = false, SlideSpeedForce = 45, NoclipEnabled = false, AntiFling = false, AutoFarmCoins = false, EmoteSpamEnabled = false, ChatAlertsEnabled = false }
         Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false }
@@ -1594,43 +1597,54 @@ local function main()
         local handle = gunDrop and (gunDrop:FindFirstChild("Handle", true) or gunDrop:FindFirstChildOfClass("Part", true) or gunDrop)
         
         if handle then
-            local highlight = handle:FindFirstChild("FogyHub_GunESP") or Instance.new("Highlight")
-            highlight.Name = "FogyHub_GunESP"
-            highlight.FillColor = Color3.fromRGB(0, 255, 100) -- Яркий зеленый
-            highlight.OutlineColor = Color3.fromRGB(0, 255, 100)
-            highlight.FillTransparency = 0.5
-            highlight.OutlineTransparency = 0
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            highlight.Parent = handle
+            local highlight = handle:FindFirstChild("FogyHub_GunESP")
+            if Config.Visuals.GunDropESP then
+                if not highlight then
+                    highlight = Instance.new("Highlight")
+                    highlight.Name = "FogyHub_GunESP"
+                    highlight.FillColor = Color3.fromRGB(0, 255, 100) -- Яркий зеленый
+                    highlight.OutlineColor = Color3.fromRGB(0, 255, 100)
+                    highlight.FillTransparency = 0.5
+                    highlight.OutlineTransparency = 0
+                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    highlight.Parent = handle
+                end
+            else
+                if highlight then highlight:Destroy() end
+            end
         end
     end
 
-    -- Оптимизированный ESP обработчик
+    -- Оптимизированный ESP обработчик (С жестким сканером инвентаря на кастомных серверах!)
     local function updateESP()
         local success, serverRoles = pcall(function()
             local remote = ReplicatedStorage:FindFirstChild("GetPlayerData", true)
             return remote and remote:InvokeServer()
         end)
         
+        local tempMurder, tempSheriff, tempHero = nil, nil, nil
         if success and serverRoles then
             roles = serverRoles
-            Murder, Sheriff, Hero = nil, nil, nil
             for i, v in pairs(roles) do
                 if v.Role == "Murderer" then
-                    Murder = i
+                    tempMurder = i
                 elseif v.Role == "Sheriff" then
-                    Sheriff = i
+                    tempSheriff = i
                 elseif v.Role == "Hero" then
-                    Hero = i
+                    tempHero = i
                 end
             end
-            
-            if Config.Utility.ChatAlertsEnabled then
-                if Murder ~= lastMurder or Sheriff ~= lastSheriff then
-                    lastMurder = Murder
-                    lastSheriff = Sheriff
-                    task.spawn(notifyRolesInChat)
-                end
+        end
+
+        Murder = tempMurder
+        Sheriff = tempSheriff
+        Hero = tempHero
+        
+        if Config.Utility.ChatAlertsEnabled then
+            if Murder ~= lastMurder or Sheriff ~= lastSheriff then
+                lastMurder = Murder
+                lastSheriff = Sheriff
+                task.spawn(notifyRolesInChat)
             end
         end
         
@@ -1641,15 +1655,17 @@ local function main()
                     local isM, isS, isH = false, false, false
                     local alive = IsAlive(player)
                     
-                    if player.Name == Murder and alive then
+                    -- Фоллбэк сканирование инвентаря на оружие (для кастомных серверов)
+                    local bp = player:FindFirstChild("Backpack")
+                    local hasKnife = (character:FindFirstChild("Knife")) or (bp and bp:FindFirstChild("Knife"))
+                    local hasGun = (character:FindFirstChild("Gun") or character:FindFirstChild("Revolver")) or (bp and (bp:FindFirstChild("Gun") or bp:FindFirstChild("Revolver")))
+
+                    if player.Name == Murder or hasKnife then
                         isM = true
-                    elseif player.Name == Sheriff and alive then
+                    elseif player.Name == Sheriff or (hasGun and not isM) then
                         isS = true
-                    elseif player.Name == Hero and alive then
-                        local sheriffPlayer = Sheriff and Players:FindFirstChild(Sheriff)
-                        if sheriffPlayer and not IsAlive(sheriffPlayer) then
-                            isH = true
-                        end
+                    elseif player.Name == Hero then
+                        isH = true
                     end
                     
                     local inLobby = false
