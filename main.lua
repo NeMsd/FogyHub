@@ -3,6 +3,17 @@
 -- Authors: MsD, Gemini, Vertex Logic Integration
 -- ======================================================
 
+-- ЭМУЛЯТОР NEWPROXY (ОБХОД КРАША ОБФУСКАТОРОВ НА DELTA / SOLARA)
+if not getgenv().newproxy then
+    getgenv().newproxy = function(bool)
+        if bool then
+            return setmetatable({}, {__metatable = false})
+        else
+            return {}
+        end
+    end
+end
+
 -- Clean up previous execution to prevent lag and stacking (ULTIMATE OPTIMIZATION)
 if getgenv().FogyHub_Cleanup then
     pcall(getgenv().FogyHub_Cleanup)
@@ -152,7 +163,7 @@ local L = {
         BtnNoclip = "Кнопка: Ноуклип", BtnKillAura = "Кнопка: Килаура", BtnKillAll = "Кнопка: Геноцид", RobloxId = "ID Музла из Roblox", PlayId = "Играть музло по ID", HttpUrl = "Прямая ссылка на MP3/OGG",
         PlayHttp = "Врубить музыку по ссылке", StopRadio = "Заткнуть радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден, бля!", NoGun = "Пестика у шерифа нет!", NoM = "Убийца подох или не найден",
         NoS = "Шериф подох или не найден", NoH = "Герой подох или не найден", SitError = " сидит, хуй ты его выбьешь!", Flinging = "Ебашим: ", RadioNoSupport = "Твой эксплойт — говно без поддержки getcustomasset!",
-        RadioDownloading = "Качаем музло...", RadioHttpSuccess = "Музыка пошла, нахуй!", RadioHttpError = "Файл битый, блядь!", RadioHttpFail = "Сайт с музыкой лежит нахуй!",
+        RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Музыка пошла, нахуй!", RadioHttpError = "Файл битый, блядь!", RadioHttpFail = "Сайт с музыкой лежит нахуй!",
         RadioCache = "Врубил из локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
         DodgeKnife = "Мансить от ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карты нет, один туман!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
@@ -167,6 +178,126 @@ local L = {
 -- Вспомогательная функция перевода
 local function T(key)
     return L[currentLang][key] or L["en"][key] or key
+end
+
+-- Безопасный выбор контейнера
+local function getSafeUIContainer()
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    if gethui then return gethui()
+    elseif game:GetService("CoreGui") then return game:GetService("CoreGui")
+    else return LocalPlayer:WaitForChild("PlayerGui", 10) end
+end
+
+-- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
+local function showCrashMenu(err)
+    local traceback = debug.traceback()
+    local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
+    warn(logText)
+    
+    pcall(function()
+        local container = getSafeUIContainer()
+        if not container then return end
+        local old = container:FindFirstChild("FogyHub_CrashHandler")
+        if old then old:Destroy() end
+        
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "FogyHub_CrashHandler"
+        screenGui.ResetOnSpawn = false
+        screenGui.Parent = container
+        
+        local mainFrame = Instance.new("Frame")
+        mainFrame.Size = UDim2.new(0, 420, 0, 280)
+        mainFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
+        mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        mainFrame.BorderSizePixel = 0
+        mainFrame.Parent = screenGui
+        
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = mainFrame
+        
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(231, 76, 60)
+        stroke.Thickness = 1.5
+        stroke.Parent = mainFrame
+        
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, 0, 0, 35)
+        title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        title.Text = T("CrashTitle")
+        title.TextColor3 = Color3.fromRGB(231, 76, 60)
+        title.TextSize = 13
+        title.Font = Enum.Font.SourceSansBold
+        title.Parent = mainFrame
+        
+        local titleCorner = Instance.new("UICorner")
+        titleCorner.CornerRadius = UDim.new(0, 8)
+        titleCorner.Parent = title
+        
+        local textBox = Instance.new("TextBox")
+        textBox.Size = UDim2.new(0.9, 0, 0, 150)
+        textBox.Position = UDim2.new(0.05, 0, 0.18, 0)
+        textBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        textBox.TextColor3 = Color3.fromRGB(220, 220, 220)
+        textBox.Text = logText
+        textBox.TextSize = 11
+        textBox.ClearTextOnFocus = false
+        textBox.TextEditable = false
+        textBox.MultiLine = true
+        textBox.TextWrapped = true
+        textBox.TextYAlignment = Enum.TextYAlignment.Top
+        textBox.TextXAlignment = Enum.TextXAlignment.Left
+        textBox.Font = Enum.Font.Code
+        textBox.Parent = mainFrame
+        
+        local boxCorner = Instance.new("UICorner")
+        boxCorner.CornerRadius = UDim.new(0, 6)
+        boxCorner.Parent = textBox
+        
+        local copyBtn = Instance.new("TextButton")
+        copyBtn.Size = UDim2.new(0.42, 0, 0, 35)
+        copyBtn.Position = UDim2.new(0.06, 0, 0.78, 0)
+        copyBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
+        copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        copyBtn.Text = T("CopyLog")
+        copyBtn.Font = Enum.Font.SourceSansBold
+        copyBtn.TextSize = 13
+        copyBtn.Parent = mainFrame
+        
+        local copyCorner = Instance.new("UICorner")
+        copyCorner.CornerRadius = UDim.new(0, 4)
+        copyCorner.Parent = copyBtn
+        
+        copyBtn.MouseButton1Click:Connect(function()
+            local success, _ = pcall(function() setclipboard(logText) end)
+            if success then
+                copyBtn.Text = T("Copied")
+                copyBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+                task.wait(2)
+                copyBtn.Text = T("CopyLog")
+                copyBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
+            else
+                copyBtn.Text = T("BufError")
+                copyBtn.BackgroundColor3 = Color3.fromRGB(192, 57, 43)
+            end
+        end)
+        
+        local closeBtn = Instance.new("TextButton")
+        closeBtn.Size = UDim2.new(0.42, 0, 0, 35)
+        closeBtn.Position = UDim2.new(0.52, 0, 0.78, 0)
+        closeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        closeBtn.Text = T("Close")
+        closeBtn.Font = Enum.Font.SourceSansBold
+        closeBtn.TextSize = 13
+        closeBtn.Parent = mainFrame
+        
+        local closeCorner = Instance.new("UICorner")
+        closeCorner.CornerRadius = UDim.new(0, 4)
+        closeCorner.Parent = closeBtn
+        closeBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
+    end)
 end
 
 -- ==================== 3. ОСНОВНОЙ КОД СКРИПТА ====================
@@ -1343,7 +1474,7 @@ local function main()
                 ["Fling Murderer"] = 100, ["Fling Sheriff"] = 145, ["Fling Hero"] = 190,
                 ["Grab Gun"] = 235, ["Slide Glitch"] = 280, ["Noclip"] = 325, 
                 ["Kill Aura"] = 370, ["Auto Kill All"] = 415, ["Godmode"] = 460, 
-                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595, ["Invisibility"] = 640
+                ["TP Lobby"] = 505, ["TP Map"] = 550, ["Aimlock"] = 595
             }
             frame.Position = UDim2.new(0.04, 0, 0, offsets[name] or 100)
         end
@@ -1377,13 +1508,13 @@ local function main()
         end)
         
         btn.InputBegan:Connect(function(input)
-            if not Config.MobileButtons.LockMobileButtons and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            if not Config.MobileButtons.LockMobileButtons && (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
                 startDrag(input)
             end
         end)
         
         UserInputService.InputChanged:Connect(function(input)
-            if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            if dragging && (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
                 local delta = input.Position - dragStart
                 frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
             end
@@ -1528,7 +1659,7 @@ local function main()
     
     -- Кнопки Флинга (Выбивания)
     CombatTab:Button({ Title = T("FlingM"), Callback = function() local m = getMurderer() if m then flingPlayer(m) else WindUI:Notify({ Title = "Error", Content = T("NoM"), Icon = "x", Duration = 3 }) end end })
-    CombatTab:Button({ Title = T("FlingS"), Callback = function() local sh = getSheriff() if sh then flingPlayer(sh) else WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) end end })
+    CombatTab:Button({ Title = T("FlingS"), Callback = function() local sh = getSheriff() if h then flingPlayer(sh) else WindUI:Notify({ Title = "Error", Content = T("NoS"), Icon = "x", Duration = 3 }) end end })
     CombatTab:Button({ Title = T("FlingH"), Callback = function() local h = getHero() if h then flingPlayer(h) else WindUI:Notify({ Title = "Error", Content = T("NoH"), Icon = "x", Duration = 3 }) end end })
 
     -- Вкладка Утилиты
@@ -1615,7 +1746,7 @@ local function main()
     RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
     RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
 
-    -- Автоматический сброс при смерти
+    -- Безопасный автосброс при смерти
     addConnection(LocalPlayer.CharacterAdded:Connect(function()
         invisOn = false
         if invisConnection then invisConnection:Disconnect() invisConnection = nil end
@@ -1812,7 +1943,7 @@ local function main()
         end
     end
 
-    -- Запуск цикла ESP и подсветки пистолета (С ЗАЩИТОЙ ОТ ПЕРЕГРЕВА)
+    -- Запуск цикла ESP и подсветки пистолета
     task.spawn(function()
         while getgenv().FogyHubActive do
             pcall(updateESP)
