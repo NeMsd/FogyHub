@@ -3,6 +3,43 @@
 -- Authors: MsD, Gemini, Vertex Logic Integration
 -- ======================================================
 
+-- Clean up previous execution to prevent lag and stacking (ULTIMATE OPTIMIZATION)
+if getgenv().FogyHub_Cleanup then
+    pcall(getgenv().FogyHub_Cleanup)
+end
+
+getgenv().FogyHub_Connections = {}
+getgenv().FogyHub_Binds = {}
+getgenv().FogyHubActive = true
+
+getgenv().FogyHub_Cleanup = function()
+    getgenv().FogyHubActive = false
+    
+    -- Disconnect all connections
+    for _, conn in ipairs(getgenv().FogyHub_Connections or {}) do
+        if conn then pcall(function() conn:Disconnect() end) end
+    end
+    getgenv().FogyHub_Connections = {}
+    
+    -- Unbind render steps
+    for _, bindName in ipairs(getgenv().FogyHub_Binds or {}) do
+        pcall(function() game:GetService("RunService"):UnbindFromRenderStep(bindName) end)
+    end
+    getgenv().FogyHub_Binds = {}
+    
+    -- Destroy old UI containers
+    pcall(function()
+        local CoreGui = game:GetService("CoreGui")
+        local gethui = gethui
+        local container = gethui and gethui() or CoreGui
+        for _, child in ipairs(container:GetChildren()) do
+            if child.Name == "FogyHub" or child.Name == "FogyHub_MobileBindsGui" or child.Name:find("Wind") then
+                child:Destroy()
+            end
+        end
+    end)
+end
+
 -- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ ====================
 local getgenv = getgenv or function()
     _G.custom_env = _G.custom_env or {}
@@ -81,7 +118,7 @@ end
 -- Загружаем настройки на самом первом этапе инициализации
 loadConfig()
 
--- Словарь локализации (2 Языка)
+-- Словарь локализации (2 Языка, РУССКИЙ МАКСИМАЛЬНО ДЕРЗКИЙ И ВУЛЬГАРНЫЙ)
 local L = {
     en = {
         CrashTitle = "🚨 FogyHub — Crash Handler", CopyLog = "Copy Log", Copied = "Log Copied!", BufError = "Clipboard Error!", Close = "Close", Loaded = "FogyHub loaded!", FailedUI = "Failed to load WindUI library.",
@@ -105,151 +142,31 @@ local L = {
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
     ru = {
-        CrashTitle = "🚨 FogyHub — Аварийное Меню", CopyLog = "Скопировать Лог", Copied = "Лог скопирован!", BufError = "Ошибка буфера!", Close = "Закрыть", Loaded = "FogyHub loaded!", FailedUI = "Не удалось загрузить библиотеку WindUI.",
-        Visuals = "Визуалы", Combat = "Бой", Utility = "Утилиты", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
-        EspM = "ESP Убийца (Мардер)", EspS = "ESP Шериф", EspI = "ESP Мирные жители", EspBoxes = "3D Бокс ESP (Для слабых читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
-        NoFog = "Отключить Туман на Карте", TimeOfDay = "Время Суток в Игре", EspG = "ESP Упавший пистолет", Invis = "Невидимка", BtnInvis = "Кнопка: Невидимка",
-        AutoShoot = "Авто-выстрел в Мардера", Aimlock = "Аимлок на Убийцу", KillAura = "Килаура на игроков", KillAuraRange = "Радиус килауры", AutoKillAll = "Убить всех игроков",
-        FlingM = "Флинг Убийцы", FlingS = "Флинг Шерифа", FlingH = "Флинг Героя", AutoGrab = "Автоподбор пистолета", SlideGlitch = "Бесконечный Спидглитч бега", SlideSpeed = "Скорость движения", Noclip = "Ноуклип (Проход сквозь стены)", AntiFling = "Анти-Флинг",
-        LockButtons = "Заблокировать все кнопки", BtnScale = "Масштаб мобильных кнопок", BtnFlingM = "Кнопка: Fling Murderer", BtnFlingS = "Кнопка: Fling Sheriff", BtnFlingH = "Кнопка: Fling Hero", BtnGrab = "Кнопка: Grab Gun", BtnSlide = "Кнопка: Slide Glitch",
-        BtnNoclip = "Кнопка: Noclip", BtnKillAura = "Кнопка: Kill Aura", BtnKillAll = "Кнопка: Auto Kill All", RobloxId = "ID Звука из Roblox", PlayId = "Играть по Roblox ID", HttpUrl = "HTTP Ссылка на MP3 / OGG файл",
-        PlayHttp = "Играть по внешней ссылке", StopRadio = "Стоп Радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден!", NoGun = "Шерифский пистолет не найден!", NoM = "Убийца не найден или мертв", NoS = "Шериф не найден или мертв", NoH = "Герой не найден или мертв",
-        SitError = " сидит (флинг невозможен)", Flinging = "Выбиваем: ", RadioNoSupport = "Ваш эксплойт не поддерживает writefile/getcustomasset!",
-        RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Внешнее аудио успешно запущено!", RadioHttpError = "Не удалось декодировать аудио.", RadioHttpFail = "Не удалось скачать аудиофайл.",
-        RadioCache = "Песня запущена из постоянного локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
-        DodgeKnife = "Авто-Манс от летящего ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
-        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
-        SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
-        ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
+        CrashTitle = "🚨 FogyHub — Пиздец Приехали (Краш)", CopyLog = "Скопировать этот лог", Copied = "Скопировано, бля!", BufError = "Буфер обосрался!", Close = "Закрыть залупу", Loaded = "FogyHub загружен, нахуй!", FailedUI = "Не удалось стянуть WindUI.",
+        Visuals = "Визуалы, сука", Combat = "Бойня, бля", Utility = "Всякая хуйня", MobileBinds = "Тел. Кнопки", Radio = "Радио", Teleports = "Телепорты", Configs = "Конфиги / Настройки",
+        EspM = "ESP на пидораса с ножом", EspS = "ESP на лоха с пушкой", EspI = "ESP на мирное мясо", EspBoxes = "3D Коробки (для бомж-читов)", Stretch = "Растяг экрана (4:3)", StretchForce = "Сила растяга",
+        NoFog = "Снести туман к хуям", TimeOfDay = "Время суток", EspG = "ESP на пестик под ногами", Invis = "Стать призраком (Невидимка)", BtnInvis = "Кнопка: Невидимка",
+        AutoShoot = "Авто-выстрел в ебало мардера", Aimlock = "Аим на башку убийцы", KillAura = "Килаура (нагибать всех)", KillAuraRange = "Радиус бойни", AutoKillAll = "Геноцид всего сервера",
+        FlingM = "Выбить мардера в космос", FlingS = "Выбить шерифа нахуй", FlingH = "Выбить героя", AutoGrab = "Пиздить пестик с земли", SlideGlitch = "Спидглитч бега", SlideSpeed = "Скорость бега", Noclip = "Проход сквозь стены", AntiFling = "Анти-Флинг",
+        LockButtons = "Запереть кнопки на экране", BtnScale = "Масштаб кнопок", BtnFlingM = "Кнопка: Флинг Мардера", BtnFlingS = "Кнопка: Флинг Шерифа", BtnFlingH = "Кнопка: Флинг Героя", BtnGrab = "Кнопка: Подбор пестика", BtnSlide = "Кнопка: Спидглитч",
+        BtnNoclip = "Кнопка: Ноуклип", BtnKillAura = "Кнопка: Килаура", BtnKillAll = "Кнопка: Геноцид", RobloxId = "ID Музла из Roblox", PlayId = "Играть музло по ID", HttpUrl = "Прямая ссылка на MP3/OGG",
+        PlayHttp = "Врубить музыку по ссылке", StopRadio = "Заткнуть радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден, бля!", NoGun = "Пестика у шерифа нет!", NoM = "Убийца подох или не найден",
+        NoS = "Шериф подох или не найден", NoH = "Герой подох или не найден", SitError = " сидит, хуй ты его выбьешь!", Flinging = "Ебашим: ", RadioNoSupport = "Твой эксплойт — говно без поддержки getcustomasset!",
+        RadioDownloading = "Качаем музло...", RadioHttpSuccess = "Музыка пошла, нахуй!", RadioHttpError = "Файл битый, блядь!", RadioHttpFail = "Сайт с музыкой лежит нахуй!",
+        RadioCache = "Врубил из локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
+        DodgeKnife = "Мансить от ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
+        BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карты нет, один туман!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
+        SkinChangerTitle = "Визуальный скинченджер", SkinChangerInput = "Ник жертвы для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден, бля!", SkinSuccess = "Скин применен!", SaveConfigBtn = "Запомнить эту конфигурацию", LoadConfigBtn = "Загрузить конфиг",
+        ResetConfigBtn = "Сбросить всё к хуям", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Конфиг сохранён!", ConfLoaded = "Конфиг загружен!", ConfReset = "Параметры сброшены до заводских.",
         GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
-        SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
-        MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
+        SilentAim = "Сайлент Аим (Шоты сквозь стены)", AutoFarmCoins = "Автофарм монет", EmoteSpam = "Спам Эмоций (Глитч хитбокса)", ChatAlerts = "Оповещения о Ролях в Чат",
+        MMBWarningTitle = "⚠️ Кастомная залупа вместо MM2", MMBWarningContent = "Ты играешь на неофициальной копии (типа MMB). Некоторые функции могут пойти по пизде."
     }
 }
 
 -- Вспомогательная функция перевода
 local function T(key)
     return L[currentLang][key] or L["en"][key] or key
-end
-
--- Безопасный выбор контейнера
-local function getSafeUIContainer()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    if gethui then return gethui()
-    elseif game:GetService("CoreGui") then return game:GetService("CoreGui")
-    else return LocalPlayer:WaitForChild("PlayerGui", 10) end
-end
-
--- ==================== 2. СТАБИЛЬНЫЙ CRASH HANDLER ====================
-local function showCrashMenu(err)
-    local traceback = debug.traceback()
-    local logText = "FogyHub Crash Log:\n" .. tostring(err) .. "\n\nTraceback:\n" .. tostring(traceback)
-    warn(logText)
-    
-    pcall(function()
-        local container = getSafeUIContainer()
-        if not container then return end
-        local old = container:FindFirstChild("FogyHub_CrashHandler")
-        if old then old:Destroy() end
-        
-        local screenGui = Instance.new("ScreenGui")
-        screenGui.Name = "FogyHub_CrashHandler"
-        screenGui.ResetOnSpawn = false
-        screenGui.Parent = container
-        
-        local mainFrame = Instance.new("Frame")
-        mainFrame.Size = UDim2.new(0, 420, 0, 280)
-        mainFrame.Position = UDim2.new(0.5, -210, 0.5, -140)
-        mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        mainFrame.BorderSizePixel = 0
-        mainFrame.Parent = screenGui
-        
-        local corner = Instance.new("UICorner")
-        corner.CornerRadius = UDim.new(0, 8)
-        corner.Parent = mainFrame
-        
-        local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(231, 76, 60)
-        stroke.Thickness = 1.5
-        stroke.Parent = mainFrame
-        
-        local title = Instance.new("TextLabel")
-        title.Size = UDim2.new(1, 0, 0, 35)
-        title.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        title.Text = T("CrashTitle")
-        title.TextColor3 = Color3.fromRGB(231, 76, 60)
-        title.TextSize = 13
-        title.Font = Enum.Font.SourceSansBold
-        title.Parent = mainFrame
-        
-        local titleCorner = Instance.new("UICorner")
-        titleCorner.CornerRadius = UDim.new(0, 8)
-        titleCorner.Parent = title
-        
-        local textBox = Instance.new("TextBox")
-        textBox.Size = UDim2.new(0.9, 0, 0, 150)
-        textBox.Position = UDim2.new(0.05, 0, 0.18, 0)
-        textBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-        textBox.TextColor3 = Color3.fromRGB(220, 220, 220)
-        textBox.Text = logText
-        textBox.TextSize = 11
-        textBox.ClearTextOnFocus = false
-        textBox.TextEditable = false
-        textBox.MultiLine = true
-        textBox.TextWrapped = true
-        textBox.TextYAlignment = Enum.TextYAlignment.Top
-        textBox.TextXAlignment = Enum.TextXAlignment.Left
-        textBox.Font = Enum.Font.Code
-        textBox.Parent = mainFrame
-        
-        local boxCorner = Instance.new("UICorner")
-        boxCorner.CornerRadius = UDim.new(0, 6)
-        boxCorner.Parent = textBox
-        
-        local copyBtn = Instance.new("TextButton")
-        copyBtn.Size = UDim2.new(0.42, 0, 0, 35)
-        copyBtn.Position = UDim2.new(0.06, 0, 0.78, 0)
-        copyBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-        copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        copyBtn.Text = T("CopyLog")
-        copyBtn.Font = Enum.Font.SourceSansBold
-        copyBtn.TextSize = 13
-        copyBtn.Parent = mainFrame
-        
-        local copyCorner = Instance.new("UICorner")
-        copyCorner.CornerRadius = UDim.new(0, 4)
-        copyCorner.Parent = copyBtn
-        
-        copyBtn.MouseButton1Click:Connect(function()
-            local success, _ = pcall(function() setclipboard(logText) end)
-            if success then
-                copyBtn.Text = T("Copied")
-                copyBtn.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
-                task.wait(2)
-                copyBtn.Text = T("CopyLog")
-                copyBtn.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-            else
-                copyBtn.Text = T("BufError")
-                copyBtn.BackgroundColor3 = Color3.fromRGB(192, 57, 43)
-            end
-        end)
-        
-        local closeBtn = Instance.new("TextButton")
-        closeBtn.Size = UDim2.new(0.42, 0, 0, 35)
-        closeBtn.Position = UDim2.new(0.52, 0, 0.78, 0)
-        closeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-        closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        closeBtn.Text = T("Close")
-        closeBtn.Font = Enum.Font.SourceSansBold
-        closeBtn.TextSize = 13
-        closeBtn.Parent = mainFrame
-        
-        local closeCorner = Instance.new("UICorner")
-        closeCorner.CornerRadius = UDim.new(0, 4)
-        closeCorner.Parent = closeBtn
-        closeBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
-    end)
 end
 
 -- ==================== 3. ОСНОВНОЙ КОД СКРИПТА ====================
@@ -261,6 +178,18 @@ local function main()
     local VirtualInputManager = game:GetService("VirtualInputManager")
     local Lighting = game:GetService("Lighting")
     local LocalPlayer = Players.LocalPlayer
+
+    -- Хелпер для сохранения и отслеживания подключений
+    local function addConnection(conn)
+        table.insert(getgenv().FogyHub_Connections, conn)
+        return conn
+    end
+
+    -- Хелпер для отслеживания рендер-биндов
+    local function addBind(name, priority, func)
+        pcall(function() RunService:BindToRenderStep(name, priority, func) end)
+        table.insert(getgenv().FogyHub_Binds, name)
+    end
 
     -- Вспомогательные функции для установки значений UI
     local function setToggle(element, value)
@@ -320,7 +249,7 @@ local function main()
     local roles, Murder, Sheriff, Hero = {}, nil, nil, nil
     local stretchConnection, antiFlingConnection = nil, nil
 
-    -- Состояния невидимки (локальные для избежания конфликтов в _G)
+    -- Состояния невидимки
     local invisOn = false
     local invisConnection, rotationConnection
     local savedCFrame, originalCameraSubject, originalAutoRotate
@@ -1232,11 +1161,11 @@ local function main()
                 end
             end
 
-            invisConnection = char.DescendantAdded:Connect(function(descendant)
+            invisConnection = addConnection(char.DescendantAdded:Connect(function(descendant)
                 if descendant:IsA("BasePart") and not isTool(descendant) then
                     descendant.LocalTransparencyModifier = 1
                 end
-            end)
+            end))
 
             if invisOutline then invisOutline:Destroy() end
             invisOutline = Instance.new("Highlight")
@@ -1268,7 +1197,7 @@ local function main()
 
             -- Поворот сиденья за камерой
             if rotationConnection then rotationConnection:Disconnect() end
-            rotationConnection = RunService.RenderStepped:Connect(function()
+            rotationConnection = addConnection(RunService.RenderStepped:Connect(function()
                 if not invisOn or not seat or not seat.Parent then return end
                 if not hum then return end
 
@@ -1283,7 +1212,7 @@ local function main()
                 else
                     hum.AutoRotate = true
                 end
-            end)
+            end))
         else
             invisOn = false
             if invisConnection then invisConnection:Disconnect() invisConnection = nil end
@@ -1318,19 +1247,22 @@ local function main()
     local function applyStretch(state)
         Config.Visuals.StretchEnabled = state
         if not state then
-            if stretchConnection then stretchConnection:Disconnect() stretchConnection = nil end
+            if stretchConnection then 
+                pcall(function() stretchConnection:Disconnect() end)
+                stretchConnection = nil 
+            end
             pcall(function()
                 workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame
             end)
             return
         end
         if not stretchConnection then
-            stretchConnection = RunService.RenderStepped:Connect(function()
+            stretchConnection = addConnection(RunService.RenderStepped:Connect(function()
                 local camera = workspace.CurrentCamera
                 if camera then 
                     camera.CFrame = camera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, Config.Visuals.StretchFactor, 0, 0, 0, 1) 
                 end
-            end)
+            end))
         end
     end
 
@@ -1347,11 +1279,14 @@ local function main()
     local function applyAntiFling(state)
         Config.Utility.AntiFling = state
         if not state then
-            if antiFlingConnection then antiFlingConnection:Disconnect() antiFlingConnection = nil end
+            if antiFlingConnection then 
+                pcall(function() antiFlingConnection:Disconnect() end)
+                antiFlingConnection = nil 
+            end
             return
         end
         if not antiFlingConnection then
-            antiFlingConnection = RunService.Stepped:Connect(function()
+            antiFlingConnection = addConnection(RunService.Stepped:Connect(function()
                 if not Config.Utility.AntiFling then return end
                 for _, p in ipairs(Players:GetPlayers()) do
                     if p ~= LocalPlayer and p.Character then
@@ -1380,7 +1315,7 @@ local function main()
                         end
                     end)
                 end
-            end)
+            end))
         end
     end
 
@@ -1640,7 +1575,7 @@ local function main()
         })
     end
 
-    -- Вкладка Конфиги
+    -- Вкладка Конфиги (ОБНОВЛЁН ПЕРЕЗАПУСК ПРИ СМЕНЕ ЯЗЫКА)
     ConfigsTab:Button({ Title = T("SaveConfigBtn"), Callback = function() saveConfig() WindUI:Notify({ Title = "FogyHub", Content = T("ConfSaved"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("LoadConfigBtn"), Callback = function() loadConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfLoaded"), Icon = "check", Duration = 3 }) end })
     ConfigsTab:Button({ Title = T("ResetConfigBtn"), Callback = function() 
@@ -1650,8 +1585,26 @@ local function main()
         Config.MobileButtons = { LockMobileButtons = false, ButtonScale = 1.0, ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false, ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Invisibility"] = false }
         saveConfig() applyConfigToUI() WindUI:Notify({ Title = "FogyHub", Content = T("ConfReset"), Icon = "check", Duration = 3 }) 
     end })
-    ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() Config.Language = "ru" currentLang = "ru" saveConfig() WindUI:Notify({ Title = "Язык", Content = "Язык успешно изменен на Русский!", Icon = "globe", Duration = 3 }) end })
-    ConfigsTab:Button({ Title = T("SetLangEn"), Callback = function() Config.Language = "en" currentLang = "en" saveConfig() WindUI:Notify({ Title = "Language", Content = "Language successfully changed to English!", Icon = "globe", Duration = 3 }) end })
+    ConfigsTab:Button({ Title = T("SetLangRu"), Callback = function() 
+        Config.Language = "ru" 
+        currentLang = "ru" 
+        saveConfig() 
+        if writefile then pcall(function() writefile("fogyhub_lang.txt", "ru") end) end
+        WindUI:Notify({ Title = "Язык", Content = "Перезапуск хуеты...", Icon = "globe", Duration = 3 })
+        task.wait(1)
+        pcall(getgenv().FogyHub_Cleanup)
+        task.spawn(main)
+    end })
+    ConfigsTab:Button({ Title = T("SetLangEn"), Callback = function() 
+        Config.Language = "en" 
+        currentLang = "en" 
+        saveConfig() 
+        if writefile then pcall(function() writefile("fogyhub_lang.txt", "en") end) end
+        WindUI:Notify({ Title = "Language", Content = "Restarting script...", Icon = "globe", Duration = 3 })
+        task.wait(1)
+        pcall(getgenv().FogyHub_Cleanup)
+        task.spawn(main)
+    end })
 
     -- Вкладка Радио
     local _ = RadioTab:Input({ Title = T("RobloxId"), Value = "", Placeholder = "ID...", Callback = function(text) currentSongId = text end })
@@ -1662,8 +1615,8 @@ local function main()
     RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
     RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
 
-    -- Безопасный автосброс при смерти
-    LocalPlayer.CharacterAdded:Connect(function()
+    -- Автоматический сброс при смерти
+    addConnection(LocalPlayer.CharacterAdded:Connect(function()
         invisOn = false
         if invisConnection then invisConnection:Disconnect() invisConnection = nil end
         if rotationConnection then rotationConnection:Disconnect() rotationConnection = nil end
@@ -1688,10 +1641,10 @@ local function main()
                 radioSound = sound
             end
         end
-    end)
+    end))
 
     -- ==================== ФОНОВЫЕ ЦИКЛЫ И ПРОСЛУШИВАТЕЛИ ====================
-    UserInputService.InputBegan:Connect(function(input, processed)
+    addConnection(UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
         if input.UserInputType == Enum.UserInputType.Keyboard then
             local success, keyStr = pcall(function() return input.KeyCode and input.KeyCode.Name end)
@@ -1704,7 +1657,7 @@ local function main()
                 elseif keyStr == "Y" then toggleInvis() end
             end
         end
-    end)
+    end))
 
     -- Оповещения в чат при раскрытии ролей
     local lastMurder, lastSheriff = nil, nil
@@ -1859,9 +1812,9 @@ local function main()
         end
     end
 
-    -- Запуск цикла ESP и подсветки пистолета
+    -- Запуск цикла ESP и подсветки пистолета (С ЗАЩИТОЙ ОТ ПЕРЕГРЕВА)
     task.spawn(function()
-        while true do
+        while getgenv().FogyHubActive do
             pcall(updateESP)
             pcall(highlightGunDrop)
             task.wait(0.1)
@@ -1870,7 +1823,7 @@ local function main()
 
     -- Цикл автоподбора пистолета
     task.spawn(function()
-        while true do
+        while getgenv().FogyHubActive do
             pcall(function()
                 if Config.Utility.AutoGrabGun then
                     local char = LocalPlayer.Character
@@ -1901,7 +1854,7 @@ local function main()
     end
 
     task.spawn(function()
-        while true do
+        while getgenv().FogyHubActive do
             pcall(function()
                 if Config.Utility.AutoFarmCoins then
                     local char = LocalPlayer.Character
@@ -1920,7 +1873,7 @@ local function main()
                         
                         if nearestCoin then
                             local stepConn
-                            stepConn = RunService.Heartbeat:Connect(function(dt)
+                            stepConn = addConnection(RunService.Heartbeat:Connect(function(dt)
                                 if not Config.Utility.AutoFarmCoins or not nearestCoin or not nearestCoin.Parent or not hrp.Parent then
                                     if stepConn then stepConn:Disconnect() end
                                     return
@@ -1930,7 +1883,7 @@ local function main()
                                 if (nearestCoin.Position - hrp.Position).Magnitude < 4 then
                                     if stepConn then stepConn:Disconnect() end
                                 end
-                            end)
+                            end))
                             
                             local timeout = 0
                             while nearestCoin and nearestCoin.Parent and Config.Utility.AutoFarmCoins and timeout < 100 do
@@ -1949,7 +1902,7 @@ local function main()
 
     -- Цикл Спама Эмоций
     task.spawn(function()
-        while true do
+        while getgenv().FogyHubActive do
             pcall(function()
                 if Config.Utility.EmoteSpamEnabled then
                     local playEmote = game:GetService("ReplicatedStorage"):FindFirstChild("PlayEmote")
@@ -1966,7 +1919,7 @@ local function main()
 
     -- Цикл авто-выстрела
     task.spawn(function()
-        while true do
+        while getgenv().FogyHubActive do
             pcall(function()
                 if Config.Combat.AutoShootMurderer then
                     local char = LocalPlayer.Character
@@ -1996,10 +1949,10 @@ local function main()
             end
         end
     end
-    RunService:BindToRenderStep("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
+    addBind("FogyHub_Aimlock", Enum.RenderPriority.Camera.Value + 1, updateAimlock)
 
     -- Бесконечный спидглитч
-    RunService.Heartbeat:Connect(function(deltaTime)
+    addConnection(RunService.Heartbeat:Connect(function(deltaTime)
         pcall(function()
             local char = LocalPlayer.Character
             local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -2009,7 +1962,7 @@ local function main()
                 hrp.CFrame = hrp.CFrame + (slideVector * (Config.Utility.SlideSpeedForce * deltaTime))
             end
         end)
-    end)
+    end))
 
     -- Silent Aim (ПЕРЕДОВОЙ СЕТЕВОЙ ПЕРЕХВАТ ПУЛИ В ТАРГЕТ)
     pcall(function()
@@ -2042,7 +1995,7 @@ local function main()
     end)
 
     -- Kill Aura
-    RunService.Heartbeat:Connect(function()
+    addConnection(RunService.Heartbeat:Connect(function()
         pcall(function()
             if not Config.Combat.KillAuraEnabled then return end
             local char = LocalPlayer.Character
@@ -2071,10 +2024,10 @@ local function main()
                 end
             end
         end)
-    end)
+    end))
 
     -- Noclip
-    RunService.Stepped:Connect(function()
+    addConnection(RunService.Stepped:Connect(function()
         pcall(function()
             if not Config.Utility.NoclipEnabled then return end
             local char = LocalPlayer.Character
@@ -2084,10 +2037,10 @@ local function main()
                 end
             end
         end)
-    end)
+    end))
 
     -- Потоковая проверка для авто-уклонения
-    RunService.Heartbeat:Connect(function()
+    addConnection(RunService.Heartbeat:Connect(function()
         pcall(function()
             if not Config.Combat.AutoDodgeKnife then return end
             local char = LocalPlayer.Character
@@ -2114,7 +2067,7 @@ local function main()
                 end
             end
         end)
-    end)
+    end))
 
     -- Проверка на неофициальный сервер
     task.spawn(function()
