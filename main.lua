@@ -4,12 +4,6 @@
 -- License: MIT (Пиздите на здоровье, нам похуй)
 -- ======================================================
 
--- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ (НА САМОМ ВЕРХУ) ====================
-local getgenv = getgenv or function()
-    _G.custom_env = _G.custom_env or {}
-    return _G.custom_env
-end
-
 -- ЭМУЛЯТОР NEWPROXY (ОБХОД КРАША ОБФУСКАТОРОВ НА DELTA / SOLARA)
 if not getgenv().newproxy then
     getgenv().newproxy = function(bool)
@@ -56,6 +50,12 @@ getgenv().FogyHub_Cleanup = function()
             end
         end
     end)
+end
+
+-- ==================== 1. ЗАЩИТА СОВМЕСТИМОСТИ ЭКСПЛОЙТОВ ====================
+local getgenv = getgenv or function()
+    _G.custom_env = _G.custom_env or {}
+    return _G.custom_env
 end
 
 local setclipboard = setclipboard or toclipboard or (Clipboard and Clipboard.set) or function(text)
@@ -164,13 +164,13 @@ local L = {
         BtnNoclip = "Кнопка: Ноуклип", BtnKillAura = "Кнопка: Килаура", BtnKillAll = "Кнопка: Геноцид", RobloxId = "ID Музла из Roblox", PlayId = "Играть музло по ID", HttpUrl = "Прямая ссылка на MP3/OGG",
         PlayHttp = "Врубить музыку по ссылке", StopRadio = "Заткнуть радио", Volume = "Громкость", Loop = "Зациклить", NoKnife = "Нож не найден, бля!", NoGun = "Пестика у шерифа нет!", NoM = "Убийца подох или не найден",
         NoS = "Шериф подох или не найден", NoH = "Герой подох или не найден", SitError = " сидит, хуй ты его выбьешь!", Flinging = "Ебашим: ", RadioNoSupport = "Твой эксплойт — говно без поддержки getcustomasset!",
-        RadioDownloading = "Качаем музло...", RadioHttpSuccess = "Музыка пошла, нахуй!", RadioHttpError = "Файл битый, блядь!", RadioHttpFail = "Сайт с музыкой лежит нахуй!",
+        RadioDownloading = "Загрузка аудиофайла...", RadioHttpSuccess = "Музыка пошла, нахуй!", RadioHttpError = "Файл битый, блядь!", RadioHttpFail = "Сайт с музыкой лежит нахуй!",
         RadioCache = "Врубил из локального кэша!", NoclipToggle = "Noclip", NoclipOn = "Включен", NoclipOff = "Выключен", SpeedOn = "Включен", SpeedOff = "Выключен",
         DodgeKnife = "Мансить от ножа (Отпрыг вправо)", BtnDodgeKnife = "Кнопка: Уворот", TpLobby = "Телепорт в Лобби", TpMap = "Телепорт на Карту", BtnTpLobby = "Кнопка: ТП Лобби",
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карты нет, один туман!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник жертвы для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден, бля!", SkinSuccess = "Скин применен!", SaveConfigBtn = "Запомнить эту конфигурацию", LoadConfigBtn = "Загрузить конфиг",
         ResetConfigBtn = "Сбросить всё к хуям", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Конфиг сохранён!", ConfLoaded = "Конфиг загружен!", ConfReset = "Параметры сброшены до заводских.",
-        GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Шоты сквозь стены)", AutoFarmCoins = "Автофарм монет", EmoteSpam = "Спам Эмоций (Глитч хитбокса)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Кастомная залупа вместо MM2", MMBWarningContent = "Ты играешь на неофициальной копии (типа MMB). Некоторые функции могут пойти по пизде."
     }
@@ -179,6 +179,15 @@ local L = {
 -- Вспомогательная функция перевода
 local function T(key)
     return L[currentLang][key] or L["en"][key] or key
+end
+
+-- Безопасный выбор контейнера
+local function getSafeUIContainer()
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    if gethui then return gethui()
+    elseif game:GetService("CoreGui") then return game:GetService("CoreGui")
+    else return LocalPlayer:WaitForChild("PlayerGui", 10) end
 end
 
 -- ==================== 3. ОСНОВНОЙ КОД СКРИПТА ====================
@@ -1420,7 +1429,7 @@ local function main()
         end)
         
         UserInputService.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch_Offset or input.UserInputType == Enum.UserInputType.Touch then
                 if dragging then
                     dragging = false
                     Config.ButtonPositions[name] = {
@@ -1568,7 +1577,7 @@ local function main()
     RadioTab:Slider({ Title = T("Volume"), Step = 0.5, Value = { Min = 0, Max = 10, Default = 2 }, Callback = function(v) radioVolume = v if radioSound then radioSound.Volume = v end end })
     RadioTab:Toggle({ Title = T("Loop"), Value = false, Callback = function(s) radioLooped = s if radioSound then radioSound.Looped = s end end })
 
-    -- Автоматический сброс при смерти
+    -- Автоматическое восстановление активного Радио
     addConnection(LocalPlayer.CharacterAdded:Connect(function()
         invisOn = false
         if invisConnection then invisConnection:Disconnect() invisConnection = nil end
@@ -1819,7 +1828,7 @@ local function main()
                         for _, coin in ipairs(coins) do
                             local dist = (coin.Position - hrp.Position).Magnitude
                             if dist < minDist then
-                                minDist = dist
+                                minDistance = dist
                                 nearestCoin = coin
                             end
                         end
