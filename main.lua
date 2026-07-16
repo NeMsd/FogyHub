@@ -41,13 +41,13 @@ local Config = {
         ["Fling Murderer"] = false, ["Fling Sheriff"] = false, ["Fling Hero"] = false, 
         ["Grab Gun"] = false, ["Slide Glitch"] = false, ["Noclip"] = false,
         ["Kill Aura"] = false, ["Auto Kill All"] = false, ["Godmode"] = false, 
-        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false
+        ["TP Lobby"] = false, ["TP Map"] = false, ["Aimlock"] = false, ["Shoot Murderer"] = false
     },
     ButtonPositions = {
         ["Fling Murderer"] = {X = 30, Y = 100}, ["Fling Sheriff"] = {X = 30, Y = 145}, ["Fling Hero"] = {X = 30, Y = 190}, 
         ["Grab Gun"] = {X = 30, Y = 235}, ["Slide Glitch"] = {X = 30, Y = 280}, ["Noclip"] = {X = 30, Y = 325},
         ["Kill Aura"] = {X = 30, Y = 370}, ["Auto Kill All"] = {X = 30, Y = 415}, ["Godmode"] = {X = 30, Y = 460},
-        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}
+        ["TP Lobby"] = {X = 30, Y = 505}, ["TP Map"] = {X = 30, Y = 550}, ["Aimlock"] = {X = 30, Y = 595}, ["Shoot Murderer"] = {X = 30, Y = 640}
     }
 }
 
@@ -100,7 +100,7 @@ local L = {
         BtnTpMap = "Button: TP Map", NoMapLoaded = "Map not loaded yet or empty!", BtnAimlock = "Button: Aimlock", VisualsSkinChanger = "Visual Skins",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Roblox Username", SkinChangerBtn = "Apply Skin", SkinNotFound = "Player not found!", SkinSuccess = "Outfit changed visually!", SaveConfigBtn = "Save Config File", LoadConfigBtn = "Load Config File",
         ResetConfigBtn = "Reset to Defaults", SetLangRu = "Switch UI to Russian", SetLangEn = "Switch UI to English", ConfSaved = "Config saved to storage!", ConfLoaded = "Config loaded from storage!", ConfReset = "Config reset to factory defaults.",
-        GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
+        BtnShootM = "Button: Shoot", GodMode = "Dodge Knife", BtnGodMode = "Button: Dodge Knife",
         SilentAim = "Silent Aim (Shoot Without Turning Camera)", AutoFarmCoins = "Auto-Farm Coins (Safe Glide)", EmoteSpam = "Emote Glitch Spammer (Zen/Sit)", ChatAlerts = "Local Role Notifications in Chat",
         MMBWarningTitle = "⚠️ Custom Server Detected", MMBWarningContent = "You are playing on an unofficial copy of MM2 (e.g. MMB). Some features like Skin Changer or Role tracking may be unstable."
     },
@@ -121,7 +121,7 @@ local L = {
         BtnTpMap = "Кнопка: ТП Карта", NoMapLoaded = "Карта еще не загружена или пуста!", BtnAimlock = "Кнопка: Аимлок", VisualsSkinChanger = "Визуальные Скины",
         SkinChangerTitle = "Visual Skin Changer", SkinChangerInput = "Ник игрока для копирования", SkinChangerBtn = "Применить скин", SkinNotFound = "Игрок не найден!", SkinSuccess = "Скин визуально применен!", SaveConfigBtn = "Сохранить текущие настройки", LoadConfigBtn = "Загрузить настройки из файла",
         ResetConfigBtn = "Сбросить по умолчанию", SetLangRu = "Сменить язык на Русский", SetLangEn = "Сменить язык на Английский", ConfSaved = "Настройки успешно сохранены на устройство!", ConfLoaded = "Настройки успешно загружены из файла!", ConfReset = "Все параметры сброшены до заводских настроек.",
-        GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
+        BtnShootM = "Кнопка: Выстрел", GodMode = "Уворот от ножа", BtnGodMode = "Кнопка: Уворот",
         SilentAim = "Сайлент Аим (Стрельба без наводки камеры)", AutoFarmCoins = "Автофарм монет (Безопасный глайд)", EmoteSpam = "Спам Эмоций для Глитча Хитбокса (Zen/Sit)", ChatAlerts = "Оповещения о Ролях в Чат",
         MMBWarningTitle = "⚠️ Обнаружена копия MM2", MMBWarningContent = "Вы находитесь на кастомной копии игры (например, MMB). Некоторые сетевые функции (скинченджер, роли игроков) могут работать нестабильно."
     }
@@ -938,11 +938,14 @@ local function main()
         end
     end
 
-    -- Сетевой выстрел без дергания камеры (ОБНОВЛЁННЫЙ ВЫСОКОКЛАССНЫЙ ШОТТЕР)
+    -- Сетевой выстрел без задержек (УЛЬТРА-СКОРОСТНАЯ ЭКСПОРТ-ФУНКЦИЯ С ДОНОРА)
     local function fireGun(gun, targetPosition)
         local char = LocalPlayer.Character
         local bp = LocalPlayer:FindFirstChild("Backpack")
-        if gun.Parent == bp then char.Humanoid:EquipTool(gun) task.wait(0.1) end
+        if gun.Parent == bp then 
+            char.Humanoid:EquipTool(gun) 
+            task.wait(0.05) -- Микро-ожидание экипировки для предотвращения отмены вызова
+        end
         
         local originCF
         local gunServer = gun:FindFirstChild("GunServer")
@@ -1161,7 +1164,7 @@ local function main()
         end
     end
 
-    -- Прямой моментальный выстрел в убийцу на месте (без ТП и фризов)
+    -- Прямой моментальный выстрел в убийцу на месте (БЕЗ ЗАДЕРЖЕК, ПАКЕТЫ НАПРЯМУЮ)
     local function shootMurdererDirect()
         local m = getMurderer()
         if not m or not m.Character or not m.Character:FindFirstChild("HumanoidRootPart") then
@@ -1841,15 +1844,15 @@ local function main()
         end
     end)
 
-    -- Высокоприоритетный плавный Аимлок (Решает проблему тряски камеры)
+    -- Высокоприоритетный мгновенный Аимлок (ЖЕСТКАЯ НАВОДКА БЕЗ СГЛАЖИВАНИЯ)
     local function updateAimlock()
         if Config.Combat.AimlockEnabled then
             local m = getMurderer()
             if m and m.Character and m.Character:FindFirstChild("Head") then
                 local camera = workspace.CurrentCamera
                 if camera then 
-                    local targetCFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
-                    camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.15)
+                    -- Мгновенная наводка без Lerp
+                    camera.CFrame = CFrame.lookAt(camera.CFrame.Position, m.Character.Head.Position)
                 end
             end
         end
